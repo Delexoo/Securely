@@ -14,11 +14,43 @@
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             color: #000000;
-            background: #ffffff;
+            background: linear-gradient(to right, #b0b0b0 50%, #ffffff 50%);
+            background-size: 200% 100%;
+            background-position: 100% 50%;
+            overflow-x: hidden;
+            min-height: 100vh;
+            animation: backgroundMoveInitial 8s ease-in-out 1 forwards, backgroundMoveSubtle 6s ease-in-out 8s infinite;
+        }
+
+        @keyframes backgroundMoveInitial {
+            0% {
+                background-position: 100% 50%;
+            }
+            30% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 50% 50%;
+            }
+        }
+
+        @keyframes backgroundMoveSubtle {
+            0%, 100% {
+                background-position: 50% 50%;
+            }
+            25% {
+                background-position: 51% 50%;
+            }
+            50% {
+                background-position: 49% 50%;
+            }
+            75% {
+                background-position: 50.5% 50%;
+            }
         }
 
         nav {
-            padding: 2rem 4rem;
+            padding: 3rem 4rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -27,97 +59,74 @@
             width: 100%;
             z-index: 100;
             background: #ffffff;
-            border-bottom: 10px solid #000000;
+            border-bottom: 8px solid #000000;
             transition: all 0.3s ease;
         }
 
+        @keyframes navSlideDown {
+            from {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
         nav.scrolled {
-            padding: 1.5rem 4rem;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 2.5rem 4rem;
+            border-bottom: 8px solid #000000;
         }
 
         .logo {
-            font-size: 1.2rem;
-            font-weight: 700;
+            font-size: 4rem;
+            font-weight: 900;
             color: #000000;
             text-decoration: none;
-            letter-spacing: 1px;
-            transition: transform 0.3s ease;
+            letter-spacing: 3px;
+            transition: color 0.3s ease;
         }
 
         .logo:hover {
-            transform: scale(1.05);
+            color: #808080;
         }
 
         nav ul {
             list-style: none;
             display: flex;
-            gap: 3rem;
+            gap: 4rem;
             align-items: center;
         }
 
         nav a {
             color: #000000;
             text-decoration: none;
-            font-weight: 600;
-            font-size: 0.9rem;
-            letter-spacing: 0.5px;
+            font-weight: 700;
+            font-size: 1.3rem;
+            letter-spacing: 2px;
             position: relative;
             transition: color 0.3s ease;
         }
 
-        nav a::after {
-            content: '';
-            position: absolute;
-            bottom: -5px;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background: #000000;
-            transition: width 0.3s ease;
-        }
-
-        nav a:hover::after {
-            width: 100%;
+        nav a:hover {
+            color: #808080;
         }
 
         .hero {
-            min-height: 100vh;
+            min-height: 80vh;
             display: flex;
             align-items: center;
             justify-content: center;
             position: relative;
-            padding: 8rem 4rem;
+            padding: 8rem 3rem;
+            overflow: hidden;
         }
 
-        .color-block {
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 50%;
-            height: 100%;
-            background: #ff6b6b;
-            z-index: 1;
-            animation: slideInLeft 1.5s ease-out;
-        }
-
-        @keyframes slideInLeft {
-            from {
-                transform: translateX(-100%);
-            }
-            to {
-                transform: translateX(0);
-            }
-        }
-
-        .hero h1 {
-            font-size: 12rem;
-            font-weight: 900;
-            line-height: 0.9;
-            letter-spacing: -6px;
-            color: #000000;
+        .hero-content {
             position: relative;
             z-index: 2;
+            text-align: center;
             animation: fadeInUp 1s ease-out;
         }
 
@@ -132,52 +141,167 @@
             }
         }
 
+        .hero h1 {
+            font-size: 15rem;
+            font-weight: 900;
+            line-height: 0.85;
+            letter-spacing: -8px;
+            color: #000000;
+            margin-bottom: 1.5rem;
+            animation: heroTextFloat 6s ease-in-out infinite 1s;
+        }
+
+        @keyframes heroTextFloat {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+        .hero h1 .dot {
+            color: #808080;
+            animation: dotPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes dotPulse {
+            0%, 100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.2);
+                opacity: 0.8;
+            }
+        }
+
+        .hero-subtitle {
+            font-size: 1.1rem;
+            font-weight: 400;
+            letter-spacing: 2px;
+            color: #666666;
+            text-transform: uppercase;
+            animation: subtitleSlide 1.5s ease-out 0.5s backwards;
+        }
+
+        @keyframes subtitleSlide {
+            from {
+                opacity: 0;
+                transform: translateX(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
         .credits-section {
-            padding: 12rem 4rem;
-            max-width: 1000px;
+            padding: 6rem 3rem;
+            max-width: 1400px;
             margin: 0 auto;
         }
 
         .credits-grid {
             display: grid;
-            gap: 4rem;
-            margin-top: 6rem;
+            gap: 3rem;
+            margin-top: 2rem;
         }
 
         .credit-box {
-            background: #f5f5f5;
-            border: 3px solid #000000;
-            padding: 4rem;
+            background: #ffffff;
+            border: 4px solid #000000;
+            padding: 4rem 3rem;
+            position: relative;
             opacity: 0;
             transform: translateY(50px);
             transition: all 0.8s ease;
+            animation: cardBreathe 4s ease-in-out infinite;
+        }
+
+        @keyframes cardBreathe {
+            0%, 100% {
+            }
+            50% {
+                transform: translateY(0) scale(1.01);
+            }
         }
 
         .credit-box.visible {
             opacity: 1;
             transform: translateY(0);
+            animation: cardSlideIn 0.6s ease-out, cardBreathe 4s ease-in-out infinite 0.6s;
+        }
+
+        @keyframes cardSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .credit-box::before {
+            content: '';
+            position: absolute;
+            top: -4px;
+            left: -4px;
+            right: -4px;
+            bottom: -4px;
+            border: 2px solid #808080;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            animation: borderGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes borderGlow {
+            0%, 100% {
+                opacity: 0;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        .credit-box:hover::before {
+            opacity: 1;
+        }
+
+        .credit-box:hover {
+            transform: translateY(-10px);
+            box-shadow: 20px 20px 0 rgba(128,128,128,0.3);
         }
 
         .credit-box h2 {
-            font-size: 3rem;
+            font-size: 4rem;
             font-weight: 900;
             margin-bottom: 2rem;
-            letter-spacing: -1px;
+            letter-spacing: -2px;
             color: #000000;
+            border-bottom: 4px solid #000000;
+            padding-bottom: 1rem;
+            line-height: 0.9;
+            animation: headingGlow 3s ease-in-out infinite;
         }
 
-        .credit-box h3 {
-            font-size: 2rem;
-            font-weight: 800;
-            margin-bottom: 1.5rem;
-            color: #000000;
+        @keyframes headingGlow {
+            0%, 100% {
+                border-bottom-color: #000000;
+            }
+            50% {
+                border-bottom-color: #808080;
+            }
         }
 
         .credit-box p {
-            font-size: 1.4rem;
-            line-height: 1.8;
+            font-size: 1.2rem;
+            line-height: 1.7;
             color: #333333;
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
+            font-weight: 400;
         }
 
         .credit-box ul {
@@ -187,9 +311,16 @@
 
         .credit-box ul li {
             font-size: 1.3rem;
-            padding: 0.8rem 0;
+            padding: 1rem 0;
             border-bottom: 2px solid #000000;
             color: #333333;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .credit-box ul li:hover {
+            color: #808080;
+            padding-left: 1rem;
         }
 
         .credit-box ul li:last-child {
@@ -199,74 +330,145 @@
         .tech-stack {
             display: flex;
             flex-wrap: wrap;
-            gap: 1rem;
-            margin-top: 1.5rem;
+            gap: 1.5rem;
+            margin-top: 2rem;
         }
 
         .tech-item {
             background: #000000;
             color: #ffffff;
-            padding: 1rem 2rem;
+            padding: 1.2rem 2.5rem;
             font-size: 1.2rem;
-            font-weight: 700;
-            border: 3px solid #000000;
+            font-weight: 900;
+            border: 4px solid #000000;
             transition: all 0.3s ease;
+            letter-spacing: 2px;
+            animation: techItemFloat 3s ease-in-out infinite;
+        }
+
+        @keyframes techItemFloat {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-5px);
+            }
         }
 
         .tech-item:hover {
             background: #ffffff;
             color: #000000;
+            border-color: #808080;
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 10px 10px 0 rgba(128,128,128,0.5);
+            animation: techItemPulse 0.5s ease-out;
+        }
+
+        @keyframes techItemPulse {
+            0%, 100% {
+                transform: translateY(-5px) scale(1.05);
+            }
+            50% {
+                transform: translateY(-8px) scale(1.08);
+            }
         }
 
         footer {
-            padding: 4rem;
+            padding: 3rem;
             text-align: center;
-            border-top: 3px solid #000000;
+            border-top: 6px solid #000000;
+            background: #000000;
+            color: #ffffff;
+            animation: footerSlideUp 1s ease-out;
+        }
+
+        @keyframes footerSlideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         footer p {
-            font-size: 1rem;
-            color: #666666;
+            font-size: 0.9rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            animation: footerTextPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes footerTextPulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.8;
+            }
         }
 
         @media (max-width: 1024px) {
+            nav {
+                padding: 2.5rem 3rem;
+            }
+            
+            .logo {
+                font-size: 3rem;
+            }
+            
+            nav a {
+                font-size: 1.1rem;
+            }
+
             .hero h1 {
-                font-size: 8rem;
+                font-size: 10rem;
+            }
+
+            .credit-box h2 {
+                font-size: 3.5rem;
             }
         }
 
         @media (max-width: 768px) {
             nav {
-                padding: 1.5rem 2rem;
+                padding: 2rem 2rem;
                 flex-direction: column;
-                gap: 1rem;
+                gap: 1.5rem;
+                border-bottom: 8px solid #000000;
             }
 
             nav.scrolled {
-                padding: 1rem 2rem;
+                padding: 1.5rem 2rem;
+                border-bottom: 8px solid #000000;
+            }
+            
+            .logo {
+                font-size: 2.5rem;
+            }
+            
+            nav a {
+                font-size: 1rem;
             }
 
             nav ul {
-                gap: 1.5rem;
+                gap: 2rem;
                 flex-wrap: wrap;
                 justify-content: center;
             }
 
             .hero {
-                padding: 6rem 2rem;
+                padding: 10rem 2rem;
             }
 
             .hero h1 {
-                font-size: 5rem;
-            }
-
-            .color-block {
-                width: 100%;
-                height: 40%;
+                font-size: 8rem;
+                letter-spacing: -4px;
             }
 
             .credits-section {
-                padding: 8rem 2rem;
+                padding: 10rem 2rem;
             }
 
             .credit-box {
@@ -277,30 +479,28 @@
                 font-size: 2.5rem;
             }
 
+            .credit-box p {
+                font-size: 1.1rem;
+            }
+
+            .credit-box ul li {
+                font-size: 1.1rem;
+            }
+
             .tech-stack {
                 flex-direction: column;
+            }
+
+            .tech-item {
+                width: 100%;
+                text-align: center;
             }
         }
     </style>
     <script>
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -100px 0px'
-        };
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                }
-            });
-        }, observerOptions);
-
         document.addEventListener('DOMContentLoaded', () => {
-            const creditBoxes = document.querySelectorAll('.credit-box');
-            creditBoxes.forEach(box => observer.observe(box));
-
             const nav = document.querySelector('nav');
+            
             window.addEventListener('scroll', () => {
                 if (window.pageYOffset > 100) {
                     nav.classList.add('scrolled');
@@ -308,51 +508,72 @@
                     nav.classList.remove('scrolled');
                 }
             });
+
+            // Intersection Observer for section animations
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -100px 0px'
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, observerOptions);
+
+            const sections = document.querySelectorAll('.credit-box');
+            sections.forEach((section, index) => {
+                if (section) {
+                    observer.observe(section);
+                }
+            });
         });
     </script>
 </head>
 <body>
     <nav>
-        <a href="index.html" class="logo">SECURELY</a>
+        <a href="index.html" class="logo">SECURELY.</a>
         <ul>
             <li><a href="index.html">HOME</a></li>
-            <li><a href="features.html">FEATURES</a></li>
+            <li><a href="index.html#what-is-securely">ABOUT</a></li>
             <li><a href="download.html">DOWNLOAD</a></li>
-            <li><a href="about.html">ABOUT</a></li>
-            <li><a href="contact.html">CONTACT</a></li>
             <li><a href="credits.html">CREDITS</a></li>
         </ul>
     </nav>
 
     <section class="hero">
-        <div class="color-block"></div>
-        <h1>CREDITS</h1>
+        <div class="hero-content">
+            <h1>CREDITS<span class="dot">.</span></h1>
+            <p class="hero-subtitle">MEET THE TEAM</p>
+        </div>
     </section>
 
     <section class="credits-section">
         <div class="credits-grid">
             <div class="credit-box">
                 <h2>DEVELOPMENT TEAM</h2>
-                <p>Securely was brought to life by a dedicated team of developers:</p>
+                <p>Securely was brought to life by a dedicated team of developers who combined their expertise in cybersecurity, artificial intelligence, and software engineering to create a revolutionary protection tool.</p>
                 <ul>
-                    <li>@delexo</li>
-                    <li>@Mai</li>
+                    <li>@delexo - Lead Developer & Architect</li>
+                    <li>@Mai - Core Developer & AI Integration Specialist</li>
                 </ul>
             </div>
 
             <div class="credit-box">
                 <h2>SPECIAL THANKS</h2>
-                <p>We extend our gratitude to those who supported this project:</p>
+                <p>We extend our deepest gratitude to those who supported, inspired, and contributed to this project throughout its development journey.</p>
                 <ul>
-                    <li>Priscilla</li>
-                    <li>Derek</li>
-                    <li>The CSUSM Community</li>
+                    <li>Priscilla - Project Advisor & Mentor</li>
+                    <li>Derek - Technical Consultant & Testing Support</li>
+                    <li>The CSUSM Community - Inspiration & Support Network</li>
                 </ul>
             </div>
 
             <div class="credit-box">
                 <h2>BUILT WITH</h2>
-                <p>The technologies and tools that power Securely:</p>
+                <p>The technologies, frameworks, and tools that power Securely's advanced threat detection and monitoring capabilities.</p>
                 <div class="tech-stack">
                     <div class="tech-item">PYTHON</div>
                     <div class="tech-item">GOOGLE API</div>
@@ -368,4 +589,3 @@
     </footer>
 </body>
 </html>
-

@@ -14,11 +14,43 @@
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             color: #000000;
-            background: #ffffff;
+            background: linear-gradient(to right, #b0b0b0 50%, #ffffff 50%);
+            background-size: 200% 100%;
+            background-position: 100% 50%;
+            overflow-x: hidden;
+            min-height: 100vh;
+            animation: backgroundMoveInitial 8s ease-in-out 1 forwards, backgroundMoveSubtle 6s ease-in-out 8s infinite;
+        }
+
+        @keyframes backgroundMoveInitial {
+            0% {
+                background-position: 100% 50%;
+            }
+            30% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 50% 50%;
+            }
+        }
+
+        @keyframes backgroundMoveSubtle {
+            0%, 100% {
+                background-position: 50% 50%;
+            }
+            25% {
+                background-position: 51% 50%;
+            }
+            50% {
+                background-position: 49% 50%;
+            }
+            75% {
+                background-position: 50.5% 50%;
+            }
         }
 
         nav {
-            padding: 2rem 4rem;
+            padding: 3rem 4rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -27,174 +59,57 @@
             width: 100%;
             z-index: 100;
             background: #ffffff;
-            border-bottom: 10px solid #000000;
+            border-bottom: 8px solid #000000;
             transition: all 0.3s ease;
-            animation: navSlideDown 0.8s ease-out;
-        }
-
-        @keyframes navSlideDown {
-            from {
-                transform: translateY(-100%);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
         }
 
         nav.scrolled {
-            padding: 1.5rem 4rem;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            animation: navPulse 3s ease-in-out infinite;
-        }
-
-        @keyframes navPulse {
-            0%, 100% {
-                border-bottom-width: 10px;
-            }
-            50% {
-                border-bottom-width: 12px;
-            }
+            padding: 2.5rem 4rem;
+            border-bottom: 8px solid #000000;
         }
 
         .logo {
-            font-size: 1.2rem;
-            font-weight: 700;
+            font-size: 4rem;
+            font-weight: 900;
             color: #000000;
             text-decoration: none;
-            letter-spacing: 1px;
-            transition: transform 0.3s ease;
-            animation: logoFloat 4s ease-in-out infinite;
-        }
-
-        @keyframes logoFloat {
-            0%, 100% {
-                transform: translateY(0);
-            }
-            50% {
-                transform: translateY(-5px);
-            }
+            letter-spacing: 3px;
+            transition: color 0.3s ease;
         }
 
         .logo:hover {
-            transform: scale(1.1) rotate(-2deg);
-            animation: logoBounce 0.5s ease-out;
-        }
-
-        @keyframes logoBounce {
-            0%, 100% {
-                transform: scale(1.1) rotate(-2deg);
-            }
-            50% {
-                transform: scale(1.15) rotate(2deg);
-            }
+            color: #808080;
         }
 
         nav ul {
             list-style: none;
             display: flex;
-            gap: 3rem;
+            gap: 4rem;
             align-items: center;
         }
 
         nav a {
             color: #000000;
             text-decoration: none;
-            font-weight: 600;
-            font-size: 0.9rem;
-            letter-spacing: 0.5px;
+            font-weight: 700;
+            font-size: 1.3rem;
+            letter-spacing: 2px;
             position: relative;
-            transition: all 0.3s ease;
-            animation: navLinkFadeIn 1s ease-out;
-            animation-fill-mode: both;
-        }
-
-        @keyframes navLinkFadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        nav a:nth-child(1) { animation-delay: 0.1s; }
-        nav a:nth-child(2) { animation-delay: 0.2s; }
-        nav a:nth-child(3) { animation-delay: 0.3s; }
-        nav a:nth-child(4) { animation-delay: 0.4s; }
-        nav a:nth-child(5) { animation-delay: 0.5s; }
-        nav a:nth-child(6) { animation-delay: 0.6s; }
-
-        nav a::after {
-            content: '';
-            position: absolute;
-            bottom: -5px;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background: #000000;
-            transition: width 0.3s ease;
+            transition: color 0.3s ease;
         }
 
         nav a:hover {
-            transform: translateY(-3px);
-            color: #ff6b6b;
-        }
-
-        nav a:hover::after {
-            width: 100%;
-            height: 3px;
-            background: #ff6b6b;
+            color: #808080;
         }
 
         .hero {
-            min-height: 100vh;
+            min-height: 80vh;
             display: flex;
             align-items: center;
             justify-content: center;
             position: relative;
-            padding: 8rem 4rem;
-        }
-
-        .color-block {
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 50%;
-            height: 100%;
-            background: #ff6b6b;
-            z-index: 1;
-            animation: slideInLeft 1.5s ease-out, colorBlockPulse 4s ease-in-out infinite 2s, colorBlockShimmer 3s ease-in-out infinite;
-        }
-
-        @keyframes slideInLeft {
-            from {
-                transform: translateX(-100%);
-            }
-            to {
-                transform: translateX(0);
-            }
-        }
-
-        @keyframes colorBlockPulse {
-            0%, 100% {
-                transform: scaleX(1);
-            }
-            50% {
-                transform: scaleX(1.05);
-            }
-        }
-
-        @keyframes colorBlockShimmer {
-            0%, 100% {
-                opacity: 1;
-            }
-            50% {
-                opacity: 0.85;
-            }
+            padding: 8rem 3rem;
+            overflow: hidden;
         }
 
         .hero-content {
@@ -216,13 +131,13 @@
         }
 
         .hero h1 {
-            font-size: 12rem;
+            font-size: 15rem;
             font-weight: 900;
-            line-height: 0.9;
-            letter-spacing: -6px;
+            line-height: 0.85;
+            letter-spacing: -8px;
             color: #000000;
-            margin-bottom: 3rem;
-            animation: heroTextFloat 6s ease-in-out infinite 1.5s, heroTextGlow 3s ease-in-out infinite;
+            margin-bottom: 1.5rem;
+            animation: heroTextFloat 6s ease-in-out infinite 1s;
         }
 
         @keyframes heroTextFloat {
@@ -234,238 +149,248 @@
             }
         }
 
-        @keyframes heroTextGlow {
+        .hero h1 .dot {
+            color: #808080;
+            animation: dotPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes dotPulse {
             0%, 100% {
-                text-shadow: 0 0 0 rgba(0,0,0,0);
+                transform: scale(1);
+                opacity: 1;
             }
             50% {
-                text-shadow: 0 0 30px rgba(255,107,107,0.3);
+                transform: scale(1.2);
+                opacity: 0.8;
+            }
+        }
+
+        .hero-subtitle {
+            font-size: 1.1rem;
+            font-weight: 400;
+            letter-spacing: 2px;
+            color: #666666;
+            text-transform: uppercase;
+            animation: subtitleSlide 1.5s ease-out 0.5s backwards;
+        }
+
+        @keyframes subtitleSlide {
+            from {
+                opacity: 0;
+                transform: translateX(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
             }
         }
 
         .download-section {
-            padding: 12rem 4rem;
-            max-width: 1000px;
+            padding: 6rem 3rem;
+            max-width: 1400px;
             margin: 0 auto;
         }
 
         .download-card {
             background: #000000;
             color: #ffffff;
-            padding: 6rem 5rem;
-            border: 3px solid #000000;
+            padding: 6rem 4rem;
+            border: 6px solid #ffffff;
             text-align: center;
-            margin-bottom: 6rem;
-            opacity: 0;
-            transform: scale(0.9) rotate(-1deg);
-            transition: all 0.8s ease;
+            margin-bottom: 4rem;
             position: relative;
-            overflow: hidden;
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 0.8s ease;
             animation: cardBreathe 4s ease-in-out infinite;
         }
 
         @keyframes cardBreathe {
             0%, 100% {
-                transform: scale(0.9) rotate(-1deg);
             }
             50% {
-                transform: scale(0.95) rotate(0deg);
+                transform: translateY(0) scale(1.01);
+            }
+        }
+
+        .download-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+            animation: cardSlideIn 0.6s ease-out, cardBreathe 4s ease-in-out infinite 0.6s;
+        }
+
+        @keyframes cardSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
             }
         }
 
         .download-card::before {
             content: '';
             position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
-            animation: cardShine 3s infinite;
-            transform: rotate(45deg);
+            top: -6px;
+            left: -6px;
+            right: -6px;
+            bottom: -6px;
+            border: 2px solid #808080;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            animation: borderGlow 3s ease-in-out infinite;
         }
 
-        @keyframes cardShine {
-            0% {
-                transform: translateX(-100%) translateY(-100%) rotate(45deg);
-            }
-            100% {
-                transform: translateX(100%) translateY(100%) rotate(45deg);
-            }
-        }
-
-        .download-card.visible {
-            opacity: 1;
-            transform: scale(1) rotate(0deg);
-            animation: cardPop 0.6s ease-out, cardBreathe 4s ease-in-out infinite 0.6s;
-        }
-
-        @keyframes cardPop {
-            0% {
-                transform: scale(0.8) rotate(-5deg);
+        @keyframes borderGlow {
+            0%, 100% {
+                opacity: 0;
             }
             50% {
-                transform: scale(1.05) rotate(2deg);
+                opacity: 0.5;
             }
-            100% {
-                transform: scale(1) rotate(0deg);
-            }
+        }
+
+        .download-card:hover::before {
+            opacity: 1;
         }
 
         .download-card:hover {
-            transform: scale(1.02) rotate(1deg);
-            animation: cardHover 0.3s ease-out;
-        }
-
-        @keyframes cardHover {
-            0%, 100% {
-                transform: scale(1.02) rotate(1deg);
-            }
-            50% {
-                transform: scale(1.05) rotate(-1deg);
-            }
+            transform: translateY(-10px);
+            box-shadow: 20px 20px 0 rgba(128,128,128,0.3);
         }
 
         .download-card h2 {
-            font-size: 4rem;
+            font-size: 6rem;
             font-weight: 900;
             margin-bottom: 2rem;
-            letter-spacing: -2px;
+            letter-spacing: -4px;
+            line-height: 0.9;
+            color: #ffffff;
+            border-bottom: 4px solid #ffffff;
+            padding-bottom: 1.5rem;
+            animation: headingGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes headingGlow {
+            0%, 100% {
+                border-bottom-color: #ffffff;
+            }
+            50% {
+                border-bottom-color: #808080;
+            }
         }
 
         .download-card p {
-            font-size: 1.5rem;
+            font-size: 1.4rem;
             margin-bottom: 3rem;
             color: #cccccc;
+            font-weight: 400;
+            line-height: 1.6;
         }
 
         .download-button {
             display: inline-block;
-            background: #ffffff;
+            background: #808080;
             color: #000000;
-            padding: 2rem 6rem;
+            padding: 1.8rem 5rem;
             text-decoration: none;
             font-weight: 900;
-            font-size: 1.5rem;
-            letter-spacing: 2px;
-            border: 3px solid #000000;
-            transition: all 0.2s;
-            animation: buttonGlow 2s ease-in-out infinite;
-            position: relative;
-            overflow: hidden;
+            font-size: 1.4rem;
+            letter-spacing: 3px;
+            border: 6px solid #808080;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            animation: buttonFloat 3s ease-in-out infinite;
         }
 
-        @keyframes buttonGlow {
+        @keyframes buttonFloat {
             0%, 100% {
-                box-shadow: 0 0 0 rgba(0,0,0,0);
+                transform: translateY(0);
             }
             50% {
-                box-shadow: 0 0 25px rgba(255,107,107,0.4);
+                transform: translateY(-10px);
             }
-        }
-
-        .download-button::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: #000000;
-            transition: left 0.3s ease;
-            z-index: -1;
         }
 
         .download-button:hover {
-            background: #000000;
-            color: #ffffff;
-            transform: scale(1.05) rotate(2deg);
+            background: #ffffff;
+            color: #000000;
+            border-color: #ffffff;
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 20px 20px 0 rgba(128,128,128,0.3);
             animation: buttonPulse 0.5s ease-out;
         }
 
         @keyframes buttonPulse {
             0%, 100% {
-                transform: scale(1.05) rotate(2deg);
+                transform: translateY(-5px) scale(1.05);
             }
             50% {
-                transform: scale(1.1) rotate(-2deg);
+                transform: translateY(-8px) scale(1.08);
             }
-        }
-
-        .download-button:hover::before {
-            left: 0;
         }
 
         .info-section {
-            background: #f5f5f5;
-            border: 3px solid #000000;
-            padding: 4rem;
-            margin-bottom: 4rem;
-            opacity: 0;
-            transform: translateY(30px) rotate(-1deg);
-            transition: all 0.8s ease;
+            background: #ffffff;
+            border: 4px solid #000000;
+            padding: 4rem 3rem;
+            margin-bottom: 3rem;
             position: relative;
-            overflow: hidden;
-            animation: sectionSway 6s ease-in-out infinite;
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 0.8s ease;
         }
 
-        @keyframes sectionSway {
-            0%, 100% {
-                transform: translateY(0) rotate(-1deg);
+        .info-section.visible {
+            opacity: 1;
+            transform: translateY(0);
+            animation: sectionSlideIn 0.8s ease-out;
+        }
+
+        @keyframes sectionSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
             }
-            50% {
-                transform: translateY(-3px) rotate(0deg);
+            to {
+                opacity: 1;
+                transform: translateY(0);
             }
         }
 
         .info-section::before {
             content: '';
             position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(45deg, transparent, rgba(0,0,0,0.05), transparent);
-            animation: sectionShine 3s infinite;
-            transform: rotate(45deg);
+            top: -4px;
+            left: -4px;
+            right: -4px;
+            bottom: -4px;
+            border: 2px solid #808080;
+            opacity: 0;
+            transition: opacity 0.3s ease;
         }
 
-        @keyframes sectionShine {
-            0% {
-                transform: translateX(-100%) translateY(-100%) rotate(45deg);
-            }
-            100% {
-                transform: translateX(100%) translateY(100%) rotate(45deg);
-            }
-        }
-
-        .info-section.visible {
+        .info-section:hover::before {
             opacity: 1;
-            transform: translateY(0) rotate(0deg);
-            animation: sectionPop 0.6s ease-out, sectionSway 6s ease-in-out infinite 0.6s;
-        }
-
-        @keyframes sectionPop {
-            0% {
-                transform: scale(0.8) rotate(-3deg);
-            }
-            50% {
-                transform: scale(1.05) rotate(2deg);
-            }
-            100% {
-                transform: scale(1) rotate(0deg);
-            }
         }
 
         .info-section:hover {
-            transform: translateY(-5px) scale(1.01) rotate(1deg);
+            transform: translateY(-5px);
+            box-shadow: 20px 20px 0 rgba(128,128,128,0.3);
         }
 
         .info-section h3 {
-            font-size: 3rem;
+            font-size: 3.5rem;
             font-weight: 900;
-            margin-bottom: 2rem;
-            letter-spacing: -1px;
+            margin-bottom: 2.5rem;
+            letter-spacing: -2px;
+            color: #000000;
+            line-height: 0.9;
+            border-bottom: 4px solid #000000;
+            padding-bottom: 1rem;
+            animation: headingGlow 3s ease-in-out infinite;
         }
 
         .info-section ul {
@@ -473,31 +398,48 @@
         }
 
         .info-section li {
-            font-size: 1.3rem;
-            padding: 1rem 0;
+            font-size: 1.2rem;
+            padding: 1.2rem 0;
             border-bottom: 2px solid #000000;
             color: #333333;
+            font-weight: 500;
+            line-height: 1.6;
+            transition: all 0.3s ease;
+        }
+
+        .info-section li:hover {
+            color: #808080;
+            padding-left: 1rem;
+        }
+
+        .info-section li:last-child {
+            border-bottom: none;
         }
 
         footer {
-            padding: 4rem;
+            padding: 3rem;
             text-align: center;
-            border-top: 3px solid #000000;
-            animation: footerSlide 6s ease-in-out infinite;
+            border-top: 6px solid #000000;
+            background: #000000;
+            color: #ffffff;
+            animation: footerSlideUp 1s ease-out;
         }
 
-        @keyframes footerSlide {
-            0%, 100% {
-                transform: translateX(0);
+        @keyframes footerSlideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
             }
-            50% {
-                transform: translateX(10px);
+            to {
+                opacity: 1;
+                transform: translateY(0);
             }
         }
 
         footer p {
-            font-size: 1rem;
-            color: #666666;
+            font-size: 0.9rem;
+            font-weight: 600;
+            letter-spacing: 1px;
             animation: footerTextPulse 2s ease-in-out infinite;
         }
 
@@ -506,120 +448,106 @@
                 opacity: 1;
             }
             50% {
-                opacity: 0.7;
+                opacity: 0.8;
             }
         }
 
         @media (max-width: 1024px) {
+            nav {
+                padding: 2.5rem 3rem;
+            }
+            
+            .logo {
+                font-size: 3rem;
+            }
+            
+            nav a {
+                font-size: 1.1rem;
+            }
+
             .hero h1 {
-                font-size: 8rem;
+                font-size: 10rem;
             }
 
             .download-card h2 {
+                font-size: 4rem;
+            }
+
+            .info-section h3 {
                 font-size: 3rem;
             }
         }
 
         @media (max-width: 768px) {
             nav {
-                padding: 1.5rem 2rem;
+                padding: 2rem 2rem;
                 flex-direction: column;
-                gap: 1rem;
+                gap: 1.5rem;
+                border-bottom: 8px solid #000000;
+            }
+
+            nav.scrolled {
+                padding: 1.5rem 2rem;
+                border-bottom: 8px solid #000000;
+            }
+            
+            .logo {
+                font-size: 2.5rem;
+            }
+            
+            nav a {
+                font-size: 1rem;
             }
 
             nav ul {
-                gap: 1.5rem;
+                gap: 2rem;
                 flex-wrap: wrap;
+                justify-content: center;
             }
 
             .hero {
-                padding: 6rem 2rem;
+                padding: 10rem 2rem;
             }
 
             .hero h1 {
-                font-size: 5rem;
-            }
-
-            .color-block {
-                width: 100%;
-                height: 40%;
+                font-size: 8rem;
+                letter-spacing: -4px;
             }
 
             .download-section {
-                padding: 8rem 2rem;
+                padding: 10rem 2rem;
             }
 
             .download-card {
-                padding: 4rem 3rem;
+                padding: 4rem 2rem;
+            }
+
+            .download-card h2 {
+                font-size: 3rem;
+            }
+
+            .download-button {
+                padding: 1.5rem 3rem;
+                font-size: 1.2rem;
+            }
+
+            .info-section {
+                padding: 3rem 2rem;
             }
 
             .info-section h3 {
-                font-size: 2rem;
+                font-size: 2.5rem;
+            }
+
+            .info-section li {
+                font-size: 1.1rem;
             }
         }
     </style>
-</head>
-<body>
-    <nav>
-        <a href="index.html" class="logo">SECURELY</a>
-        <ul>
-            <li><a href="index.html">HOME</a></li>
-            <li><a href="features.html">FEATURES</a></li>
-            <li><a href="download.html">DOWNLOAD</a></li>
-            <li><a href="about.html">ABOUT</a></li>
-            <li><a href="contact.html">CONTACT</a></li>
-            <li><a href="credits.html">CREDITS</a></li>
-        </ul>
-    </nav>
-
-    <section class="hero">
-        <div class="color-block"></div>
-        <div class="hero-content">
-            <h1>DOWNLOAD</h1>
-        </div>
-    </section>
-
-    <section class="download-section">
-        <div class="download-card">
-            <h2>WINDOWS</h2>
-            <p>Windows 10 & 11 Compatible</p>
-            <a href="#" class="download-button">DOWNLOAD NOW</a>
-        </div>
-
-        <div class="info-section">
-            <h3>REQUIREMENTS</h3>
-            <ul>
-                <li>Windows 10 or Windows 11</li>
-                <li>4 GB RAM minimum (8 GB recommended)</li>
-                <li>500 MB free disk space</li>
-                <li>Internet connection</li>
-                <li>Administrator privileges</li>
-            </ul>
-        </div>
-    </section>
-
-    <footer>
-        <p>&copy; 2024 SECURELY</p>
-    </footer>
     <script>
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -100px 0px'
-        };
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                }
-            });
-        }, observerOptions);
-
         document.addEventListener('DOMContentLoaded', () => {
-            const sections = document.querySelectorAll('.download-card, .info-section');
-            sections.forEach(section => observer.observe(section));
-
             const nav = document.querySelector('nav');
+            
             window.addEventListener('scroll', () => {
                 if (window.pageYOffset > 100) {
                     nav.classList.add('scrolled');
@@ -627,7 +555,94 @@
                     nav.classList.remove('scrolled');
                 }
             });
+
+            // Intersection Observer for section animations
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -100px 0px'
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, observerOptions);
+
+            const sections = document.querySelectorAll('.download-card, .info-section');
+            sections.forEach(section => {
+                if (section) {
+                    observer.observe(section);
+                }
+            });
         });
     </script>
+</head>
+<body>
+    <nav>
+        <a href="index.html" class="logo">SECURELY.</a>
+        <ul>
+            <li><a href="index.html">HOME</a></li>
+            <li><a href="index.html#what-is-securely">ABOUT</a></li>
+            <li><a href="download.html">DOWNLOAD</a></li>
+            <li><a href="credits.html">CREDITS</a></li>
+        </ul>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-content">
+            <h1>DOWNLOAD<span class="dot">.</span></h1>
+            <p class="hero-subtitle">GET SECURELY NOW</p>
+        </div>
+    </section>
+
+    <section class="download-section">
+        <div class="download-card">
+            <h2>WINDOWS</h2>
+            <p>Download Securely for Windows 10 and Windows 11. Get instant protection against phishing attacks, malware, and malicious URLs with our AI-powered cybersecurity monitoring application.</p>
+            <a href="#" class="download-button">DOWNLOAD NOW</a>
+        </div>
+
+        <div class="info-section">
+            <h3>SYSTEM REQUIREMENTS</h3>
+            <ul>
+                <li>Windows 10 (64-bit) or Windows 11 (64-bit)</li>
+                <li>4 GB RAM minimum (8 GB recommended for optimal performance)</li>
+                <li>500 MB free disk space for installation</li>
+                <li>Active internet connection for AI threat analysis</li>
+                <li>Administrator privileges required for installation</li>
+                <li>Screen resolution: 1280x720 or higher</li>
+            </ul>
+        </div>
+
+        <div class="info-section">
+            <h3>INSTALLATION GUIDE</h3>
+            <ul>
+                <li>Click the "DOWNLOAD NOW" button above to download the installer</li>
+                <li>Locate the downloaded file in your Downloads folder</li>
+                <li>Right-click the installer and select "Run as Administrator"</li>
+                <li>Follow the installation wizard prompts to complete setup</li>
+                <li>Launch Securely from your desktop shortcut after installation</li>
+                <li>Configure your security preferences and enable monitoring</li>
+            </ul>
+        </div>
+
+        <div class="info-section">
+            <h3>GETTING STARTED</h3>
+            <ul>
+                <li>Upon first launch, Securely will guide you through initial setup</li>
+                <li>Enable continuous monitoring for real-time protection</li>
+                <li>Use Quick Scan for on-demand threat detection</li>
+                <li>Review detected threats in the audit log dashboard</li>
+                <li>Customize alert preferences in settings</li>
+                <li>Keep Securely updated for the latest security features</li>
+            </ul>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2024 SECURELY</p>
+    </footer>
 </body>
 </html>
