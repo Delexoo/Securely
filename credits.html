@@ -14,43 +14,12 @@
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             color: #000000;
-            background: linear-gradient(to right, #b0b0b0 50%, #ffffff 50%);
-            background-size: 200% 100%;
-            background-position: 100% 50%;
+            background: #ffffff;
             overflow-x: hidden;
-            min-height: 100vh;
-            animation: backgroundMoveInitial 8s ease-in-out 1 forwards, backgroundMoveSubtle 6s ease-in-out 8s infinite;
-        }
-
-        @keyframes backgroundMoveInitial {
-            0% {
-                background-position: 100% 50%;
-            }
-            30% {
-                background-position: 100% 50%;
-            }
-            100% {
-                background-position: 50% 50%;
-            }
-        }
-
-        @keyframes backgroundMoveSubtle {
-            0%, 100% {
-                background-position: 50% 50%;
-            }
-            25% {
-                background-position: 51% 50%;
-            }
-            50% {
-                background-position: 49% 50%;
-            }
-            75% {
-                background-position: 50.5% 50%;
-            }
         }
 
         nav {
-            padding: 3rem 4rem;
+            padding: 3rem 6rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -63,24 +32,13 @@
             transition: all 0.3s ease;
         }
 
-        @keyframes navSlideDown {
-            from {
-                transform: translateY(-100%);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
-
         nav.scrolled {
-            padding: 2.5rem 4rem;
-            border-bottom: 8px solid #000000;
+            padding: 2rem 6rem;
+            border-bottom: 4px solid #000000;
         }
 
         .logo {
-            font-size: 4rem;
+            font-size: 2rem;
             font-weight: 900;
             color: #000000;
             text-decoration: none;
@@ -89,7 +47,7 @@
         }
 
         .logo:hover {
-            color: #808080;
+            color: #ff8900;
         }
 
         nav ul {
@@ -103,24 +61,80 @@
             color: #000000;
             text-decoration: none;
             font-weight: 700;
-            font-size: 1.3rem;
+            font-size: 1rem;
             letter-spacing: 2px;
             position: relative;
             transition: color 0.3s ease;
         }
 
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -12px;
+            left: 0;
+            width: 0;
+            height: 4px;
+            background: #ff8900;
+            transition: width 0.3s ease;
+        }
+
         nav a:hover {
-            color: #808080;
+            color: #ff8900;
+        }
+
+        nav a:hover::after {
+            width: 100%;
         }
 
         .hero {
-            min-height: 80vh;
+            min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
             position: relative;
-            padding: 8rem 3rem;
+            padding: 12rem 6rem;
             overflow: hidden;
+        }
+
+        .abstract-shapes {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .shape {
+            position: absolute;
+        }
+
+        .shape-1 {
+            width: 400px;
+            height: 12px;
+            background: #ff8900;
+            top: 20%;
+            right: 15%;
+            transform: rotate(-45deg);
+        }
+
+        .shape-2 {
+            width: 12px;
+            height: 300px;
+            background: #000000;
+            bottom: 25%;
+            right: 25%;
+        }
+
+        .shape-3 {
+            width: 250px;
+            height: 250px;
+            border: 12px solid #ff8900;
+            background: transparent;
+            top: 50%;
+            left: 10%;
+            transform: rotate(15deg);
         }
 
         .hero-content {
@@ -142,128 +156,42 @@
         }
 
         .hero h1 {
-            font-size: 15rem;
+            font-size: 20rem;
             font-weight: 900;
             line-height: 0.85;
-            letter-spacing: -8px;
+            letter-spacing: -12px;
             color: #000000;
-            margin-bottom: 1.5rem;
-            animation: heroTextFloat 6s ease-in-out infinite 1s;
-        }
-
-        @keyframes heroTextFloat {
-            0%, 100% {
-                transform: translateY(0);
-            }
-            50% {
-                transform: translateY(-20px);
-            }
-        }
-
-        .hero h1 .dot {
-            color: #808080;
-            animation: dotPulse 2s ease-in-out infinite;
-        }
-
-        @keyframes dotPulse {
-            0%, 100% {
-                transform: scale(1);
-                opacity: 1;
-            }
-            50% {
-                transform: scale(1.2);
-                opacity: 0.8;
-            }
-        }
-
-        .hero-subtitle {
-            font-size: 1.1rem;
-            font-weight: 400;
-            letter-spacing: 2px;
-            color: #666666;
-            text-transform: uppercase;
-            animation: subtitleSlide 1.5s ease-out 0.5s backwards;
-        }
-
-        @keyframes subtitleSlide {
-            from {
-                opacity: 0;
-                transform: translateX(-50px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
         }
 
         .credits-section {
-            padding: 6rem 3rem;
-            max-width: 1400px;
+            padding: 15rem 6rem;
+            max-width: 1200px;
             margin: 0 auto;
         }
 
         .credits-grid {
             display: grid;
-            gap: 3rem;
-            margin-top: 2rem;
+            gap: 6rem;
+            margin-top: 8rem;
         }
 
         .credit-box {
-            background: #ffffff;
-            border: 4px solid #000000;
-            padding: 4rem 3rem;
+            background: #f5f5f5;
+            border: 8px solid #000000;
+            padding: 6rem;
             position: relative;
-            opacity: 0;
-            transform: translateY(50px);
-            transition: all 0.8s ease;
-            animation: cardBreathe 4s ease-in-out infinite;
-        }
-
-        @keyframes cardBreathe {
-            0%, 100% {
-            }
-            50% {
-                transform: translateY(0) scale(1.01);
-            }
-        }
-
-        .credit-box.visible {
-            opacity: 1;
-            transform: translateY(0);
-            animation: cardSlideIn 0.6s ease-out, cardBreathe 4s ease-in-out infinite 0.6s;
-        }
-
-        @keyframes cardSlideIn {
-            from {
-                opacity: 0;
-                transform: translateY(50px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
         }
 
         .credit-box::before {
             content: '';
             position: absolute;
-            top: -4px;
-            left: -4px;
-            right: -4px;
-            bottom: -4px;
-            border: 2px solid #808080;
+            top: -8px;
+            left: -8px;
+            right: -8px;
+            bottom: -8px;
+            border: 2px solid #ff8900;
             opacity: 0;
             transition: opacity 0.3s ease;
-            animation: borderGlow 3s ease-in-out infinite;
-        }
-
-        @keyframes borderGlow {
-            0%, 100% {
-                opacity: 0;
-            }
-            50% {
-                opacity: 0.5;
-            }
         }
 
         .credit-box:hover::before {
@@ -271,56 +199,40 @@
         }
 
         .credit-box:hover {
-            transform: translateY(-10px);
-            box-shadow: 20px 20px 0 rgba(128,128,128,0.3);
+            transform: translateY(-5px);
+            box-shadow: 20px 20px 0 rgba(255,137,0,0.3);
         }
 
         .credit-box h2 {
-            font-size: 4rem;
+            font-size: 6rem;
             font-weight: 900;
-            margin-bottom: 2rem;
-            letter-spacing: -2px;
+            margin-bottom: 3rem;
+            letter-spacing: -3px;
             color: #000000;
             border-bottom: 4px solid #000000;
-            padding-bottom: 1rem;
+            padding-bottom: 2rem;
             line-height: 0.9;
-            animation: headingGlow 3s ease-in-out infinite;
-        }
-
-        @keyframes headingGlow {
-            0%, 100% {
-                border-bottom-color: #000000;
-            }
-            50% {
-                border-bottom-color: #808080;
-            }
         }
 
         .credit-box p {
-            font-size: 1.2rem;
-            line-height: 1.7;
+            font-size: 1.8rem;
+            line-height: 1.9;
             color: #333333;
-            margin-bottom: 1.5rem;
+            margin-bottom: 2rem;
             font-weight: 400;
         }
 
         .credit-box ul {
             list-style: none;
-            margin-top: 1.5rem;
+            margin-top: 2rem;
         }
 
         .credit-box ul li {
-            font-size: 1.3rem;
-            padding: 1rem 0;
-            border-bottom: 2px solid #000000;
+            font-size: 1.8rem;
+            padding: 1.5rem 0;
+            border-bottom: 3px solid #000000;
             color: #333333;
             font-weight: 600;
-            transition: all 0.3s ease;
-        }
-
-        .credit-box ul li:hover {
-            color: #808080;
-            padding-left: 1rem;
         }
 
         .credit-box ul li:last-child {
@@ -330,126 +242,67 @@
         .tech-stack {
             display: flex;
             flex-wrap: wrap;
-            gap: 1.5rem;
+            gap: 2rem;
             margin-top: 2rem;
         }
 
         .tech-item {
             background: #000000;
             color: #ffffff;
-            padding: 1.2rem 2.5rem;
-            font-size: 1.2rem;
+            padding: 1.5rem 3rem;
+            font-size: 1.6rem;
             font-weight: 900;
-            border: 4px solid #000000;
+            border: 6px solid #000000;
             transition: all 0.3s ease;
             letter-spacing: 2px;
-            animation: techItemFloat 3s ease-in-out infinite;
-        }
-
-        @keyframes techItemFloat {
-            0%, 100% {
-                transform: translateY(0);
-            }
-            50% {
-                transform: translateY(-5px);
-            }
         }
 
         .tech-item:hover {
             background: #ffffff;
             color: #000000;
-            border-color: #808080;
-            transform: translateY(-5px) scale(1.05);
-            box-shadow: 10px 10px 0 rgba(128,128,128,0.5);
-            animation: techItemPulse 0.5s ease-out;
-        }
-
-        @keyframes techItemPulse {
-            0%, 100% {
-                transform: translateY(-5px) scale(1.05);
-            }
-            50% {
-                transform: translateY(-8px) scale(1.08);
-            }
+            transform: translateY(-5px);
+            box-shadow: 10px 10px 0 rgba(255,137,0,0.5);
         }
 
         footer {
-            padding: 3rem;
+            padding: 6rem;
             text-align: center;
-            border-top: 6px solid #000000;
+            border-top: 8px solid #000000;
             background: #000000;
             color: #ffffff;
-            animation: footerSlideUp 1s ease-out;
-        }
-
-        @keyframes footerSlideUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
         }
 
         footer p {
-            font-size: 0.9rem;
+            font-size: 1.2rem;
             font-weight: 600;
-            letter-spacing: 1px;
-            animation: footerTextPulse 2s ease-in-out infinite;
-        }
-
-        @keyframes footerTextPulse {
-            0%, 100% {
-                opacity: 1;
-            }
-            50% {
-                opacity: 0.8;
-            }
+            letter-spacing: 2px;
         }
 
         @media (max-width: 1024px) {
             nav {
-                padding: 2.5rem 3rem;
-            }
-            
-            .logo {
-                font-size: 3rem;
-            }
-            
-            nav a {
-                font-size: 1.1rem;
+                padding: 2rem 4rem;
             }
 
             .hero h1 {
-                font-size: 10rem;
+                font-size: 12rem;
             }
 
             .credit-box h2 {
-                font-size: 3.5rem;
+                font-size: 4rem;
             }
         }
 
         @media (max-width: 768px) {
             nav {
-                padding: 2rem 2rem;
+                padding: 1.5rem 2rem;
                 flex-direction: column;
                 gap: 1.5rem;
-                border-bottom: 8px solid #000000;
+                border-bottom: 6px solid #000000;
             }
 
             nav.scrolled {
-                padding: 1.5rem 2rem;
-                border-bottom: 8px solid #000000;
-            }
-            
-            .logo {
-                font-size: 2.5rem;
-            }
-            
-            nav a {
-                font-size: 1rem;
+                padding: 1rem 2rem;
+                border-bottom: 4px solid #000000;
             }
 
             nav ul {
@@ -463,8 +316,11 @@
             }
 
             .hero h1 {
-                font-size: 8rem;
-                letter-spacing: -4px;
+                font-size: 6rem;
+            }
+
+            .shape-1, .shape-2, .shape-3 {
+                display: none;
             }
 
             .credits-section {
@@ -472,35 +328,21 @@
             }
 
             .credit-box {
-                padding: 3rem 2rem;
+                padding: 4rem 3rem;
             }
 
             .credit-box h2 {
                 font-size: 2.5rem;
             }
 
-            .credit-box p {
-                font-size: 1.1rem;
-            }
-
-            .credit-box ul li {
-                font-size: 1.1rem;
-            }
-
             .tech-stack {
                 flex-direction: column;
-            }
-
-            .tech-item {
-                width: 100%;
-                text-align: center;
             }
         }
     </style>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const nav = document.querySelector('nav');
-            
             window.addEventListener('scroll', () => {
                 if (window.pageYOffset > 100) {
                     nav.classList.add('scrolled');
@@ -508,45 +350,28 @@
                     nav.classList.remove('scrolled');
                 }
             });
-
-            // Intersection Observer for section animations
-            const observerOptions = {
-                threshold: 0.1,
-                rootMargin: '0px 0px -100px 0px'
-            };
-
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('visible');
-                    }
-                });
-            }, observerOptions);
-
-            const sections = document.querySelectorAll('.credit-box');
-            sections.forEach((section, index) => {
-                if (section) {
-                    observer.observe(section);
-                }
-            });
         });
     </script>
 </head>
 <body>
     <nav>
-        <a href="index.html" class="logo">SECURELY.</a>
+        <a href="index.html" class="logo">SECURELY</a>
         <ul>
             <li><a href="index.html">HOME</a></li>
-            <li><a href="index.html#what-is-securely">ABOUT</a></li>
             <li><a href="download.html">DOWNLOAD</a></li>
+            <li><a href="about.html">ABOUT</a></li>
             <li><a href="credits.html">CREDITS</a></li>
         </ul>
     </nav>
 
     <section class="hero">
+        <div class="abstract-shapes">
+            <div class="shape shape-1"></div>
+            <div class="shape shape-2"></div>
+            <div class="shape shape-3"></div>
+        </div>
         <div class="hero-content">
-            <h1>CREDITS<span class="dot">.</span></h1>
-            <p class="hero-subtitle">MEET THE TEAM</p>
+            <h1>CREDITS</h1>
         </div>
     </section>
 
@@ -554,26 +379,26 @@
         <div class="credits-grid">
             <div class="credit-box">
                 <h2>DEVELOPMENT TEAM</h2>
-                <p>Securely was brought to life by a dedicated team of developers who combined their expertise in cybersecurity, artificial intelligence, and software engineering to create a revolutionary protection tool.</p>
+                <p>Securely was brought to life by a dedicated team of developers:</p>
                 <ul>
-                    <li>@delexo - Lead Developer & Architect</li>
-                    <li>@Mai - Core Developer & AI Integration Specialist</li>
+                    <li>@delexo</li>
+                    <li>@Mai</li>
                 </ul>
             </div>
 
             <div class="credit-box">
                 <h2>SPECIAL THANKS</h2>
-                <p>We extend our deepest gratitude to those who supported, inspired, and contributed to this project throughout its development journey.</p>
+                <p>We extend our gratitude to those who supported this project:</p>
                 <ul>
-                    <li>Priscilla - Project Advisor & Mentor</li>
-                    <li>Derek - Technical Consultant & Testing Support</li>
-                    <li>The CSUSM Community - Inspiration & Support Network</li>
+                    <li>Priscilla</li>
+                    <li>Derek</li>
+                    <li>The CSUSM Community</li>
                 </ul>
             </div>
 
             <div class="credit-box">
                 <h2>BUILT WITH</h2>
-                <p>The technologies, frameworks, and tools that power Securely's advanced threat detection and monitoring capabilities.</p>
+                <p>The technologies and tools that power Securely:</p>
                 <div class="tech-stack">
                     <div class="tech-item">PYTHON</div>
                     <div class="tech-item">GOOGLE API</div>
