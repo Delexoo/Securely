@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Guide - Securely</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            color: #000000;
+            background: #ffffff;
+            overflow-x: hidden;
+            max-width: 100vw;
+            margin: 0;
+            padding: 0;
+        }
+
+        nav {
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 100;
+            background: #ffffff;
+            border-bottom: 2px solid #000000;
+            transition: all 0.3s ease;
+            animation: navSlideDown 0.8s ease-out;
+            max-width: 100%;
+            box-sizing: border-box;
+        }
+
+        @keyframes navSlideDown {
+            from {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        nav.scrolled {
+            padding: 0.75rem 2rem;
+            border-bottom: 2px solid #000000;
+        }
+
+        .logo {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #000000;
+            text-decoration: none;
+            letter-spacing: 2px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .logo:hover {
+            color: #ff8900;
+            transform: scale(1.05);
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        nav a {
+            color: #000000;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1rem;
+            letter-spacing: 1px;
+            position: relative;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            white-space: nowrap;
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -12px;
+            left: 0;
+            width: 0;
+            height: 4px;
+            background: #ff8900;
+            transition: width 0.3s ease;
+        }
+
+        nav a:hover {
+            color: #ff8900;
+            transform: translateY(-4px) scale(1.05);
+        }
+
+        nav a:hover::after {
+            width: 100%;
+        }
+
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            padding: 8rem 2rem 4rem;
+            overflow: hidden;
+            max-width: 100%;
+            box-sizing: border-box;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            animation: fadeInUp 1s ease-out;
+            max-width: 100%;
+            padding: 0 1rem;
+            box-sizing: border-box;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero h1 {
+            font-size: 6rem;
+            font-weight: 800;
+            line-height: 1.1;
+            letter-spacing: -2px;
+            color: #000000;
+            word-wrap: break-word;
+            max-width: 100%;
+            animation: heroTextFloat 3s ease-in-out infinite;
+        }
+
+        @keyframes heroTextFloat {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .guide-section {
+            padding: 4rem 2rem 4rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding-right: 320px;
+            box-sizing: border-box;
+        }
+
+        .table-of-contents {
+            position: fixed;
+            top: 90px;
+            right: 20px;
+            width: 280px;
+            max-height: calc(100vh - 110px);
+            overflow-y: auto;
+            background: #ffffff;
+            border: 2px solid #000000;
+            padding: 1.5rem;
+            z-index: 50;
+            box-sizing: border-box;
+            border-radius: 4px;
+            box-shadow: 4px 4px 0 rgba(0,0,0,0.1);
+        }
+
+        .table-of-contents::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .table-of-contents::-webkit-scrollbar-track {
+            background: #f5f5f5;
+        }
+
+        .table-of-contents::-webkit-scrollbar-thumb {
+            background: #ff8900;
+            border-radius: 3px;
+        }
+
+        .table-of-contents h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: #000000;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            border-bottom: 2px solid #000000;
+            padding-bottom: 0.5rem;
+        }
+
+        .toc-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .toc-list li {
+            margin-bottom: 0.5rem;
+        }
+
+        .toc-list a {
+            display: block;
+            color: #333333;
+            text-decoration: none;
+            font-size: 0.9rem;
+            padding: 0.5rem 0.75rem;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .toc-list a:hover {
+            background: #f5f5f5;
+            color: #ff8900;
+            border-left-color: #ff8900;
+            padding-left: 1rem;
+        }
+
+        .toc-list a.active {
+            background: #fff4e6;
+            color: #ff8900;
+            font-weight: 600;
+            border-left-color: #ff8900;
+            padding-left: 1rem;
+        }
+
+        .toc-list .toc-subitem {
+            padding-left: 1.5rem;
+            font-size: 0.85rem;
+            margin-top: 0.25rem;
+        }
+
+        .toc-list .toc-subitem a {
+            padding: 0.4rem 0.75rem;
+        }
+
+        .guide-section h2 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            letter-spacing: -1px;
+            color: #000000;
+            border-bottom: 3px solid #000000;
+            padding-bottom: 1rem;
+            word-wrap: break-word;
+            max-width: 100%;
+        }
+
+        .guide-section h3 {
+            font-size: 2.25rem;
+            font-weight: 700;
+            margin-top: 3rem;
+            margin-bottom: 1.5rem;
+            letter-spacing: -0.5px;
+            color: #000000;
+            word-wrap: break-word;
+            max-width: 100%;
+        }
+
+        .guide-section h4 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            color: #ff8900;
+            word-wrap: break-word;
+            max-width: 100%;
+        }
+
+        .guide-section p {
+            font-size: 1.15rem;
+            line-height: 1.7;
+            color: #333333;
+            margin-bottom: 1.5rem;
+            word-wrap: break-word;
+            max-width: 100%;
+        }
+
+        .guide-section ul, .guide-section ol {
+            font-size: 1.15rem;
+            line-height: 1.8;
+            color: #333333;
+            margin-bottom: 1.5rem;
+            padding-left: 2rem;
+        }
+
+        .guide-section li {
+            margin-bottom: 0.75rem;
+        }
+
+        .feature-box {
+            background: #ffffff;
+            border: 3px solid #000000;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            position: relative;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-sizing: border-box;
+        }
+
+        .feature-box.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .feature-box::before {
+            content: '';
+            position: absolute;
+            top: -3px;
+            left: -3px;
+            right: -3px;
+            bottom: -3px;
+            border: 2px solid #ff8900;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .feature-box:hover::before {
+            opacity: 1;
+        }
+
+        .feature-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 10px 10px 0 rgba(255,137,0,0.2);
+        }
+
+        .button-demo {
+            display: inline-block;
+            background: #000000;
+            color: #ffffff;
+            padding: 0.5rem 1.5rem;
+            font-weight: 700;
+            font-size: 0.9rem;
+            border: 2px solid #000000;
+            border-radius: 4px;
+            margin: 0.5rem 0.5rem 0.5rem 0;
+        }
+
+        .highlight-box {
+            background: #fff4e6;
+            border-left: 4px solid #ff8900;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            border-radius: 4px;
+        }
+
+        .warning-box {
+            background: #ffe6e6;
+            border-left: 4px solid #d73a49;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            border-radius: 4px;
+        }
+
+        .info-box {
+            background: #e6f3ff;
+            border-left: 4px solid #0969da;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            border-radius: 4px;
+        }
+
+        footer {
+            padding: 2rem;
+            text-align: center;
+            border-top: 2px solid #000000;
+            background: #000000;
+            color: #ffffff;
+            max-width: 100%;
+            box-sizing: border-box;
+        }
+
+        footer p {
+            font-size: 1rem;
+            font-weight: 400;
+            letter-spacing: 1px;
+        }
+
+        @media (max-width: 1024px) {
+            nav {
+                padding: 1rem 1.5rem;
+            }
+
+            .hero h1 {
+                font-size: 4.5rem;
+            }
+
+            .guide-section {
+                padding-right: 1.5rem;
+            }
+
+            .table-of-contents {
+                display: none;
+            }
+
+            .guide-section h2 {
+                font-size: 2.75rem;
+            }
+
+            .guide-section h3 {
+                font-size: 2rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            nav {
+                padding: 0.75rem 1rem;
+                flex-direction: column;
+                gap: 1rem;
+                border-bottom: 2px solid #000000;
+            }
+
+            nav.scrolled {
+                padding: 0.5rem 1rem;
+            }
+
+            .logo {
+                font-size: 1.25rem;
+            }
+
+            nav ul {
+                gap: 1rem;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            nav a {
+                font-size: 0.85rem;
+            }
+
+            .hero {
+                padding: 6rem 1.5rem 3rem;
+            }
+
+            .hero h1 {
+                font-size: 3.5rem;
+            }
+
+            .guide-section {
+                padding: 3rem 1.5rem;
+                max-width: 100%;
+                margin-right: 0;
+            }
+
+            .table-of-contents {
+                display: none;
+            }
+
+            .guide-section h2 {
+                font-size: 2.25rem;
+            }
+
+            .guide-section h3 {
+                font-size: 1.75rem;
+            }
+
+            .guide-section h4 {
+                font-size: 1.25rem;
+            }
+
+            .guide-section p,
+            .guide-section ul,
+            .guide-section ol {
+                font-size: 1rem;
+            }
+
+            .feature-box {
+                padding: 2rem 1.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero h1 {
+                font-size: 2.75rem;
+            }
+
+            .guide-section h2 {
+                font-size: 1.9rem;
+            }
+        }
+    </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const nav = document.querySelector('nav');
+            window.addEventListener('scroll', () => {
+                if (window.pageYOffset > 100) {
+                    nav.classList.add('scrolled');
+                } else {
+                    nav.classList.remove('scrolled');
+                }
+            });
+
+            // Intersection Observer for animations
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, observerOptions);
+
+            const elements = document.querySelectorAll('.feature-box');
+            elements.forEach(el => observer.observe(el));
+
+            // Build Table of Contents
+            const tocList = document.getElementById('toc-list');
+            const sections = document.querySelectorAll('.feature-box[id]');
+            
+            sections.forEach(section => {
+                const id = section.id;
+                const h2 = section.querySelector('h2');
+                const h3 = section.querySelector('h3');
+                const heading = h2 || h3;
+                
+                if (heading) {
+                    const li = document.createElement('li');
+                    const a = document.createElement('a');
+                    a.href = `#${id}`;
+                    // Clean up text - remove emojis and extra spaces
+                    let text = heading.textContent.replace(/[📊⚙️📋]/g, '').trim();
+                    // Capitalize first letter of each word for consistency
+                    text = text.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
+                    a.textContent = text;
+                    a.setAttribute('data-section', id);
+                    li.appendChild(a);
+                    tocList.appendChild(li);
+                }
+            });
+
+            // Track active section on scroll
+            const tocLinks = document.querySelectorAll('.toc-list a');
+            const sectionObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const id = entry.target.id;
+                        tocLinks.forEach(link => {
+                            link.classList.remove('active');
+                            if (link.getAttribute('data-section') === id) {
+                                link.classList.add('active');
+                            }
+                        });
+                    }
+                });
+            }, {
+                threshold: 0.3,
+                rootMargin: '-100px 0px -50% 0px'
+            });
+
+            sections.forEach(section => {
+                sectionObserver.observe(section);
+            });
+
+            // Smooth scroll for TOC links
+            tocLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const targetId = link.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    if (targetElement) {
+                        const offsetTop = targetElement.offsetTop - 80;
+                        window.scrollTo({
+                            top: offsetTop,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+</head>
+<body>
+    <nav>
+        <a href="index.html" class="logo">SECURELY</a>
+        <ul>
+            <li><a href="index.html">HOME</a></li>
+            <li><a href="download.html">DOWNLOAD</a></li>
+            <li><a href="about.html">ABOUT</a></li>
+            <li><a href="guide.html">GUIDE</a></li>
+            <li><a href="credits.html">CREDITS</a></li>
+        </ul>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-content">
+            <h1>USER GUIDE</h1>
+        </div>
+    </section>
+
+    <aside class="table-of-contents">
+        <h3>CONTENTS</h3>
+        <ul class="toc-list" id="toc-list">
+            <!-- Populated by JavaScript -->
+        </ul>
+    </aside>
+
+    <section class="guide-section">
+        <div class="feature-box" id="complete-guide">
+            <h2>COMPLETE USER GUIDE</h2>
+            <p>Welcome to the comprehensive guide for Securely. This guide covers every feature, button, and setting in detail to help you get the most out of your security monitoring experience.</p>
+        </div>
+
+        <div class="feature-box" id="getting-started">
+            <h2>GETTING STARTED</h2>
+            
+            <h4>First Launch</h4>
+            <p>When you first open Securely, the application will appear as a compact window on the left side of your screen. The program starts in a <strong>Disabled</strong> state, meaning no monitoring is active until you enable it.</p>
+
+            <div class="info-box">
+                <p><strong>Important:</strong> Securely requires Tesseract OCR to be installed for text detection. If Tesseract is not found, you'll see a notification with installation instructions. The program can still run but threat detection will be limited without OCR.</p>
+            </div>
+
+            <h4>Window Controls</h4>
+            <p>The Securely window has custom controls in the title bar:</p>
+            <ul>
+                <li><strong>Minimize Button (−):</strong> Minimizes the window to the taskbar</li>
+                <li><strong>Resize Button (⛶):</strong> Toggles between compact and enlarged window sizes</li>
+                <li><strong>Close Button (✕):</strong> Closes the application (monitoring will stop)</li>
+            </ul>
+            <p>You can drag the window by clicking and holding the title bar or the Securely logo.</p>
+        </div>
+
+        <div class="feature-box" id="dashboard-tab">
+            <h3>DASHBOARD TAB (📊)</h3>
+            
+            <h4>Status Label</h4>
+            <p>The status label at the top shows the current monitoring state:</p>
+            <ul>
+                <li><strong>● Disabled:</strong> No monitoring is active</li>
+                <li><strong>● Monitoring:</strong> Continuous 24/7 monitoring is active</li>
+                <li><strong>● Paused:</strong> Monitoring is temporarily paused (e.g., on login pages)</li>
+                <li><strong>● Scanning (Xm remaining):</strong> Temporary scan is active with time remaining</li>
+            </ul>
+
+            <h4>Quick Scan Button</h4>
+            <p><span class="button-demo">Quick Scan</span></p>
+            <p>Performs a single, immediate scan of your screen:</p>
+            <ul>
+                <li>Takes one screenshot of your primary monitor</li>
+                <li>Extracts text using OCR (if available)</li>
+                <li>Analyzes content with AI for threats</li>
+                <li>Shows results immediately via notification</li>
+                <li><strong>Does NOT enable continuous monitoring</strong></li>
+                <li><strong>Does NOT pause on login pages</strong> (pause only works during continuous monitoring)</li>
+            </ul>
+            <div class="highlight-box">
+                <p><strong>Use Case:</strong> Perfect for quick checks when you want to verify a specific screen or URL without starting continuous monitoring.</p>
+            </div>
+
+            <h4>Scan for 15m Button</h4>
+            <p><span class="button-demo">Scan 15m</span></p>
+            <p>Starts a temporary monitoring session that runs for 15 minutes:</p>
+            <ul>
+                <li>Continuously scans your screen every second</li>
+                <li>Automatically stops after 15 minutes</li>
+                <li>Shows a countdown timer in the status label</li>
+                <li>Can be stopped early by clicking "Turn Off"</li>
+                <li><strong>Will pause automatically</strong> if a login or payment page is detected</li>
+                <li>When paused, the temporary scan is disabled and monitoring enters pause mode</li>
+            </ul>
+            <div class="warning-box">
+                <p><strong>Note:</strong> If a login or payment page is detected during a temporary scan, the scan will stop and the program will enter pause mode. You'll be notified and monitoring will auto-resume after 3 minutes.</p>
+            </div>
+
+            <h4>Turn On / Turn Off Button</h4>
+            <p><span class="button-demo">Turn On</span> / <span class="button-demo">Turn Off</span></p>
+            <p>Controls continuous 24/7 monitoring:</p>
+            <ul>
+                <li><strong>Turn On:</strong> Starts continuous monitoring that runs indefinitely</li>
+                <li>Shows a confirmation dialog the first time you enable it</li>
+                <li>Scans your primary monitor every second</li>
+                <li>Analyzes all visible content for threats</li>
+                <li>Button changes to "Turn Off" when monitoring is active</li>
+                <li><strong>Turn Off:</strong> Stops all monitoring immediately</li>
+            </ul>
+            <div class="info-box">
+                <p><strong>Confirmation Dialog:</strong> The first time you click "Turn On", you'll see a confirmation dialog explaining that continuous monitoring will keep Securely running in the background and may analyze portions of your screen. Click "Enable" to proceed or "Cancel" to go back.</p>
+            </div>
+        </div>
+
+        <div class="feature-box" id="settings-tab">
+            <h3>SETTINGS TAB (⚙️)</h3>
+            
+            <h4>Hitboxes Toggle</h4>
+            <p>When enabled, displays visual boxes around detected threats on your screen:</p>
+            <ul>
+                <li>Red boxes appear around suspicious or malicious content</li>
+                <li>Boxes update in real-time (every 0.3 seconds when enabled)</li>
+                <li>One box per unique threat (no stacking)</li>
+                <li>Boxes automatically disappear when threats are no longer detected</li>
+                <li>No text labels - just visual indicators</li>
+                <li>Only works when monitoring is active</li>
+            </ul>
+            <div class="highlight-box">
+                <p><strong>Tip:</strong> Hitboxes are great for visual feedback, but they may slightly increase CPU usage due to faster update intervals. Disable if you experience performance issues.</p>
+            </div>
+
+            <h4>More Strict Toggle</h4>
+            <p>Enables enhanced keyword-based threat detection:</p>
+            <ul>
+                <li>Adds additional keyword scanning alongside AI analysis</li>
+                <li>Scans for common phishing terms, suspicious URLs, and threat indicators</li>
+                <li>Works in combination with AI analysis for comprehensive protection</li>
+                <li>May increase false positives but provides extra security layer</li>
+            </ul>
+
+            <h4>Notifications Toggle</h4>
+            <p>Controls desktop notifications for threat detections:</p>
+            <ul>
+                <li>When enabled: Shows Windows desktop notifications when threats are detected</li>
+                <li>When disabled: Threats are still logged but no notifications appear</li>
+                <li>Notifications work best with Windows 10/11 native toast support</li>
+                <li>Falls back to alternative methods if native support isn't available</li>
+            </ul>
+
+            <h4>Sound Toggle</h4>
+            <p>Enables audio alerts for threat detections:</p>
+            <ul>
+                <li>Plays a system beep sound when threats are detected</li>
+                <li>Only works on Windows (uses winsound)</li>
+                <li>Works independently of notifications</li>
+            </ul>
+
+            <h4>Test Notification Button</h4>
+            <p><span class="button-demo">🚨 Test Notification</span></p>
+            <p>Tests your notification system:</p>
+            <ul>
+                <li>Sends a test desktop notification</li>
+                <li>If successful, shows a second confirmation notification</li>
+                <li>If notifications aren't working, displays instructions for installing required libraries</li>
+                <li>Use this to verify your notification setup is working correctly</li>
+            </ul>
+
+            <h4>Advanced Section</h4>
+            
+            <h4>Test Mode Toggle</h4>
+            <p>Enables debug/test mode for development:</p>
+            <ul>
+                <li>Shows additional debug information in console</li>
+                <li>May save training screenshots (if enabled)</li>
+                <li>Primarily for developers and troubleshooting</li>
+            </ul>
+
+            <h4>View Console Log Button</h4>
+            <p><span class="button-demo">🖥️ View Console Log</span></p>
+            <p>Opens a console log viewer window:</p>
+            <ul>
+                <li>Shows real-time console output from Securely</li>
+                <li>Useful for debugging and seeing what the program is doing</li>
+                <li>Updates automatically as events occur</li>
+            </ul>
+        </div>
+
+        <div class="feature-box" id="audit-log-tab">
+            <h3>AUDIT LOG TAB (📋)</h3>
+            
+            <h4>Overview</h4>
+            <p>The Audit Log displays all detected threats and security events in chronological order. Each entry is shown as a card with detailed information.</p>
+
+            <h4>Quick Scan Button</h4>
+            <p><span class="button-demo">Quick Scan</span></p>
+            <p>Same as the Quick Scan button on the Dashboard - performs an immediate single scan.</p>
+
+            <h4>Clear Log Button</h4>
+            <p><span class="button-demo">Clear Log</span></p>
+            <p>Clears all entries from the audit log:</p>
+            <ul>
+                <li>Removes all threat cards from the display</li>
+                <li>Clears the log file on disk</li>
+                <li>Action cannot be undone</li>
+            </ul>
+            <div class="warning-box">
+                <p><strong>Warning:</strong> Clearing the log permanently deletes all threat history. Make sure you've reviewed important entries before clearing.</p>
+            </div>
+
+            <h4>Threat Cards</h4>
+            <p>Each detected threat appears as a card showing:</p>
+            <ul>
+                <li><strong>Timestamp:</strong> When the threat was detected</li>
+                <li><strong>Threat Type:</strong> Category of the threat (phishing, malware, suspicious URL, etc.)</li>
+                <li><strong>Details:</strong> Specific information about what was detected</li>
+                <li><strong>AI Analysis:</strong> Full AI response explaining why it was flagged</li>
+                <li><strong>Screenshot:</strong> Visual reference of what was on screen (if available)</li>
+            </ul>
+        </div>
+
+        <div class="feature-box" id="auto-pause">
+            <h3>AUTO-PAUSE FEATURE</h3>
+            
+            <h4>How It Works</h4>
+            <p>Securely automatically pauses monitoring when it detects legitimate login or payment pages to protect your privacy:</p>
+            <ul>
+                <li>Detects login pages (email, social media, banking, etc.)</li>
+                <li>Detects payment pages (checkout, billing, etc.)</li>
+                <li>Automatically pauses monitoring for 3 minutes</li>
+                <li>Shows a notification explaining the pause</li>
+                <li>Auto-resumes after 3 minutes</li>
+                <li>Status label changes to "● Paused"</li>
+            </ul>
+
+            <h4>When Auto-Pause Activates</h4>
+            <ul>
+                <li><strong>During 24/7 Monitoring:</strong> Pauses automatically, resumes after 3 minutes</li>
+                <li><strong>During Temporary Scan (15m):</strong> Stops the temporary scan and enters pause mode</li>
+                <li><strong>During Quick Scan:</strong> Does NOT pause (only shows a notification)</li>
+            </ul>
+
+            <h4>Manual Resume</h4>
+            <p>You can manually resume monitoring by:</p>
+            <ul>
+                <li>Clicking "Quick Scan" or "Scan 15m" - these will automatically resume monitoring if paused</li>
+                <li>Waiting for the 3-minute auto-resume timer</li>
+            </ul>
+        </div>
+
+        <div class="feature-box" id="monitoring-behavior">
+            <h3>MONITORING BEHAVIOR</h3>
+            
+            <h4>Primary Monitor Only</h4>
+            <p>Securely only monitors your primary monitor:</p>
+            <ul>
+                <li>Uses Windows API to detect the primary monitor</li>
+                <li>Ignores secondary monitors completely</li>
+                <li>Window-specific captures only work if the window is entirely on the primary monitor</li>
+                <li>This ensures privacy and focuses monitoring on your main workspace</li>
+            </ul>
+
+            <h4>Scan Interval</h4>
+            <p>Monitoring frequency depends on settings:</p>
+            <ul>
+                <li><strong>Normal Mode:</strong> Scans every 1 second</li>
+                <li><strong>Hitboxes Enabled:</strong> Scans every 0.3 seconds for faster visual updates</li>
+                <li>OCR text extraction runs on every scan</li>
+            </ul>
+
+            <h4>Text Extraction (OCR)</h4>
+            <p>Securely uses Tesseract OCR to extract visible text from your screen:</p>
+            <ul>
+                <li>Extracts all visible text from the current screen</li>
+                <li>Text is sent to AI for analysis</li>
+                <li>If no text is detected, AI will flag it as "UNSURE" and recommend manual review</li>
+                <li>OCR is essential for accurate threat detection</li>
+            </ul>
+            <div class="info-box">
+                <p><strong>Installation:</strong> Tesseract OCR must be installed separately. Download from: <a href="https://github.com/UB-Mannheim/tesseract/wiki" target="_blank">https://github.com/UB-Mannheim/tesseract/wiki</a></p>
+            </div>
+        </div>
+
+        <div class="feature-box" id="ai-analysis">
+            <h3>AI THREAT ANALYSIS</h3>
+            
+            <h4>How AI Analysis Works</h4>
+            <p>Securely uses Groq API with advanced language models to analyze screen content:</p>
+            <ul>
+                <li>Extracted text is sent to AI for analysis</li>
+                <li>AI models used (in order of preference):
+                    <ul>
+                        <li>meta-llama/llama-4-maverick-17b-128e-instruct</li>
+                        <li>meta-llama/llama-4-scout-17b-16e-instruct</li>
+                        <li>openai/gpt-oss-120b</li>
+                        <li>qwen/qwen3-32b</li>
+                        <li>kimi/kimi-k2-0905</li>
+                    </ul>
+                </li>
+                <li>If one model fails, automatically tries the next</li>
+                <li>AI is trained to be aggressive in threat detection, especially for emails</li>
+            </ul>
+
+            <h4>AI Response Types</h4>
+            <p>The AI can respond with:</p>
+            <ul>
+                <li><strong>SAFE:</strong> Content appears legitimate and safe</li>
+                <li><strong>THREAT:</strong> Suspicious or malicious content detected</li>
+                <li><strong>UNSURE:</strong> Cannot determine with confidence (recommends manual review)</li>
+                <li><strong>LEGITIMATE_LOGIN:</strong> Detected a legitimate login page (triggers auto-pause)</li>
+                <li><strong>LEGITIMATE_PAYMENT:</strong> Detected a legitimate payment page (triggers auto-pause)</li>
+            </ul>
+
+            <h4>Threat Detection Focus</h4>
+            <p>The AI is specifically trained to detect:</p>
+            <ul>
+                <li>Phishing emails and websites</li>
+                <li>Malicious URLs and links</li>
+                <li>Suspicious sender addresses</li>
+                <li>Fake login pages</li>
+                <li>Social engineering attempts</li>
+                <li>Malware distribution attempts</li>
+            </ul>
+        </div>
+
+        <div class="feature-box" id="troubleshooting">
+            <h3>TROUBLESHOOTING</h3>
+            
+            <h4>Notifications Not Working</h4>
+            <p>If notifications don't appear:</p>
+            <ul>
+                <li>Click "Test Notification" to diagnose the issue</li>
+                <li>Install <code>win11toast</code> or <code>win10toast</code> if prompted</li>
+                <li>Check Windows notification settings - ensure notifications are enabled for Securely</li>
+                <li>Try restarting the application</li>
+            </ul>
+
+            <h4>No Text Detected</h4>
+            <p>If you see "No text detected on screen":</p>
+            <ul>
+                <li>Verify Tesseract OCR is installed correctly</li>
+                <li>Check that Tesseract is in your system PATH or installed to the default location</li>
+                <li>Restart Securely after installing Tesseract</li>
+                <li>Some screens (images, videos) may not have extractable text</li>
+            </ul>
+
+            <h4>AI Analysis Failing</h4>
+            <p>If AI analysis isn't working:</p>
+            <ul>
+                <li>Check your internet connection</li>
+                <li>Verify Groq API key is valid (check console log)</li>
+                <li>API may be experiencing rate limits - wait a few minutes and try again</li>
+                <li>View console log for specific error messages</li>
+            </ul>
+
+            <h4>Performance Issues</h4>
+            <p>If Securely is using too much CPU:</p>
+            <ul>
+                <li>Disable Hitboxes (reduces scan frequency)</li>
+                <li>Use Quick Scan instead of continuous monitoring when possible</li>
+                <li>Close other resource-intensive applications</li>
+                <li>Ensure Tesseract OCR is properly installed (missing OCR can cause errors)</li>
+            </ul>
+        </div>
+
+        <div class="feature-box" id="best-practices">
+            <h3>BEST PRACTICES</h3>
+            
+            <h4>Recommended Settings</h4>
+            <ul>
+                <li><strong>Notifications:</strong> Keep enabled to stay informed of threats</li>
+                <li><strong>Hitboxes:</strong> Enable for visual feedback, disable if performance is an issue</li>
+                <li><strong>More Strict:</strong> Enable for maximum security, may increase false positives</li>
+                <li><strong>Sound:</strong> Optional - useful if you're away from screen</li>
+            </ul>
+
+            <h4>When to Use Each Scan Type</h4>
+            <ul>
+                <li><strong>Quick Scan:</strong> Use for one-time checks, verifying specific URLs or emails</li>
+                <li><strong>Scan 15m:</strong> Use for temporary monitoring sessions (browsing, checking emails)</li>
+                <li><strong>Turn On (24/7):</strong> Use for continuous protection during extended computer use</li>
+            </ul>
+
+            <h4>Privacy Considerations</h4>
+            <ul>
+                <li>Securely only monitors your primary monitor</li>
+                <li>Auto-pause protects login and payment pages</li>
+                <li>All processing is done locally (OCR) or via secure API (AI analysis)</li>
+                <li>Threat logs are stored locally on your computer</li>
+                <li>No screen content is stored permanently (unless training mode is enabled)</li>
+            </ul>
+        </div>
+
+        <div class="feature-box" id="keyboard-shortcuts">
+            <h3>KEYBOARD SHORTCUTS</h3>
+            <p>Currently, Securely is primarily mouse-driven. All functions are accessible through the GUI buttons and toggles.</p>
+        </div>
+
+        <div class="feature-box" id="support">
+            <h3>SUPPORT & RESOURCES</h3>
+            <p>For additional help or to report issues:</p>
+            <ul>
+                <li>Check the console log for detailed error messages</li>
+                <li>Review the Audit Log for threat detection history</li>
+                <li>Visit the About page to learn more about Securely's mission</li>
+                <li>Check the Credits page for development team information</li>
+            </ul>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2026 SECURELY</p>
+    </footer>
+</body>
+</html>
+
