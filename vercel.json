@@ -1,12 +1,7 @@
 {
-  "version": 2,
-  "builds": [
-    { "src": "api/analyze.py", "use": "@vercel/python" }
-  ],
-  "routes": [
-    { "src": "/api/analyze", "dest": "/api/analyze.py" }
-  ],
-  "env": {
-    "GROQ_MODEL": "llama-3.1-8b-instant"
+  "functions": {
+    "api/*.py": {
+      "runtime": "python3.11"
+    }
   }
 }
