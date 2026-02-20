@@ -1,9 +1,6 @@
 {
+  "$schema": "https://openapi.vercel.sh/vercel.json",
   "functions": {
-    "api/**/*.py": { "runtime": "python3.11" }
-  },
-  "routes": [
-    { "src": "/api/analyze", "dest": "/api/analyze.py" },
-    { "src": "/api/webhook", "dest": "/api/webhook.py" }
-  ]
+    "api/**/*.py": { "runtime": "python3.12" }
+  }
 }
