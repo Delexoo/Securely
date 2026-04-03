@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pricing — Securely</title>
+  <meta name="description" content="Simple plans: free Starter, Pro for individuals, Business for teams. See what you get in each tier.">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="https://unpkg.com/lenis@1.1.20/dist/lenis.css" crossorigin="anonymous">
+</head>
+<body class="page-pricing">
+  <header class="site-header" id="siteHeader">
+    <div class="header-inner">
+      <a class="logo" href="index.html"><img class="logo-img" src="docs/SecurelyLogo.png" alt="Securely" width="160" height="160" decoding="async"></a>
+      <button type="button" class="menu-toggle" id="menuToggle" aria-label="Open menu" aria-expanded="false">☰</button>
+      <nav class="nav" id="mainNav" aria-label="Primary">
+        <a class="nav-link" href="index.html">Home</a>
+        <a class="nav-link" href="demo.html">Demo</a>
+        <a class="nav-link active" href="pricing.html">Pricing</a>
+        <a class="nav-cta" href="pricing.html">Get started</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="section center pricing-page-hero">
+      <div class="wrap sr-stagger">
+        <p class="eyebrow sr sr--in-left">Pricing</p>
+        <h1 class="headline headline-hero sr sr--fade-blur">Simple pricing</h1>
+        <p class="subhead sr sr--in-right">Each plan says what is included. Compare at your own pace.</p>
+      </div>
+    </section>
+
+    <section class="section bg-light">
+      <div class="wrap-wide">
+        <div class="pricing-grid sr-stagger">
+          <article class="price-card sr sr--in-left">
+            <h2>Starter</h2>
+            <p class="tagline">Try the basics on your own, free.</p>
+            <p class="price">Free</p>
+            <a class="btn btn-primary" href="index.html">Download</a>
+            <ul>
+              <li>Basic safety tips in the app</li>
+              <li>30-day history on this device</li>
+              <li>Community help</li>
+              <li>One device</li>
+            </ul>
+          </article>
+
+          <article class="price-card featured sr sr--soft-zoom">
+            <h2>Pro</h2>
+            <p class="tagline">For people who want the full tool every day.</p>
+            <p class="price">$20 <small>/ month</small></p>
+            <a class="btn btn-primary" href="index.html">Subscribe</a>
+            <ul>
+              <li>Everything in Starter</li>
+              <li>Unlimited safety checks</li>
+              <li>Sync and backup in the cloud</li>
+              <li>Faster email support</li>
+              <li>Up to 5 devices</li>
+            </ul>
+          </article>
+
+          <article class="price-card sr sr--in-right">
+            <h2>Business</h2>
+            <p class="tagline">For companies that need one setup for everyone.</p>
+            <p class="price">$75 <small>/ month</small></p>
+            <a class="btn btn-primary" href="index.html">Subscribe</a>
+            <ul>
+              <li>Everything in Pro</li>
+              <li>Company-wide rules and roles</li>
+              <li>Reports you can download</li>
+              <li>Single sign-on and user directory</li>
+              <li>Your own success contact</li>
+            </ul>
+          </article>
+        </div>
+
+        <div class="compare-wrap sr sr--fade-blur">
+          <table class="compare" aria-label="Feature comparison">
+            <thead>
+              <tr>
+                <th scope="col">Feature</th>
+                <th scope="col">Starter</th>
+                <th scope="col">Pro</th>
+                <th scope="col">Business</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Safety checks</td>
+                <td>Limited</td>
+                <td>Unlimited</td>
+                <td>Unlimited</td>
+              </tr>
+              <tr>
+                <td>Rule templates</td>
+                <td>1</td>
+                <td>10</td>
+                <td>Custom</td>
+              </tr>
+              <tr>
+                <td>Downloadable reports</td>
+                <td>—</td>
+                <td>Monthly</td>
+                <td>Live updates</td>
+              </tr>
+              <tr>
+                <td>Admin overview screen</td>
+                <td>—</td>
+                <td>—</td>
+                <td>Included</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="center sr-stagger" style="margin-top: 100px;">
+          <h2 class="headline-section sr sr--tilt">Want to see it first?</h2>
+          <p class="subhead sr sr--in-up">Watch the demo. Then pick the plan that fits you.</p>
+          <div class="cta-row sr sr--in-left">
+            <a class="btn btn-primary" href="demo.html">Open demo</a>
+            <a class="btn btn-ghost" href="demo.html#detail-more-heading">How it’s different</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner sr sr--in-up">
+      <div class="footer-brand">
+        <img class="footer-logo-img" src="docs/SecurelyLogo.png" alt="" width="64" height="64" decoding="async" aria-hidden="true">
+        <p class="footer-copyright">© <span id="y"></span> Securely</p>
+      </div>
+      <div class="footer-links">
+        <a href="demo.html">Demo</a>
+        <a href="pricing.html">Pricing</a>
+      </div>
+    </div>
+  </footer>
+  <script src="https://unpkg.com/lenis@1.1.20/dist/lenis.min.js" crossorigin="anonymous"></script>
+  <script src="js/main.js"></script>
+  <script>document.getElementById("y").textContent = new Date().getFullYear();</script>
+</body>
+</html>

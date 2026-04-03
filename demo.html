@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Demo &amp; how it works, Securely</title>
+  <meta name="description" content="Try the interactive desktop demo: Quick Scan, four channels (email, SMS, browser, downloads), and plain-language threat context.">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="https://unpkg.com/lenis@1.1.20/dist/lenis.css" crossorigin="anonymous">
+</head>
+<body class="page-demo">
+  <header class="site-header" id="siteHeader">
+    <div class="header-inner">
+      <a class="logo" href="index.html"><img class="logo-img" src="docs/SecurelyLogo.png" alt="Securely" width="160" height="160" decoding="async"></a>
+      <button type="button" class="menu-toggle" id="menuToggle" aria-label="Open menu" aria-expanded="false">☰</button>
+      <nav class="nav" id="mainNav" aria-label="Primary">
+        <a class="nav-link" href="index.html">Home</a>
+        <a class="nav-link active" href="demo.html">Demo</a>
+        <a class="nav-link" href="pricing.html">Pricing</a>
+        <a class="nav-cta" href="pricing.html">Get started</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="section center demo-page-hero demo-page-hero--simple" aria-labelledby="demo-page-title">
+      <div class="wrap sr-stagger">
+        <p class="eyebrow sr sr--in-down">Welcome to our Demo</p>
+        <h1 class="headline headline-hero sr sr--fade-blur" id="demo-page-title">See Securely on a desktop</h1>
+        <p class="subhead sr sr--in-right">Try the live preview below, then keep scrolling for how Securely differs from reactive tools.</p>
+      </div>
+    </section>
+
+    <section class="section bg-light demo-page-canvas" id="interactive-demo" aria-labelledby="demo-live-label">
+      <div class="wrap-wide">
+        <div class="demo-page-canvas-intro center sr-stagger">
+          <p class="eyebrow sr sr--in-left" id="demo-live-label">Live simulation</p>
+          <h2 class="headline-section demo-page-canvas-title sr sr--tilt">Desktop preview</h2>
+          <p class="subhead-section demo-page-canvas-lead sr sr--soft-zoom">Let's simulate your everyday digital routine with the help of Securely.</p>
+        </div>
+
+        <figure class="threat-figure threat-figure-composite demo-page-primary-figure sr sr--fade-blur" id="securelyThreatDemo" aria-label="Interactive demo: drag the dot handle to move the Securely widget on a Windows 11 desktop">
+          <div class="threat-figure-stage threat-demo-stage" id="threatDemoStage">
+            <img
+              class="threat-figure-bg"
+              src="docs/Windows-11.png"
+              width="1919"
+              height="1079"
+              alt=""
+              loading="eager"
+              decoding="async">
+            <div class="threat-demo-toasts" id="threatDemoToasts" aria-live="polite" aria-relevant="additions"></div>
+            <div class="threat-demo-floating" id="threatDemoFloating">
+              <aside class="lockin-pill" aria-label="Quick Scan on the left; drag the 2×2 dots to move this widget on the desktop">
+                <div class="lockin-pill-glass" aria-hidden="true"></div>
+                <div class="lockin-pill-inner">
+                  <button type="button" class="lockin-pill-scan" id="threatDemoQuickScan">Quick Scan</button>
+                  <div class="lockin-pill-icons">
+                    <span class="lockin-pill-icon" title="Home" aria-hidden="true">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                    </span>
+                    <span class="lockin-pill-icon" title="Settings" aria-hidden="true">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+                    </span>
+                    <span class="lockin-pill-dots" id="threatDemoDragHandle" role="button" tabindex="0" aria-label="Drag handle: move the Securely widget anywhere on the desktop"><span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span></span>
+                    <span class="lockin-pill-icon lockin-pill-icon-exit" title="Close" aria-hidden="true">✕</span>
+                  </div>
+                </div>
+              </aside>
+            </div>
+            <div class="threat-widget-demo threat-demo-window" id="threatDemoWidget">
+              <div class="threat-widget-demo-inner">
+                <div class="threat-widget-demo-header">
+                  <p class="threat-widget-demo-title" id="threatDemoTitle">Action required: Payroll deposit verification</p>
+                </div>
+                <div class="threat-widget-demo-body" id="threatDemoBody"><div class="threat-demo-email-headers"><p class="threat-demo-line"><span class="threat-demo-k">From</span> Human Resources &lt;no-reply@acme-payroll-portal.net&gt;</p><p class="threat-demo-line"><span class="threat-demo-k">To</span> you@company.com</p><p class="threat-demo-line threat-demo-line-meta">Sent today, 4:12 PM</p></div><hr class="threat-demo-divider" aria-hidden="true" /><div class="threat-demo-prose"><p>Our payroll partner flagged an incomplete direct-deposit profile before this Friday’s run.</p><p>Please confirm your routing and account numbers using the secure portal below. If this is not completed by 5:00 PM ET, deposits may post as a paper check on the following cycle.</p><p class="threat-demo-cta-line"><a href="#" class="threat-demo-link">Review &amp; confirm payroll settings</a></p><p class="threat-demo-url-wrap"><a href="#" class="threat-demo-link threat-demo-url" title="Demo link (does not leave this page)">https://acme-payroll-portal.net/employee/update?ref=PR-2025-03-19&amp;tkn=7k2…</a></p><p class="threat-demo-footnote">Questions? Contact Payroll Services at ext. 4400. Do not reply to this message.</p></div></div>
+                <p class="threat-widget-demo-meta" id="threatDemoMeta">Outlook · Inbox · Today, 4:12 PM</p>
+              </div>
+            </div>
+          </div>
+          <div class="threat-demo-picker-wrap">
+            <div class="threat-demo-picker" role="group" aria-label="Switch demo scenario: email, SMS, browser, or downloads">
+              <button type="button" class="threat-demo-picker-btn is-active" data-demo-scenario="email" aria-pressed="true">
+                <span class="threat-demo-picker-icon" aria-hidden="true">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                </span>
+                <span class="threat-demo-picker-label">Email</span>
+                <span class="threat-demo-picker-sub">Phishing in inbox</span>
+              </button>
+              <button type="button" class="threat-demo-picker-btn" data-demo-scenario="sms" aria-pressed="false">
+                <span class="threat-demo-picker-icon" aria-hidden="true">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                </span>
+                <span class="threat-demo-picker-label">SMS</span>
+                <span class="threat-demo-picker-sub">Texts &amp; smishing</span>
+              </button>
+              <button type="button" class="threat-demo-picker-btn" data-demo-scenario="browser" aria-pressed="false">
+                <span class="threat-demo-picker-icon" aria-hidden="true">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                </span>
+                <span class="threat-demo-picker-label">Browser</span>
+                <span class="threat-demo-picker-sub">Microsoft security</span>
+              </button>
+              <button type="button" class="threat-demo-picker-btn" data-demo-scenario="downloads" aria-pressed="false">
+                <span class="threat-demo-picker-icon" aria-hidden="true">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                </span>
+                <span class="threat-demo-picker-label">Downloads</span>
+                <span class="threat-demo-picker-sub">EXE files</span>
+              </button>
+            </div>
+          </div>
+          <figcaption class="threat-figure-caption threat-demo-caption">
+            <span class="threat-figure-label">What you’re looking at</span>
+            <p class="threat-demo-caption-text"><strong>Try it:</strong> Click <span class="threat-demo-caption-fake-btn">Quick Scan</span> on the bar above! This demo simulates your everyday digital routine: checking emails, SMS, browsing the internet, downloading files, and Securely is ready to detect malicious content. <strong>Grab the 2×2 dots</strong> <span class="threat-demo-caption-dots" aria-hidden="true"><span></span><span></span><span></span><span></span></span> on the right side of the bar and <strong>drag</strong> to place the widget anywhere on the screen. Experiment with the demo above to see how it works. After a scan, you’ll see the results in a small desktop notification.</p>
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="detail-more-heading">
+      <div class="wrap-wide">
+        <div class="center section-intro sr-stagger" style="margin-bottom: 48px;">
+          <p class="eyebrow sr">Under the hood</p>
+          <h2 class="headline-section sr" id="detail-more-heading">Proactive, not reactive</h2>
+          <p class="subhead-section sr">Securely is the first of its kind built around what you see on screen before you act. Most other tools are built to respond after something has already gone wrong.</p>
+        </div>
+        <div class="detail-block sr sr--left">
+          <div class="detail-copy">
+            <h3>Securely is proactive</h3>
+            <p>Securely reads the same cues you do—emails, links, messages, attachments—while you are still deciding. You get context about risk before you click, download, or run anything. You do not have to interact with something malicious to find out that it is dangerous; the warning shows up in the moment, on your screen.</p>
+          </div>
+          <div class="detail-visual" aria-hidden="true">Diagram: before you click</div>
+        </div>
+
+        <div class="detail-block reverse sr sr--right">
+          <div class="detail-copy">
+            <h3>Why other tools feel reactive</h3>
+            <p>Traditional antivirus and many security products lean on known signatures and behavior rules. They often act only after malware has run, something unwanted has installed, or your device is already misbehaving or interrupted. They may block the next attempt or clean up afterward, but the first harmful encounter can already have happened.</p>
+          </div>
+          <div class="detail-visual" aria-hidden="true">Diagram: after infection</div>
+        </div>
+
+        <div class="detail-block sr sr--soft-zoom">
+          <div class="detail-copy">
+            <h3>First of its kind for pre-interaction risk</h3>
+            <p>That difference is what we mean by proactive: step in at the risky moment, before you engage, not only once the system is compromised. Other stacks were not designed from the start for live, on-screen judgment the way Securely is—so the comparison is not “more features,” it is earlier protection.</p>
+          </div>
+          <div class="detail-visual" aria-hidden="true">Diagram: proactive vs reactive</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section center bg-light">
+      <div class="wrap sr-stagger">
+        <p class="eyebrow sr">Next</p>
+        <h2 class="headline-section sr">Ready when you are</h2>
+        <p class="subhead sr">Compare plans, or head home for the overview.</p>
+        <div class="cta-row sr">
+          <a class="btn btn-primary" href="pricing.html">See pricing</a>
+          <a class="btn btn-ghost" href="index.html">Back to home</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner sr sr--in-up">
+      <div class="footer-brand">
+        <img class="footer-logo-img" src="docs/SecurelyLogo.png" alt="" width="64" height="64" decoding="async" aria-hidden="true">
+        <p class="footer-copyright">© <span id="y"></span> Securely</p>
+      </div>
+      <div class="footer-links">
+        <a href="demo.html">Demo</a>
+        <a href="pricing.html">Pricing</a>
+      </div>
+    </div>
+  </footer>
+  <script src="https://unpkg.com/lenis@1.1.20/dist/lenis.min.js" crossorigin="anonymous"></script>
+  <script src="js/main.js"></script>
+  <script>document.getElementById("y").textContent = new Date().getFullYear();</script>
+</body>
+</html>
