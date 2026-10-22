@@ -1,0 +1,177 @@
+SECURELY - CS50X FINAL PROJECT VIDEO SCRIPT
+===========================================
+
+VIDEO REQUIREMENTS CHECKLIST
+- Opening section with: Project Title, Name, GitHub/edX usernames, City/Country, Date
+- Demonstration of project in action
+- Maximum 3 minutes length
+
+SCRIPT (Target: 2:30 - 2:45 minutes)
+=====================================
+
+[0:00 - 0:15] OPENING SLIDE
+Display static slide with the following information:
+
+Project Title: Securely
+Name: [Your Name]
+GitHub Username: [Your GitHub Username]
+edX Username: [Your edX Username]
+City, Country: [Your City, Country]
+Date: [Recording Date - e.g., December 2024]
+
+Voiceover:
+"Hi, I'm [Your Name], and this is my CS50x final project: Securely."
+
+
+[0:15 - 0:30] PROBLEM STATEMENT
+Show screenshot of a phishing email or suspicious webpage
+
+Voiceover:
+"In today's digital world, cyber threats like phishing emails, malware warnings, and suspicious websites are everywhere. Many users don't recognize these threats until it's too late. Securely solves this problem by providing real-time AI-powered threat detection that monitors your screen and alerts you to potential security risks."
+
+
+[0:30 - 0:50] CORE FUNCTIONALITY DEMONSTRATION
+Screen recording: Show the Securely application window
+
+Voiceover:
+"Securely works by taking screenshots of your screen every second, using OCR to extract text, and then analyzing that content with AI to detect security threats. Let me show you how it works."
+
+Action: Click "Turn On" button in the application
+
+Voiceover:
+"When you enable monitoring, Securely runs in the background, continuously analyzing your screen content."
+
+Action: Open a browser and navigate to a test page with suspicious content, or show a screenshot of a phishing email
+
+Voiceover:
+"If Securely detects a threat—like a phishing email, suspicious website, or malware warning—it immediately sends you a desktop notification."
+
+Action: Show notification appearing
+
+Voiceover:
+"All detected threats are logged in the Audit Log tab, where you can review them later."
+
+Action: Switch to Audit Log tab, show threat cards
+
+
+[0:50 - 1:20] KEY FEATURES
+Screen recording: Navigate through the application
+
+Voiceover:
+"Securely has several key features. First, the Dashboard lets you control monitoring with Quick Scan for immediate checks, or continuous monitoring that runs in the background."
+
+Action: Show Dashboard tab, demonstrate Quick Scan button
+
+Voiceover:
+"The Settings tab allows you to customize alerts—you can enable or disable notifications and sound alerts, toggle strict mode for more aggressive threat detection, and even enable hitboxes for debugging."
+
+Action: Show Settings tab, toggle some options
+
+Voiceover:
+"One smart feature is automatic pausing—when Securely detects you're on a login or payment page, it automatically pauses monitoring to protect your sensitive credentials."
+
+Action: Show this happening or explain it
+
+
+[1:20 - 1:50] TECHNICAL IMPLEMENTATION
+Show code snippets or architecture diagram
+
+Voiceover:
+"Securely is built with Python and uses several key technologies. It uses pytesseract for OCR to extract text from screenshots, the mss library for efficient screen capture, and Google's Gemini AI API for intelligent threat analysis. The GUI is built with CustomTkinter for a modern, dark-themed interface."
+
+Action: Show relevant code or architecture
+
+Voiceover:
+"The application uses multi-threading to ensure the monitoring runs smoothly in the background without blocking the user interface. It also implements rate limiting and API fallback mechanisms to handle API restrictions gracefully."
+
+
+[1:50 - 2:15] REAL-WORLD IMPACT
+Show examples of detected threats
+
+Voiceover:
+"Securely can detect various types of threats: phishing emails asking for credentials, suspicious websites, malware warnings, social engineering attempts, and more. The AI is trained to be aggressive in flagging potential threats, because it's better to be cautious than to miss a real security risk."
+
+Action: Show examples from audit log or screenshots
+
+
+[2:15 - 2:30] CONCLUSION
+Show the application running
+
+Voiceover:
+"Securely is a practical security tool that helps users stay protected in an increasingly dangerous digital landscape. It combines OCR, AI analysis, and real-time monitoring to provide proactive threat detection that works silently in the background."
+
+Action: Show final view of the application
+
+Voiceover:
+"Thank you for watching! You can find the source code and README on my GitHub repository. This was CS50x!"
+
+
+PRODUCTION NOTES
+================
+
+Visual Elements to Prepare:
+1. Opening Slide: Create a clean slide with all required information
+2. Application Screenshots: Capture high-quality screenshots of:
+   - Main application window (Dashboard)
+   - Settings tab
+   - Audit Log with threat cards
+   - Desktop notification example
+3. Screen Recording: Record the application in action:
+   - Enabling monitoring
+   - Detecting a threat
+   - Showing notifications
+   - Navigating through tabs
+4. Code/Architecture: Optional - show key code snippets or a simple architecture diagram
+5. Threat Examples: Prepare examples of detected threats (screenshots or mockups)
+
+Recording Tips:
+- Use a screen recording tool (OBS, Windows Game Bar, or similar)
+- Record at 1080p resolution for best quality
+- Speak clearly and at a moderate pace
+- Practice the script a few times before recording
+- Keep transitions smooth between sections
+- Ensure the application window is clearly visible
+- Test notifications work before recording
+
+Timing Breakdown:
+- Opening: 15 seconds
+- Problem Statement: 15 seconds
+- Core Demo: 20 seconds
+- Key Features: 30 seconds
+- Technical: 30 seconds
+- Impact: 25 seconds
+- Conclusion: 15 seconds
+- Total: ~2:30 minutes (leaves 30 seconds buffer for transitions)
+
+Alternative Shorter Version (if needed):
+If you need to cut time, you can:
+- Reduce technical implementation section to 15 seconds
+- Combine problem statement and core demo
+- Shorten conclusion to 10 seconds
+
+
+KEY POINTS TO EMPHASIZE
+=======================
+
+1. Real-world problem: Cyber threats are common and users need protection
+2. Core technology: OCR + AI analysis for intelligent threat detection
+3. User-friendly: Simple interface, automatic features, customizable alerts
+4. Practical impact: Actually helps users avoid security threats
+5. Technical sophistication: Multi-threading, API management, intelligent pausing
+
+
+SCRIPT VARIATIONS
+=================
+
+If you want to focus more on the demo:
+- Extend core functionality demo to 45 seconds
+- Show 2-3 different threat detection scenarios
+- Reduce technical section to 15 seconds
+
+If you want to focus more on technical aspects:
+- Extend technical section to 45 seconds
+- Show more code examples
+- Explain the architecture in more detail
+- Reduce feature walkthrough to 20 seconds
+
+

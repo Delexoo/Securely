@@ -1,0 +1,7 @@
+customtkinter
+Pillow
+mss
+pytesseract
+requests
+win10toast
+win11toast

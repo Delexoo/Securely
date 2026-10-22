@@ -1,0 +1,617 @@
+═══════════════════════════════════════════════════════════════════════════════
+                    SECURELY - TERMS OF SERVICE
+                    Version 2.1 - Last Updated: 2025
+═══════════════════════════════════════════════════════════════════════════════
+
+IMPORTANT: PLEASE READ THESE TERMS OF SERVICE CAREFULLY BEFORE USING SECURELY.
+BY INSTALLING, ACCESSING, OR USING SECURELY, YOU ACKNOWLEDGE THAT YOU HAVE READ,
+UNDERSTOOD, AND AGREE TO BE BOUND BY THESE TERMS. IF YOU DO NOT AGREE TO THESE
+TERMS, DO NOT USE SECURELY.
+
+═══════════════════════════════════════════════════════════════════════════════
+1. ACCEPTANCE OF TERMS
+═══════════════════════════════════════════════════════════════════════════════
+
+1.1. These Terms of Service ("Terms") constitute a legally binding agreement
+     between you ("User", "you", or "your") and Securely ("we", "us", "our", or
+     "Securely") regarding your use of the Securely software application and
+     related services (collectively, the "Service").
+
+1.2. By downloading, installing, accessing, or using Securely, you represent
+     and warrant that:
+     (a) You are at least 18 years of age or have obtained parental/guardian
+         consent;
+     (b) You have the legal capacity to enter into this agreement;
+     (c) You will comply with all applicable laws and regulations;
+     (d) You have read, understood, and agree to be bound by these Terms.
+
+1.3. If you are using Securely on behalf of an organization, you represent that
+     you have the authority to bind that organization to these Terms.
+
+1.4. These Terms may be updated from time to time. Continued use of Securely
+     after changes constitutes acceptance of the modified Terms.
+
+═══════════════════════════════════════════════════════════════════════════════
+2. DESCRIPTION OF SERVICE
+═══════════════════════════════════════════════════════════════════════════════
+
+2.1. Securely is an AI-powered cybersecurity monitoring application designed to
+     help protect users from phishing attacks, malware, malicious URLs, and
+     other security threats by monitoring screen content in real-time.
+
+2.2. Core Functionality:
+     (a) Continuous screen monitoring using Optical Character Recognition (OCR)
+         technology;
+     (b) Real-time threat detection using keyword matching and AI analysis;
+     (c) Visual threat indicators (optional hitbox overlay);
+     (d) Desktop notifications for detected threats;
+     (e) Audit logging of security events;
+     (f) Integration with Google Gemini AI for advanced threat analysis.
+
+2.3. Service Modes:
+     (a) 24/7 Continuous Monitoring: Monitors screen content continuously while
+         enabled;
+     (b) Quick Scan: 15-minute focused security scan;
+     (c) One-Shot Scan: Single immediate security analysis.
+
+2.4. Securely operates by:
+     (a) Capturing screenshots of your screen at regular intervals (approximately
+         20 times per second);
+     (b) Extracting visible text using OCR technology;
+     (c) Analyzing content using keyword matching and AI-powered analysis;
+     (d) Sending screen content to third-party AI services (Google Gemini) for
+         threat analysis;
+     (e) Displaying notifications and visual indicators when threats are detected.
+
+═══════════════════════════════════════════════════════════════════════════════
+3. CRITICAL DISCLOSURES AND WARNINGS
+═══════════════════════════════════════════════════════════════════════════════
+
+3.1. SCREEN MONITORING DISCLOSURE:
+     Securely continuously monitors and captures your screen content, including:
+     - All visible text on your screen
+     - URLs and web addresses
+     - Email content
+     - Application windows
+     - Personal information displayed on screen
+     - Sensitive data (passwords, credit card numbers, etc.) if visible
+
+3.2. THIRD-PARTY AI SERVICES:
+     Securely uses Google Gemini AI API to analyze screen content. By using
+     Securely, you acknowledge that:
+     (a) Screen content is transmitted to Google's servers for analysis;
+     (b) Google's privacy policy and terms of service apply to data sent to
+         their services;
+     (c) We are not responsible for Google's handling of your data;
+     (d) AI analysis may not be 100% accurate and may produce false positives
+         or false negatives.
+
+3.3. PRIVACY IMPLICATIONS:
+     (a) Securely processes and analyzes all visible screen content;
+     (b) Screen content may be transmitted to third-party AI services;
+     (c) Sensitive information displayed on your screen may be captured and
+         analyzed;
+     (d) You should not use Securely if you are not comfortable with screen
+         monitoring and third-party data processing.
+
+3.4. SECURITY CONSIDERATIONS:
+     (a) Securely is a security tool but does not guarantee protection against
+         all threats;
+     (b) Threat detection is based on pattern matching and AI analysis, which
+         may not catch all threats;
+     (c) False positives may occur, flagging legitimate content as threats;
+     (d) False negatives may occur, missing actual threats;
+     (e) You should use Securely as a supplementary security measure, not as
+         your sole security solution.
+
+3.5. ⚠️ EARLY DEVELOPMENT STATUS - CRITICAL WARNING:
+     SECURELY IS CURRENTLY IN EARLY DEVELOPMENT AND IS PROVIDED "AS IS" WITHOUT
+     ANY WARRANTIES OR GUARANTEES. BY USING SECURELY, YOU ACKNOWLEDGE AND AGREE
+     THAT:
+
+     (a) EARLY DEVELOPMENT STAGE:
+         - Securely is in active development and may contain bugs, errors, or
+           incomplete features;
+         - The software has not been fully tested in all environments and use
+           cases;
+         - Features may change, break, or be removed without notice;
+         - Performance may be unstable or unpredictable;
+         - The software may not function as intended or advertised.
+
+     (b) NOT PRODUCTION-READY:
+         - Securely is NOT production-ready software;
+         - It should NOT be used as your primary or sole security solution;
+         - It should NOT be relied upon for critical security decisions;
+         - It should NOT be used in mission-critical or high-risk environments;
+         - The software may fail to detect threats or may malfunction at any time.
+
+     (c) NO LIABILITY FOR DIGITAL HARM:
+         TO THE MAXIMUM EXTENT PERMITTED BY LAW, WE EXPRESSLY DISCLAIM ALL
+         LIABILITY FOR ANY DIGITAL HARM, INCLUDING BUT NOT LIMITED TO:
+         - Data loss, corruption, or unauthorized access;
+         - Security breaches, malware infections, or cyber attacks;
+         - Financial losses resulting from undetected threats;
+         - System crashes, software conflicts, or performance degradation;
+         - Privacy violations or data exposure;
+         - Any other digital harm, damage, or loss of any kind;
+         - Consequences of software bugs, errors, or malfunctions;
+         - Issues arising from incomplete or untested features.
+
+     (d) USE AT YOUR OWN RISK:
+         - You use Securely entirely at your own risk;
+         - We are not responsible for any consequences of using this software;
+         - You assume all risks associated with using early development software;
+         - You should maintain backups of all important data;
+         - You should use additional security measures and not rely solely on
+           Securely;
+         - You should test the software in a safe environment before using it
+           for important tasks.
+
+     (e) NO WARRANTIES:
+         - We make no representations or warranties about the software's
+           functionality, reliability, or security;
+         - We do not guarantee that the software will work correctly or at all;
+         - We do not guarantee protection against any threats;
+         - We do not guarantee data security or privacy protection;
+         - The software is provided with all faults and defects.
+
+     (f) ACKNOWLEDGMENT OF RISKS:
+         BY USING SECURELY, YOU EXPRESSLY ACKNOWLEDGE THAT:
+         - You understand Securely is in early development;
+         - You understand the software may have bugs, errors, or malfunctions;
+         - You understand we are not liable for any digital harm;
+         - You agree to use the software at your own risk;
+         - You will not hold us responsible for any damages or losses;
+         - You have been warned of all potential risks and limitations.
+
+═══════════════════════════════════════════════════════════════════════════════
+4. USER RESPONSIBILITIES AND ACCEPTABLE USE
+═══════════════════════════════════════════════════════════════════════════════
+
+4.1. You agree to use Securely only for lawful purposes and in accordance with
+     these Terms.
+
+4.2. You are responsible for:
+     (a) Maintaining the security of your system and Securely installation;
+     (b) Keeping Securely updated to the latest version;
+     (c) Configuring Securely appropriately for your use case;
+     (d) Reviewing and responding to security alerts;
+     (e) Ensuring you have proper authorization to monitor any systems or
+         networks on which Securely is installed;
+     (f) Complying with all applicable laws, including privacy laws, when using
+         Securely.
+
+4.3. Prohibited Uses:
+     You agree NOT to use Securely to:
+     (a) Monitor systems or networks without proper authorization;
+     (b) Violate any applicable laws or regulations;
+     (c) Infringe upon the rights of others;
+     (d) Monitor others' screens without their explicit consent;
+     (e) Use Securely in any manner that could damage, disable, or impair the
+         Service;
+     (f) Attempt to reverse engineer, decompile, or disassemble Securely;
+     (g) Remove or alter any copyright, trademark, or proprietary notices;
+     (h) Use Securely for any illegal or unauthorized purpose.
+
+4.4. Consent Requirements:
+     (a) If monitoring systems belonging to others, you must obtain explicit
+         written consent;
+     (b) If monitoring shared or public computers, you must inform all users;
+     (c) You are solely responsible for obtaining all necessary consents;
+     (d) We are not responsible for your failure to obtain proper consent.
+
+═══════════════════════════════════════════════════════════════════════════════
+5. DATA COLLECTION, PROCESSING, AND PRIVACY
+═══════════════════════════════════════════════════════════════════════════════
+
+5.1. DATA COLLECTED BY SECURELY:
+     Securely collects and processes the following data:
+     (a) Screen Content: Screenshots and visible text from your screen;
+     (b) OCR Data: Text extracted from screen content;
+     (c) Threat Detection Data: Information about detected threats;
+     (d) Audit Logs: Timestamps, threat types, and descriptions;
+     (e) Application Settings: Your configuration preferences;
+     (f) System Information: Operating system, screen resolution, etc.
+
+5.2. DATA PROCESSING:
+     (a) Screen content is processed locally on your device using OCR;
+     (b) Screen content and extracted text are sent to Google Gemini AI API
+         for threat analysis;
+     (c) Threat detection results are stored locally in audit logs;
+     (d) No data is transmitted to Securely's servers (we do not operate
+         servers);
+     (e) Data is processed in real-time and not permanently stored by us.
+
+5.3. THIRD-PARTY DATA SHARING:
+     (a) Screen content is shared with Google Gemini AI API for analysis;
+     (b) Google's privacy policy governs how they handle your data;
+     (c) We are not responsible for Google's data handling practices;
+     (d) You should review Google's privacy policy before using Securely;
+     (e) We do not share your data with any other third parties.
+
+5.4. LOCAL DATA STORAGE:
+     (a) Audit logs are stored locally in "securely_log.txt";
+     (b) Application settings are stored locally on your device;
+     (c) Screenshots may be temporarily cached for analysis;
+     (d) You are responsible for securing local data storage;
+     (e) You can delete audit logs at any time through the application.
+
+5.5. DATA RETENTION:
+     (a) Screen content is processed in real-time and not retained by us;
+     (b) Audit logs are stored locally and retained until you delete them;
+     (c) Google may retain data according to their privacy policy;
+     (d) We do not have access to or control over data retained by Google.
+
+5.6. YOUR PRIVACY RIGHTS:
+     (a) You can stop monitoring at any time;
+     (b) You can delete audit logs;
+     (c) You can uninstall Securely to stop all data collection;
+     (d) You cannot control how Google processes data sent to their API;
+     (e) We do not collect personally identifiable information directly.
+
+═══════════════════════════════════════════════════════════════════════════════
+6. DISCLAIMERS AND LIMITATIONS OF LIABILITY
+═══════════════════════════════════════════════════════════════════════════════
+
+6.1. NO WARRANTIES:
+     SECURELY IS PROVIDED "AS IS" AND "AS AVAILABLE" WITHOUT WARRANTIES OF ANY
+     KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO:
+     (a) WARRANTIES OF MERCHANTABILITY;
+     (b) FITNESS FOR A PARTICULAR PURPOSE;
+     (c) NON-INFRINGEMENT;
+     (d) ACCURACY, RELIABILITY, OR COMPLETENESS;
+     (e) UNINTERRUPTED OR ERROR-FREE OPERATION;
+     (f) SECURITY OR PROTECTION AGAINST ALL THREATS.
+
+6.2. THREAT DETECTION DISCLAIMERS:
+     (a) Securely does not guarantee detection of all security threats;
+     (b) False positives may occur (legitimate content flagged as threats);
+     (c) False negatives may occur (actual threats not detected);
+     (d) Threat detection is based on pattern matching and AI analysis, which
+         are not infallible;
+     (e) AI analysis accuracy depends on third-party services (Google Gemini);
+     (f) OCR accuracy may vary and may miss or misread text;
+     (g) You should not rely solely on Securely for security protection.
+
+6.3. LIMITATION OF LIABILITY:
+     TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, IN NO EVENT SHALL
+     SECURELY, ITS DEVELOPERS, CONTRIBUTORS, OR AFFILIATES BE LIABLE FOR:
+     (a) ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR PUNITIVE
+         DAMAGES;
+     (b) LOSS OF DATA, PROFITS, REVENUE, OR BUSINESS OPPORTUNITIES;
+     (c) SECURITY BREACHES, DATA BREACHES, OR UNAUTHORIZED ACCESS;
+     (d) FINANCIAL LOSSES RESULTING FROM UNDETECTED THREATS;
+     (e) DAMAGES RESULTING FROM FALSE POSITIVES OR FALSE NEGATIVES;
+     (f) DAMAGES RESULTING FROM THIRD-PARTY AI SERVICES (GOOGLE GEMINI);
+     (g) DAMAGES RESULTING FROM SCREEN MONITORING OR DATA PROCESSING;
+     (h) ANY OTHER DAMAGES ARISING FROM USE OR INABILITY TO USE SECURELY.
+
+6.4. TOTAL LIABILITY CAP:
+     TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, OUR TOTAL LIABILITY FOR
+     ANY CLAIMS ARISING FROM OR RELATED TO SECURELY SHALL NOT EXCEED THE AMOUNT
+     YOU PAID FOR SECURELY (IF ANY), OR $0 IF SECURELY IS PROVIDED FREE OF CHARGE.
+
+6.5. THIRD-PARTY SERVICES LIABILITY:
+     (a) We are not responsible for Google Gemini AI API availability,
+         accuracy, or data handling;
+     (b) We are not responsible for Tesseract OCR functionality or accuracy;
+     (c) We are not responsible for third-party notification services;
+     (d) We are not responsible for any issues arising from third-party
+         dependencies;
+     (e) Your use of third-party services is subject to their respective terms
+         and privacy policies.
+
+6.6. DATA BREACH AND SECURITY INCIDENT DISCLAIMER:
+     (a) We do not operate servers and do not store your data;
+     (b) However, data is transmitted to third-party AI services;
+     (c) We are not responsible for data breaches at third-party services;
+     (d) We are not responsible for unauthorized access to your local data;
+     (e) You are responsible for securing your device and local data storage;
+     (f) We cannot guarantee the security of data transmitted to third parties.
+
+6.7. SCREEN MONITORING RISKS:
+     (a) Screen monitoring may capture sensitive information;
+     (b) Sensitive data may be transmitted to third-party AI services;
+     (c) We are not responsible for exposure of sensitive information;
+     (d) You use Securely at your own risk regarding privacy and data exposure;
+     (e) You should not use Securely if you are not comfortable with screen
+         monitoring.
+
+6.8. ACCURACY DISCLAIMER:
+     (a) Threat detection is not guaranteed to be 100% accurate;
+     (b) AI analysis may produce incorrect results;
+     (c) OCR may misread or miss text;
+     (d) You should verify all security alerts independently;
+     (e) We are not responsible for decisions made based on Securely's alerts.
+
+═══════════════════════════════════════════════════════════════════════════════
+7. INTELLECTUAL PROPERTY RIGHTS
+═══════════════════════════════════════════════════════════════════════════════
+
+7.1. OWNERSHIP:
+     (a) Securely and all associated intellectual property rights are owned by
+         Securely or its licensors;
+     (b) This includes but is not limited to: software code, user interface,
+         design, logos, trademarks, documentation, and all related materials;
+     (c) These Terms do not grant you any ownership rights in Securely.
+
+7.2. LICENSE GRANT:
+     Subject to your compliance with these Terms, we grant you a limited,
+     non-exclusive, non-transferable, revocable license to:
+     (a) Install and use Securely on your personal devices;
+     (b) Use Securely for its intended security monitoring purposes;
+     (c) This license is for personal, non-commercial use only.
+
+7.3. LICENSE RESTRICTIONS:
+     You may NOT:
+     (a) Copy, modify, or create derivative works of Securely;
+     (b) Reverse engineer, decompile, or disassemble Securely;
+     (c) Remove or alter any copyright, trademark, or proprietary notices;
+     (d) Rent, lease, lend, or sublicense Securely;
+     (e) Use Securely for commercial purposes without written permission;
+     (f) Distribute, publish, or make Securely available to third parties.
+
+7.4. THIRD-PARTY INTELLECTUAL PROPERTY:
+     (a) Securely uses third-party software and services;
+     (b) These are subject to their respective licenses and terms;
+     (c) We do not claim ownership of third-party intellectual property;
+     (d) You must comply with all applicable third-party licenses.
+
+═══════════════════════════════════════════════════════════════════════════════
+8. THIRD-PARTY SERVICES AND DEPENDENCIES
+═══════════════════════════════════════════════════════════════════════════════
+
+8.1. GOOGLE GEMINI AI API:
+     (a) Securely uses Google Gemini AI API for threat analysis;
+     (b) Your use of Google services is subject to Google's Terms of Service
+         and Privacy Policy;
+     (c) We are not responsible for Google's services, availability, or data
+         handling;
+     (d) Google may change their services, pricing, or terms at any time;
+     (e) We are not responsible for any impact of Google's changes on Securely;
+     (f) You are responsible for any costs associated with Google API usage
+         (if applicable).
+
+8.2. TESSERACT OCR:
+     (a) Securely uses Tesseract OCR for text extraction;
+     (b) Tesseract is open-source software subject to Apache License 2.0;
+     (c) OCR accuracy depends on Tesseract's capabilities;
+     (d) We are not responsible for OCR errors or limitations.
+
+8.3. OTHER DEPENDENCIES:
+     Securely uses various open-source libraries and dependencies, each subject
+     to their respective licenses. We are not responsible for:
+     (a) Functionality of third-party libraries;
+     (b) Security vulnerabilities in third-party code;
+     (c) Changes or discontinuation of third-party services;
+     (d) Compliance with third-party license terms.
+
+8.4. NOTIFICATION SERVICES:
+     Securely may use Windows notification services (WinRT, win10toast, win11toast).
+     We are not responsible for:
+     (a) Notification service availability;
+     (b) Notification delivery failures;
+     (c) Third-party notification service terms.
+
+═══════════════════════════════════════════════════════════════════════════════
+9. UPDATES, MODIFICATIONS, AND DISCONTINUATION
+═══════════════════════════════════════════════════════════════════════════════
+
+9.1. UPDATES:
+     (a) We may release updates to Securely from time to time;
+     (b) Updates may include bug fixes, new features, or security patches;
+     (c) You are responsible for keeping Securely updated;
+     (d) We are not obligated to provide updates;
+     (e) Updates may change functionality or require reconfiguration.
+
+9.2. MODIFICATIONS TO SERVICE:
+     (a) We reserve the right to modify, suspend, or discontinue Securely at
+         any time;
+     (b) We may change features, functionality, or remove capabilities;
+     (c) We are not required to provide notice of changes;
+     (d) We are not liable for any impact of changes on your use of Securely.
+
+9.3. DISCONTINUATION:
+     (a) We may discontinue Securely at any time without notice;
+     (b) We are not required to provide support after discontinuation;
+     (c) We are not liable for any losses resulting from discontinuation;
+     (d) You should maintain backups of important data.
+
+9.4. TERMS MODIFICATIONS:
+     (a) We may modify these Terms at any time;
+     (b) Continued use of Securely after changes constitutes acceptance;
+     (c) You should review Terms periodically;
+     (d) If you do not agree to modified Terms, you must stop using Securely.
+
+═══════════════════════════════════════════════════════════════════════════════
+10. TERMINATION
+═══════════════════════════════════════════════════════════════════════════════
+
+10.1. TERMINATION BY YOU:
+      You may terminate your use of Securely at any time by:
+      (a) Uninstalling the application;
+      (b) Stopping all monitoring functions;
+      (c) Deleting all local data (audit logs, settings);
+      (d) No notice to us is required.
+
+10.2. TERMINATION BY US:
+      We may terminate or suspend your access to Securely at any time, with or
+      without cause or notice, if:
+      (a) You violate these Terms;
+      (b) You use Securely illegally or inappropriately;
+      (c) We discontinue the Service;
+      (d) We determine termination is necessary for any reason.
+
+10.3. EFFECTS OF TERMINATION:
+      Upon termination:
+      (a) Your license to use Securely ends immediately;
+      (b) You must stop all use of Securely;
+      (c) You should uninstall Securely and delete all local data;
+      (d) Sections of these Terms that by their nature should survive will
+          survive termination (including liability limitations, disclaimers,
+          and intellectual property provisions).
+
+10.4. DATA AFTER TERMINATION:
+      (a) Local data (audit logs) remains on your device until you delete it;
+      (b) We do not have access to your local data;
+      (c) Data sent to third-party services (Google) is subject to their
+          retention policies;
+      (d) We are not responsible for data retention by third parties.
+
+═══════════════════════════════════════════════════════════════════════════════
+11. INDEMNIFICATION
+═══════════════════════════════════════════════════════════════════════════════
+
+11.1. You agree to indemnify, defend, and hold harmless Securely, its
+      developers, contributors, affiliates, and their respective officers,
+      directors, employees, and agents from and against any and all claims,
+      damages, obligations, losses, liabilities, costs, and expenses (including
+      reasonable attorney's fees) arising from:
+      (a) Your use of Securely;
+      (b) Your violation of these Terms;
+      (c) Your violation of any law or regulation;
+      (d) Your violation of any third-party rights;
+      (e) Your failure to obtain proper consent for monitoring;
+      (f) Any data breach or security incident related to your use of Securely;
+      (g) Any damages or losses resulting from your use of Securely.
+
+11.2. This indemnification obligation will survive termination of these Terms
+      and your use of Securely.
+
+═══════════════════════════════════════════════════════════════════════════════
+12. DISPUTE RESOLUTION
+═══════════════════════════════════════════════════════════════════════════════
+
+12.1. GOVERNING LAW:
+      These Terms shall be governed by and construed in accordance with the
+      laws of the jurisdiction in which Securely is developed, without regard to
+      its conflict of law provisions.
+
+12.2. DISPUTE RESOLUTION:
+      Any disputes arising from or related to these Terms or Securely shall be
+      resolved through:
+      (a) Good faith negotiation between the parties;
+      (b) If negotiation fails, through binding arbitration if both parties
+          agree;
+      (c) Otherwise, through the courts of competent jurisdiction.
+
+12.3. CLASS ACTION WAIVER:
+      You agree that any disputes will be resolved individually, not as part of
+      a class action or representative proceeding.
+
+12.4. LIMITATION PERIOD:
+      Any claims must be brought within one (1) year of the event giving rise to
+      the claim.
+
+═══════════════════════════════════════════════════════════════════════════════
+13. GENERAL PROVISIONS
+═══════════════════════════════════════════════════════════════════════════════
+
+13.1. ENTIRE AGREEMENT:
+      These Terms constitute the entire agreement between you and Securely
+      regarding the Service and supersede all prior agreements and
+      understandings.
+
+13.2. SEVERABILITY:
+      If any provision of these Terms is found to be unenforceable or invalid,
+      that provision shall be limited or eliminated to the minimum extent
+      necessary, and the remaining provisions shall remain in full force and
+      effect.
+
+13.3. WAIVER:
+      The failure of Securely to enforce any right or provision of these Terms
+      shall not constitute a waiver of such right or provision.
+
+13.4. ASSIGNMENT:
+      You may not assign or transfer these Terms or your rights hereunder
+      without our prior written consent. We may assign these Terms without
+      restriction.
+
+13.5. FORCE MAJEURE:
+      We shall not be liable for any failure or delay in performance due to
+      circumstances beyond our reasonable control, including but not limited to:
+      natural disasters, war, terrorism, labor disputes, third-party service
+      failures, or government actions.
+
+13.6. EXPORT COMPLIANCE:
+      You agree to comply with all applicable export control laws and
+      regulations. You may not export or re-export Securely in violation of any
+      applicable laws.
+
+13.7. NOTICES:
+      Any notices required under these Terms may be provided through the
+      application interface or by posting on our website (if applicable).
+
+═══════════════════════════════════════════════════════════════════════════════
+14. SPECIAL WARNINGS AND ACKNOWLEDGMENTS
+═══════════════════════════════════════════════════════════════════════════════
+
+14.1. YOU ACKNOWLEDGE AND AGREE THAT:
+      (a) SECURELY IS A SECURITY TOOL PROVIDED "AS IS" WITHOUT WARRANTIES;
+      (b) SECURELY DOES NOT GUARANTEE PROTECTION AGAINST ALL THREATS;
+      (c) THREAT DETECTION MAY PRODUCE FALSE POSITIVES OR FALSE NEGATIVES;
+      (d) YOU USE SECURELY AT YOUR OWN RISK;
+      (e) WE ARE NOT LIABLE FOR ANY DAMAGES ARISING FROM USE OF SECURELY;
+      (f) SCREEN MONITORING MAY CAPTURE SENSITIVE INFORMATION;
+      (g) DATA IS TRANSMITTED TO THIRD-PARTY AI SERVICES (GOOGLE);
+      (h) YOU ARE RESPONSIBLE FOR OBTAINING PROPER CONSENT FOR MONITORING;
+      (i) YOU ARE RESPONSIBLE FOR SECURING YOUR DEVICE AND DATA;
+      (j) SECURELY SHOULD BE USED AS A SUPPLEMENTARY SECURITY MEASURE, NOT AS
+          YOUR SOLE SECURITY SOLUTION.
+
+14.2. NO LIABILITY FOR:
+      (a) UNDETECTED SECURITY THREATS;
+      (b) FALSE POSITIVE ALERTS;
+      (c) FALSE NEGATIVE DETECTIONS;
+      (d) DATA BREACHES OR SECURITY INCIDENTS;
+      (e) FINANCIAL LOSSES;
+      (f) THIRD-PARTY SERVICE FAILURES;
+      (g) SCREEN MONITORING PRIVACY IMPLICATIONS;
+      (h) AI ANALYSIS INACCURACIES;
+      (i) OCR ERRORS OR LIMITATIONS;
+      (j) ANY OTHER DAMAGES ARISING FROM USE OF SECURELY.
+
+14.3. BY USING SECURELY, YOU EXPRESSLY ACKNOWLEDGE THAT YOU HAVE READ AND
+      UNDERSTAND ALL WARNINGS, DISCLAIMERS, AND LIMITATIONS OF LIABILITY SET
+      FORTH IN THESE TERMS, AND YOU AGREE TO ASSUME ALL RISKS ASSOCIATED WITH
+      USING SECURELY.
+
+═══════════════════════════════════════════════════════════════════════════════
+15. CONTACT INFORMATION
+═══════════════════════════════════════════════════════════════════════════════
+
+15.1. For questions, concerns, or notices regarding these Terms or Securely,
+      you may contact us through:
+      - Application interface (if available)
+      - Official website: https://delexoo.github.io/Securely/
+      - GitHub repository (if applicable)
+
+15.2. We reserve the right to not respond to all inquiries, but will make
+      reasonable efforts to address legitimate concerns.
+
+═══════════════════════════════════════════════════════════════════════════════
+16. ACKNOWLEDGMENT OF TERMS
+═══════════════════════════════════════════════════════════════════════════════
+
+BY INSTALLING, ACCESSING, OR USING SECURELY, YOU ACKNOWLEDGE THAT:
+
+1. YOU HAVE READ THESE TERMS OF SERVICE IN THEIR ENTIRETY;
+2. YOU UNDERSTAND ALL DISCLAIMERS, WARNINGS, AND LIMITATIONS OF LIABILITY;
+3. YOU AGREE TO BE BOUND BY ALL PROVISIONS OF THESE TERMS;
+4. YOU UNDERSTAND THAT SECURELY MONITORS YOUR SCREEN AND SENDS DATA TO
+   THIRD-PARTY AI SERVICES;
+5. YOU UNDERSTAND THAT WE ARE NOT LIABLE FOR ANY DAMAGES ARISING FROM USE OF
+   SECURELY;
+6. YOU USE SECURELY AT YOUR OWN RISK;
+7. IF YOU DO NOT AGREE TO THESE TERMS, YOU MUST NOT USE SECURELY.
+
+═══════════════════════════════════════════════════════════════════════════════
+
+                    END OF TERMS OF SERVICE
+
+Version: 2.1
+Last Updated: January 2025
+Effective Date: January 2025
+
+═══════════════════════════════════════════════════════════════════════════════
+

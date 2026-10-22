@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pricing — Securely</title>
+  <meta name="description" content="Securely pricing: free Starter and Pro at $20/month for unlimited AI checks on Windows.">
+  <link rel="canonical" href="https://trysecurely.com/pricing.html">
+  <meta property="og:title" content="Pricing — Securely">
+  <meta property="og:description" content="Starter free. Pro $20/month for unlimited AI-assisted checks.">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Pricing — Securely">
+  <meta name="theme-color" content="#1c1b19">
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="stylesheet" href="/site.css">
+</head>
+<body>
+  <a class="skip" href="#content">Skip to content</a>
+  <header id="site-header">
+    <a class="home-btn" href="/" aria-label="Home"><img src="/docs/SecurelyLogo-256.png" width="46" height="46" alt="Securely"></a>
+    <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-menu"><span class="menu-label">Menu</span></button>
+    <nav class="menu-screen" id="site-menu" aria-label="Pages">
+      <a href="/">Home</a>
+      <a href="/pricing.html">Pricing</a>
+      
+      <a href="/releases.html">Releases</a>
+      <a href="/billing.html">Billing</a>
+      <a href="/contact.html">Contact</a>
+    </nav>
+  </header>
+  <main id="content" class="wrap-wide" style="padding-top:6.5rem">
+    <p class="eyebrow">Pricing</p>
+    <h1>Simple pricing</h1>
+    <p class="lede">Amounts below are shown before you pay. Pro renews monthly until you cancel. See <a href="/billing.html">Billing</a>.</p>
+    <div class="price-grid">
+      <article class="price-card">
+        <h2>Starter</h2>
+        <p class="subhead">Try Securely on one Windows PC.</p>
+        <p class="price">Free</p>
+        <a class="btn" href="/#download">Download for Windows</a>
+        <ul>
+          <li>Quick Scan and timed scans</li>
+          <li>Local audit log</li>
+          <li>Limited AI checks (fair use)</li>
+        </ul>
+      </article>
+      <article class="price-card featured">
+        <h2>Pro</h2>
+        <p class="subhead">For daily monitoring.</p>
+        <p class="price">$20 <small>/ month, renews until canceled</small></p>
+        <form id="checkout-form" class="form" action="/api/checkout" method="post">
+          <input type="hidden" name="plan" value="pro">
+          <label for="email">Email for receipt
+            <input id="email" name="email" type="email" autocomplete="email" required maxlength="200" placeholder="you@example.com">
+          </label>
+          <p class="error" id="checkout-error" hidden></p>
+          <p class="ok" id="checkout-ok" hidden></p>
+          <button class="btn" id="checkout-btn" type="submit">Subscribe to Pro — $20/month</button>
+        </form>
+        <ul>
+          <li>Everything in Starter</li>
+          <li>24/7 continuous mode</li>
+          <li>Higher AI analyze quota</li>
+          <li>Cancel anytime via Billing</li>
+        </ul>
+      </article>
+    </div>
+  </main>
+  <footer class="site-footer">
+    <a href="/privacy.html">Privacy</a>
+    <a href="/terms.html">Terms</a>
+    <a href="/billing.html">Refunds &amp; cancellation</a>
+    <a href="/contact.html">Contact</a>
+  </footer>
+  <script src="/site.js"></script>
+  <script>
+    const form = document.querySelector("#checkout-form");
+    const btn = document.querySelector("#checkout-btn");
+    const err = document.querySelector("#checkout-error");
+    const ok = document.querySelector("#checkout-ok");
+    form?.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      err.hidden = true; ok.hidden = true;
+      btn.disabled = true; btn.textContent = "Starting checkout…";
+      try {
+        const email = document.querySelector("#email").value.trim();
+        const res = await fetch("/api/checkout", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ plan: "pro", email }),
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok || !data.url) throw new Error(data.error || "Checkout is not available yet.");
+        ok.textContent = "Redirecting to Stripe…";
+        ok.hidden = false;
+        location.href = data.url;
+      } catch (ex) {
+        err.textContent = ex.message || "Could not start checkout.";
+        err.hidden = false;
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "Subscribe to Pro — $20/month";
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,446 @@
+MAKING SECURELY – SCRIPT
+========================
+
+Tone: Casual, straightforward, slightly cinematic. Not fast-paced.
+
+------------------------------------------------------------------------------
+[0:00–2:10] OPENING – PERSONAL HOOK, BUILD CURIOSITY
+------------------------------------------------------------------------------
+
+[Wide shot – Dark room, only streetlight + monitor glow]
+[Ambient sound – distant cars, soft keyboard clicks]
+Voiceover (calm, reflective):
+“Eighteen years of my life went by so quick.
+And when I look back… I already see myself in a completely different world.
+Unique campus… new faces… new environment…"
+
+[Cut to – Alarm clock: 3:00 AM]
+[Close up – Hand slaps alarm, feet hit the floor]
+Voiceover:
+“Every day… 3 AM.
+I’d roll off my bed and do push-ups - just to wake my body up.
+Then I’d take a good shower… make a good breakfast…
+because I wanted my mornings to feel solid.
+Like no matter what happened later… at least I started strong.”
+
+[Cut to – Coffee brewing / eggs cooking / backpack getting packed]
+[Close up – Keys in hand]
+Voiceover:
+“By 5 AM I was on the road.”
+
+[Driving shot – highway, sunrise starting]
+Voiceover:
+“An hour later… 6 AM… I’m in the parking lot.”
+
+[Inside car – notebook open, highlighter, quick review]
+[Close up – Notes flipping]
+Voiceover:
+“I’d study in my car for a little bit.
+Just a quick review… because at 7:30 my first class started.”
+
+[Montage – Campus walk, shoes on pavement, classroom door opening]
+Voiceover:
+“And it was five classes back-to-back.
+So I’d finish around 1 PM… and I still wasn’t done.”
+
+[Cut to – After school: laptop open, club flyer, competition checklist]
+Voiceover:
+“Homework. Clubs. Competitions.
+Literally after school.”
+
+[Close up – You exhale, stare at the screen]
+You (in frame, honest):
+“That was my first semester of college.
+And I’m telling you that because… that’s the environment this project was born in.”
+
+[Cut to – CS50 folder on screen, scrolling past weeks]
+You:
+“On top of all that, I was enrolled in CS50 — Harvard’s course.
+And I’m not even exaggerating when I say… I was like 90% done with the problem sets…
+and I still didn’t know what my final project was.”
+
+[Pause – let it sit]
+
+[Close up – You lean in a little]
+You:
+“Then my school announced this competition called the AI Contest.
+And that kinda sparked interest.”
+
+[Cut to – Screen recording: contest prompt / notes page]
+You:
+“I saw the prompt and it was basically like…
+you have to make a program or a system that has AI integrated into it.
+And the point is to simulate coming up with an idea, making it exist,
+and actually selling it to companies.”
+
+[Close up – You, half laugh]
+You:
+“So now I’m stressed, right?
+CS50 final project is still sitting there… and now this contest is sitting there too…
+and I’m like, okay — I need one idea that can do both.”
+
+[Close up – Pen tapping / typing in notes]
+You:
+“And that’s where the ‘one big project’ idea came from.”
+
+[Close up – Terminal / editor, fast little montage but not too fast]
+Voiceover:
+“That decision started a chain reaction: late nights, a lot of learning curves,
+and way more time than I’m comfortable admitting.”
+
+[Close up – You, half-smile]
+You:
+“I’m not gonna name it yet.
+But if you’ve ever clicked something questionable on autopilot and immediately regretted it…
+this whole project is basically my response to that feeling.”
+
+[Cut to black – 1 second]
+
+------------------------------------------------------------------------------
+[2:10–3:05] REVEAL – SECURELY
+------------------------------------------------------------------------------
+
+[Cut to – App open on screen, clean shot]
+You:
+“Alright. The program is called Securely.”
+
+[Screen recording – Slow pan over the Securely UI, not rushed]
+Voiceover:
+“Securely is an AI–powered security assistant that quietly watches your screen in the background.”
+
+[Close up – You in frame, medium shot]
+You:
+“Think of it like an overprotective linter… but for real life.
+Phishing emails, sketchy pop–ups, weird websites — the stuff you click when you’re tired and your brain is running on low power mode.”
+
+[Screen recording – show the flow visually: screenshot → OCR → AI → alert]
+Voiceover:
+“It takes screenshots, uses OCR to read what’s there, and sends that text to an AI model to check for security threats.”
+
+[Close up – Code on screen, quick highlight]
+Voiceover:
+“In the CS50 write-up I literally had it listed like this: screenshots every second, OCR with `pytesseract`, screen capture with `mss`,
+and then the AI analysis with Gemini — all wrapped in a desktop app.”
+
+[Close up – You]
+You:
+“It’s meant to be that extra pair of eyes that quietly asks,
+‘Hey… are you sure you want to click that?’”
+
+
+------------------------------------------------------------------------------
+[3:05–4:45] HOW IT STARTED – CS50 & THE AI CONTEST
+------------------------------------------------------------------------------
+
+[Walking into frame – You walk into your room / workspace, drop your backpack on a chair]
+You:
+“So, how did this all start?”
+
+[Sit down at desk, lean back a little]
+You:
+“I was enrolled in CS50… and I was, like, 90% done with the course. I had gone through all the problem sets, all the lectures… 
+but I still had no idea what my final project was going to be.”
+
+[Cut to – B–roll of CS50 materials: course page on your screen, maybe the CS50 folder in your files]
+Voiceover:
+“I had this deadline staring at me. Final project due, and I had nothing I was truly excited about. 
+At the same time, my school announced something called the AI Contest.”
+
+[Close up – You talking directly to camera]
+You:
+“The contest sounded… intense. You had to build a program or system that integrated AI. 
+But it wasn’t just ‘make something cool.’ The whole idea was to pretend this was a real product — 
+something you’d pitch to companies, something you’d actually sell.”
+
+[Cut to – Over–the–shoulder shot of you scrolling through competition details on screen]
+Voiceover:
+“That’s when something clicked. I thought… what if I could build *one* project that checked both boxes? 
+My CS50 final… and a serious submission for this AI Contest.”
+
+
+------------------------------------------------------------------------------
+[3:45–5:15] FINDING A PARTNER – THE BUSINESS SIDE
+------------------------------------------------------------------------------
+
+[Close up – You, relaxed, maybe slightly smiling]
+You:
+“The first thing I realized: I’m not a business major. I can code… but sales, marketing, business strategy? That’s a whole different world.”
+
+[Cut to – Empty chair beside you]
+You:
+“So I knew I needed a partner. 
+Someone who could actually think about this like a product, not just a cool script running in the background.”
+
+[Cut to – B–roll: maybe a notebook with ‘Securely’ written, arrows, and ‘Market’, ‘Branding’, ‘Pitch’ scribbled]
+Voiceover:
+“That’s when I met this really cool girl. She’s a business major, and honestly… she’s amazing.”
+
+[Close up – You looking genuinely appreciative]
+You:
+“She helped me so much throughout this project. She didn’t just say, ‘Oh yeah, that’s cool.’ 
+She gave real feedback. Honest opinions. We’d go back and forth on features, what actually matters to users, 
+how to explain Securely to people who don’t speak ‘tech.’ 
+That’s when Securely stopped being just a coding assignment and started feeling like… a real product.”
+
+
+------------------------------------------------------------------------------
+[5:15–7:00] OFFICIALLY STARTING SECURELY – CS50 TIME CRUNCH
+------------------------------------------------------------------------------
+
+[Draw on the whiteboard – Simple architecture diagram: “Screen” → “Screenshot” → “OCR” → “AI” → “Alert”]
+You (while drawing):
+“Okay, so this is kind of how Securely works behind the scenes. 
+You’ve got your screen, we grab an image, convert it to text with OCR, send that text to an AI model, 
+and then we decide: Is this safe… or is this sketchy?”
+
+[Cut to – Close up of the whiteboard finished drawing]
+Voiceover:
+“Once I had the idea, the clock started ticking. 
+CS50’s final project wasn’t going to wait for me to feel ‘ready’.”
+
+[Sit back at desk, slightly stressed but smiling]
+You:
+“For CS50, I was on a serious time crunch. I had about one month left to create something *big*. 
+Something I’d be proud to submit to Harvard’s CS50, and also something good enough for the AI Contest.”
+
+[Close up – You rubbing your eyes, a coffee or energy drink on the desk]
+You:
+“Every day… more pressure. I was still a full–time student. 
+I had five classes, I was involved in clubs, competitions, this Harvard course, and on top of all that, 
+I was trying to build side projects to make my resume actually mean something.”
+
+[Slow montage – Shots of you walking through campus, typing on a laptop in different places, late–night scenes]
+Voiceover:
+“So yeah… life was kind of insane. But that’s also what made finishing Securely feel so important.”
+
+
+------------------------------------------------------------------------------
+[7:00–9:00] THE GRIND – 200+ HOURS, ALL–NIGHTERS
+------------------------------------------------------------------------------
+
+[Close up – Monitor showing lines of Securely code (no need to read it, just aesthetic)]
+Voiceover:
+“I lost count at some point, but I know I put in over 200 hours into this project. 
+Debugging. Refactoring. Rewriting logic that I thought was good… until it broke everything.”
+
+[Cut to – Terminal showing tests/logs scrolling]
+You (quick, understated):
+“You know it’s serious when you start naming bugs like they’re roommates.”
+
+[Over–the–shoulder shot – You scrolling through the CS50 project folder]
+Voiceover:
+“Most of those hours weren’t glamorous. It was just me, in front of a screen, trying to fix one tiny bug… 
+that no one will ever see… but that makes the whole thing actually work.”
+
+[Close up – Empty cans / cups: Monster, Starbucks, etc.]
+You (light laugh):
+“I’m not proud of how much caffeine went into this project… 
+but let’s just say that Monster and Starbucks were definitely co–founders of Securely.”
+
+[Slow shot – You staring at the screen, visibly tired]
+Voiceover:
+“There were days where I questioned if it was even worth it. 
+Like, why am I doing this to myself? Why am I this stressed… over a project?”
+
+[Close up – You, thoughtful]
+You:
+“But every time I got something working — like the OCR pipeline, or the AI threat detection, or the UI finally looking clean — 
+it reminded me why I love building things. Because you watch your ideas turn into something real.”
+
+
+------------------------------------------------------------------------------
+[9:00–11:00] LEARNING CURVES – TECHNICAL CHALLENGES
+------------------------------------------------------------------------------
+
+[Draw on the whiteboard – New section: “Learning Curve” with bullet points: OCR, API, Threads, UX]
+You:
+“Securely forced me to level up in a lot of ways.”
+
+[Close up – You pointing to “OCR” on the board]
+You:
+“First: OCR. Getting the computer to actually *read* the screen isn’t as simple as just ‘take a screenshot.’ 
+I had to figure out how to capture efficiently, convert that to text, and then clean that text up so the AI actually understood it.”
+
+[Cut to – Screen recording of code: OCR function, AI request, etc. Scroll slowly.]
+Voiceover:
+“Then there was AI. Handling API calls, rate limits, timeouts, errors — 
+you don’t think about that when you first imagine the idea. But in reality, it’s a huge part of making the app feel reliable.”
+
+[Close up – You shrugging]
+You:
+“It was a lot of ‘it works on my machine’… and then my machine immediately proving me wrong.”
+
+[Close up – “Threads” on whiteboard]
+You:
+“Multi–threading was another big one. Securely needs to monitor your screen without freezing the whole app. 
+That meant learning how to run work in the background while keeping the interface smooth.”
+
+[Cut to – You at desk, interacting with the app calmly]
+Voiceover:
+“I also had to care about user experience. Not just, ‘Does it run?’ but ‘Would *I* actually want this running on my machine every day?’ 
+That changed a lot of tiny decisions — how notifications look, how aggressive the alerts are, how easy it is to pause monitoring.”
+
+
+------------------------------------------------------------------------------
+[11:00–13:00] PROS & CONS – BEING HONEST ABOUT SECURELY
+------------------------------------------------------------------------------
+
+[Medium shot – You seated, more relaxed now]
+You:
+“I want to be honest about Securely. It’s not perfect. It’s not some magical AI that can stop every single threat on the internet.”
+
+[Close up – App UI again, maybe showing a log with some detections]
+You:
+“Let me start with the pros.”
+
+[List on screen – Simple text slide: “Pros”]
+Voiceover:
+“**Pros:**  
+– It actually works. It can catch phishing–looking content, sketchy messages, and suspicious wording on your screen.  
+– It runs in the background and doesn’t need you to constantly babysit it.  
+– It’s practical. This isn’t just a school demo — it’s solving a real problem people face every day.”
+
+[List on screen – Simple text slide: “Cons”]
+Voiceover:
+“**Cons:**  
+– It can be a little too aggressive sometimes, flagging things that are technically safe but *look* suspicious.  
+– It’s not lightweight in the sense of ‘oh yeah, it’s just a tiny script.’ It uses OCR and AI, so it has a cost in performance and API usage.  
+– It’s still evolving. There are edge cases it doesn’t handle perfectly yet.”
+
+[Cut back to you]
+You:
+“But honestly… I’m okay with that. I’d rather it be a bit over–protective than miss something important.”
+
+
+------------------------------------------------------------------------------
+[13:00–15:30] THE DEADLINE NIGHTMARE – DECEMBER 31, 2025
+------------------------------------------------------------------------------
+
+[Dramatic lighting – Room a bit darker, light mostly from the monitor]
+You:
+“Now, I have to tell you about the craziest part of this entire story.”
+
+[Close up – Calendar on screen or phone showing December 31, 2025]
+Voiceover:
+“The deadline for my CS50 final project was December 31, 2025. New Year’s Eve.”
+
+[Close up – You half–laughing, half–traumatized]
+You:
+“Yeah. While everyone else was getting ready to celebrate, I was trying to submit my assignment.”
+
+[Screen recording – Simulated or real GitHub/CS50 submission page failing to connect]
+Voiceover:
+“I spent around three hours just trying to submit my work. 
+The connection to GitHub was awful. I’m pretty sure it was just way too many people hitting the servers at the same time.”
+
+[Close up – Your hand on mouse, frustrated]
+You:
+“Every time I tried to upload, something broke. Time was running out. The due time was getting closer and closer.”
+
+[Medium shot – You leaning back, exhausted]
+You:
+“At one point… I actually gave up. I closed the page. 
+Months of grinding, all–nighters, all the stress — and I was ready to just let it go.”
+
+[Close up – You, more emotional, sincere tone]
+You:
+“But I wasn’t alone.”
+
+[Cut to – Empty space next to you in frame, maybe a second chair]
+Voiceover:
+“The whole time, my friend Kayla was there with me.”
+
+[Close up – You looking into camera]
+You:
+“Kayla, if you’re watching this… thank you. 
+I was seriously about to not turn it in. After everything. 
+You made me reopen the page. You made me try again. 
+And because of you, I actually submitted my work.”
+
+[Pause. Hold the moment. No music or very soft faint music.]
+
+[Cut to – Subtle B–roll: your hand clicking ‘Submit’, little moment of relief]
+Voiceover:
+“That moment kind of summed up this whole journey: frustration, doubt, exhaustion… and then, somehow, pushing through anyway.”
+
+
+------------------------------------------------------------------------------
+[15:30–17:30] LIFE DURING SECURELY – BUSY STUDENT REALITY
+------------------------------------------------------------------------------
+
+[Walking shot – You walking down a hallway or outside, backpack on, casual pace]
+Voiceover:
+“All of this was happening while I was still just a student. 
+Five classes. Clubs. Competitions. The Harvard course. Side projects. Life stuff.”
+
+[Cut to – You sitting somewhere outside of your usual workspace, maybe campus or a quiet spot]
+You:
+“It wasn’t like I had the luxury of clearing my schedule and ‘just coding.’ 
+Securely was something I had to fight to make time for.”
+
+[Montage – Brief clips: studying, club meeting flyer, coding on laptop in different locations]
+Voiceover:
+“There were days where I’d be in class, thinking about a bug I hadn’t fixed yet. 
+Or I’d be at a club meeting, mentally redesigning a feature. 
+It kind of took over my brain… in a good way, mostly.”
+
+
+------------------------------------------------------------------------------
+[17:30–19:30] WHY SECURELY MATTERS TO ME
+------------------------------------------------------------------------------
+
+[Close up – You at your desk, lights a bit warmer, calmer mood]
+You:
+“So after all of that… why does Securely matter so much to me?”
+
+[Slow pan – Over the app UI, the code editor, the CS50 folder]
+Voiceover:
+“Because it’s personal for me in a way that I don’t think I ever really said out loud.
+When I was younger — like middle school — I got doxxed by a small group of high school upperclassmen.
+And back then, I didn’t even know what any of that meant. I didn’t know what phishing was, I didn’t know what social engineering was —
+I just knew my privacy was gone and it was scary.”
+
+[Close up – You, serious]
+You:
+“That whole thing made me ask this question that sounds simple but it’s not:
+‘How do I stay safe online?’
+And that question is basically the reason I’m even into cybersecurity at all.”
+
+[Slow pan – Securely audit log / notification example]
+Voiceover:
+“So when I built Securely, I wasn’t trying to make something that only tech people understand.
+I wanted something that could’ve helped the younger version of me —
+someone who’s online every day, but doesn’t always know what danger looks like yet.”
+
+[Close up – You, a bit more vulnerable]
+You:
+“It’s also a reminder that I’m not doing this alone. 
+From my CS50 instructors, to my classmates, to the AI Contest, to my business partner, to friends like Kayla… 
+there were a lot of people, directly and indirectly, who helped make Securely possible.”
+
+
+------------------------------------------------------------------------------
+[19:30–21:00] CLOSING – WHAT’S NEXT
+------------------------------------------------------------------------------
+
+[Medium shot – You facing camera, Securely running on screen behind you]
+You:
+“Securely isn’t finished. There are features I still want to add, optimizations I want to make, and a lot of ways it can grow.”
+
+[Close up – App window with Securely quietly monitoring in the background]
+Voiceover:
+“Maybe it becomes a polished product one day. Maybe it stays as the project that changed the way I think about building software. 
+Either way… it already did something important.”
+
+[Close up – You leaning forward slightly]
+You:
+“If you’ve watched this far, seriously… thank you. 
+I hope seeing the *making* of Securely — not just the polished version — gives you a more honest picture of what it’s like to build something big as a student.”
+
+[Hold a few seconds of silence, just room tone and a soft smile]
+
+You:
+“This was the making of Securely.”
+
+[Fade out – Screen slowly fades to black, faint ambient music if you want]
+

@@ -1,0 +1,45 @@
+# Secrets and local env
+.env
+.env.*
+!.env.example
+**/.env
+!**/.env.example
+
+# Build / tooling
+**/bin/
+**/obj/
+**/node_modules/
+**/dist/
+**/publish/
+**/.venv/
+**/__pycache__/
+*.pyc
+.DS_Store
+Thumbs.db
+
+# Local runtime artifacts
+**/securely_log.txt
+**/securely_logs/
+**/training_screenshots/
+**/instant_analysis/
+*.user
+*.suo
+
+# Heavy legacy / reference trees (not part of the Securely ship)
+Securely-Website/lockinnigga/
+Securely-Website/Cluely Website/
+Securely-Website/Freeuniversitytools/
+sSecurely/build/
+sSecurely/dist/
+**/CS50/
+Securely C#/lockinnigga/
+Securely C#/CS50/
+
+# Vercel local link
+**/.vercel/
+
+# Binaries and local tooling dumps
+*.exe
+!Securely-Website/download/.gitkeep
+Securely Project/supabase/.temp/
+**/stripe_*/

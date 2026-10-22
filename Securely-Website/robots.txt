@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /billing-success.html
+Disallow: /error.html
+Disallow: /api/
+
+Sitemap: https://trysecurely.com/sitemap.xml

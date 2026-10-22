@@ -1,0 +1,14 @@
+version: 2
+updates:
+  - package-ecosystem: "nuget"
+    directory: "/securely-app/host"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "nuget"
+    directory: "/securely-app/core"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "pip"
+    directory: "/Securely Project"
+    schedule:
+      interval: "weekly"

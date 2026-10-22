@@ -1,0 +1,139 @@
+SECURELY VIDEO SCRIPT - QUICK REFERENCE CHECKLIST
+==================================================
+
+TIMING BREAKDOWN
+----------------
+Opening: 0:00-0:15 (15s)
+Problem & Solution: 0:15-0:45 (30s)
+Key Features: 0:45-1:15 (30s)
+Technical: 1:15-1:45 (30s)
+Impact: 1:45-2:15 (30s)
+Conclusion: 2:15-2:30 (15s)
+Total: ~2:30 minutes
+
+
+OPENING SLIDE (MUST INCLUDE)
+-----------------------------
+- Project Title: "Securely"
+- Your Name
+- GitHub Username
+- edX Username
+- City, Country
+- Date of Recording
+
+
+SCENES TO RECORD
+----------------
+
+Scene 1: Application Overview
+- Show Securely window (Dashboard tab)
+- Click "Turn On" button
+- Explain what happens (screenshots, OCR, AI analysis)
+
+Scene 2: Threat Detection Demo
+- Show a threat being detected (notification appears)
+- Navigate to Audit Log tab
+- Show threat cards/logs
+
+Scene 3: Features Walkthrough
+- Dashboard: Show Quick Scan button
+- Settings: Toggle options (notifications, sounds)
+- Explain auto-pause feature
+
+Scene 4: Technical (Optional)
+- Show code snippets OR
+- Explain architecture verbally
+
+Scene 5: Examples
+- Show examples of detected threats
+- Explain types of threats detected
+
+
+KEY TALKING POINTS
+==================
+
+Core Functionality (MUST MENTION):
+1. Takes screenshots every second
+2. Uses OCR (pytesseract) to extract text
+3. Uses AI (Gemini) to analyze for threats
+4. Sends desktop notifications
+5. Logs all threats in Audit Log
+
+Technical Stack (MENTION):
+- Python
+- pytesseract (OCR)
+- mss (screen capture)
+- Google Gemini AI
+- CustomTkinter (GUI)
+- Multi-threading
+
+Key Features (MENTION):
+- Real-time monitoring
+- AI-powered analysis
+- Desktop notifications
+- Auto-pause on login pages
+- Customizable alerts
+- Threat logging
+
+
+TIPS FOR RECORDING
+==================
+
+Visual Quality:
+- Record at 1080p minimum
+- Ensure application window is clearly visible
+- Use good lighting if showing yourself
+- Keep screen clean (close unnecessary windows)
+
+Audio Quality:
+- Use a good microphone
+- Record in quiet environment
+- Speak clearly and at moderate pace
+- Practice pronunciation of technical terms
+
+Content Quality:
+- Show, don't just tell (demonstrate features)
+- Keep it concise (under 3 minutes)
+- Be enthusiastic but professional
+- Focus on what makes your project unique
+
+Editing:
+- Remove long pauses
+- Smooth transitions between scenes
+- Add captions if helpful
+- Ensure audio is clear throughout
+
+
+FINAL CHECKLIST
+===============
+
+Before Upload:
+- Video is under 3 minutes
+- Opening slide has all required info
+- Core functionality is demonstrated
+- Audio is clear
+- Video quality is good
+- No sensitive information visible
+- Application works in demo
+
+Upload:
+- Upload to YouTube
+- Set as "Unlisted" (not private)
+- Copy the URL
+- Test the URL works
+- Add URL to README.md
+
+
+REMEMBER
+========
+
+The core function of Securely:
+1. Continuously monitors your screen
+2. Extracts text using OCR
+3. Analyzes content with AI for security threats
+4. Alerts you immediately when threats are detected
+5. Logs everything for review
+
+Make sure this is clear in your video!
+
+

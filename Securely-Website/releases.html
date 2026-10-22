@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Release notes · Securely</title>
+  <meta name="description" content="What changed in each version of Securely.">
+  <link rel="canonical" href="https://trysecurely.com/releases.html">
+  <meta property="og:title" content="Release notes · Securely">
+  <meta property="og:description" content="What changed in each version of Securely.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://trysecurely.com/releases.html">
+  <meta name="theme-color" content="#1c1b19">
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="icon" href="/favicon.png" type="image/png">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="stylesheet" href="/site.css">
+  <style>
+    .release-log { display: flex; flex-direction: column; gap: 1.5rem; margin: 2rem 0 4rem; }
+    .release-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem 1rem; margin-bottom: 0.6rem; }
+    .release-tag { font-weight: 700; text-decoration: none; }
+    .release-latest {
+      display: inline-block;
+      padding: 0.15rem 0.55rem;
+      border-radius: 999px;
+      background: color-mix(in srgb, var(--accent, #3b82f6) 18%, transparent);
+      color: var(--ink);
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+    .release-card { padding: 1rem 1.15rem; border-radius: 16px; background: color-mix(in srgb, var(--ink) 4%, transparent); }
+    .release-card h2 { margin: 0 0 0.75rem; font-size: 1.25rem; }
+    .release-card h3 { margin: 1rem 0 0.35rem; font-size: 0.95rem; }
+    .release-card h4 { margin: 0.65rem 0 0.25rem; font-size: 0.85rem; opacity: 0.8; }
+    .release-card ul { margin: 0; padding-left: 1.15rem; }
+    .release-card li { margin: 0.25rem 0; }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#content">Skip to content</a>
+  <header id="site-header">
+    <a class="home-btn" href="/" aria-label="Home"><img src="/docs/SecurelyLogo-256.png" width="46" height="46" alt="Securely"></a>
+    <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-menu"><span class="menu-label">Menu</span></button>
+    <nav class="menu-screen" id="site-menu" aria-label="Pages">
+      <a href="/#download">Download</a>
+      <a href="/#features">Features</a>
+      <a href="/pricing.html">Pricing</a>
+      <a href="/releases.html">Releases</a>
+      <a href="/#faq">FAQ</a>
+      <a href="/contact.html">Contact</a>
+      <a href="/privacy.html">Privacy</a>
+      <a href="/terms.html">Terms</a>
+    </nav>
+  </header>
+  <main id="content" class="wrap">
+    <h1>Release notes</h1>
+    <p class="lede">The same list as the <a href="https://github.com/Delexoo/Securely/releases">GitHub releases</a>.</p>
+    <div class="release-log">
+      <!-- brain:notes -->
+      <article class="release" id="v0.1.0">
+        <div class="release-body">
+          <header class="release-meta">
+            <a class="release-tag" href="https://github.com/Delexoo/Securely/releases/tag/v0.1.0">v0.1.0</a>
+            <span class="release-latest">Latest</span>
+            <time datetime="2026-10-22">22 Oct 2026</time>
+          </header>
+          <div class="release-card">
+            <h2>Hooxie-style shell with colored scan modes</h2>
+            <h3>Added</h3>
+            <h4>Widget</h4>
+            <ul>
+              <li>Compact island with SVG toolbar icons and a colored scan pill: red Quick, green Timed, blue 24/7 (right-click cycles mode).</li>
+              <li>Drag uses host cursor-follow so the pill can move the full working area without an invisible border.</li>
+            </ul>
+            <h4>Dashboard</h4>
+            <ul>
+              <li>Hooxie-style light sidebar dashboard for Monitoring, Settings, Audit log, and Credits.</li>
+              <li>Release notes appear in the dashboard About section from the same brain log as the website.</li>
+            </ul>
+            <h4>Site</h4>
+            <ul>
+              <li>Release notes pipeline from brain/log.json into the website and GitHub Releases on commit/deploy.</li>
+            </ul>
+            <h3>Bug fixes</h3>
+            <h4>Widget</h4>
+            <ul>
+              <li>Scan and window chrome no longer rely on emoji glyphs.</li>
+            </ul>
+          </div>
+        </div>
+      </article>
+      <!-- /brain:notes -->
+    </div>
+  </main>
+  <script src="/site.js"></script>
+</body>
+</html>

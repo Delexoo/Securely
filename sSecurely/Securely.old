@@ -1,0 +1,326 @@
+import sys 
+import time
+import threading
+import warnings
+import pytesseract
+from PIL import Image
+from mss import mss
+import requests
+try:
+    import winsound
+except Exception:
+    winsound = None
+import customtkinter as ctk
+from win10toast import ToastNotifier
+
+# --- ignore warnings ---
+warnings.filterwarnings("ignore", category=UserWarning, module="win10toast")
+
+# --- notifier ---
+toaster = ToastNotifier()
+
+# --- settings ---
+SCREENSHOT_INTERVAL = 8  # seconds
+KEYWORDS = ["virus", "malware", "worm", "spyware", "spy", "http", "phish", "keylogger"]
+
+# --- keyword & domain analysis ---
+def analyze_text(text):
+    found = []
+    for word in KEYWORDS:
+        if word.lower() in text.lower():
+            found.append(word)
+    return found
+
+def log_event(msg):
+    with open("securely_log.txt", "a", encoding="utf-8") as f:
+        f.write(f"[{time.strftime('%H:%M:%S')}] {msg}\n")
+
+# --- AI monitor thread ---
+class ScreenMonitor(threading.Thread):
+    def __init__(self, interval=SCREENSHOT_INTERVAL):
+        super().__init__(daemon=True)
+        self.interval = interval
+        self.running = threading.Event()
+        self.recent_alerts = []
+        # notification controls (can be changed from UI)
+        self.notifications_enabled = True
+        self.sound_enabled = False
+
+    def start_monitor(self):
+        self.running.set()
+        if not self.is_alive():
+            self.start()
+
+    def stop_monitor(self):
+        self.running.clear()
+
+    def run(self):
+        with mss() as sct:
+            while True:
+                if not self.running.is_set():
+                    time.sleep(0.2)
+                    continue
+                img = sct.grab(sct.monitors[1])
+                im = Image.frombytes("RGB", img.size, img.rgb)
+                text = pytesseract.image_to_string(im)
+                findings = analyze_text(text)
+                if findings:
+                    for f in findings:
+                        msg = f"Suspicious keyword detected: {f}"
+                        # only show desktop notifications when enabled
+                        if getattr(self, "notifications_enabled", True):
+                            toaster.show_toast("Securely — Alert", msg, duration=6, threaded=True)
+                        # play a short beep when sound alerts enabled
+                        if getattr(self, "sound_enabled", False) and winsound is not None:
+                            try:
+                                winsound.Beep(800, 220)
+                            except Exception:
+                                pass
+                        log_event(msg)
+                        self.recent_alerts.append(msg)
+                        if len(self.recent_alerts) > 5:
+                            self.recent_alerts.pop(0)
+                time.sleep(self.interval)
+
+# --- GUI ---
+class MainWindow(ctk.CTk):
+    def __init__(self):
+        super().__init__()
+        
+        # Configure CustomTkinter appearance
+        ctk.set_appearance_mode("dark")
+        ctk.set_default_color_theme("blue")
+        
+        # Window setup
+        self.title("Securely")
+        self.geometry("200x160")
+        self.resizable(False, False)
+        self.attributes("-topmost", True)
+        self.overrideredirect(True)  # Remove default window controls
+        self.configure(fg_color="#0d1117")  # GitHub dark theme
+        
+        # Handle window closing
+        self.protocol("WM_DELETE_WINDOW", self.on_closing)
+        
+        # Create main frame with scrollable content
+        self.main_frame = ctk.CTkFrame(self, fg_color="#0d1117", corner_radius=0)
+        self.main_frame.pack(fill="both", expand=True, padx=2, pady=2)
+        
+        # Custom title bar with exit button
+        self.title_bar = ctk.CTkFrame(self.main_frame, fg_color="#161b22", height=20)
+        self.title_bar.pack(fill="x", padx=0, pady=(0, 2))
+        self.title_bar.pack_propagate(False)
+        
+        # Title label
+        self.title_label = ctk.CTkLabel(self.title_bar, text="Securely", 
+                                       font=ctk.CTkFont(size=10, weight="bold"),
+                                       text_color="#f0f6fc")
+        self.title_label.pack(side="left", padx=6, pady=2)
+        
+        # Custom exit button
+        self.exit_btn = ctk.CTkButton(self.title_bar, text="✕", width=20, height=16,
+                                     font=ctk.CTkFont(size=12, weight="bold"),
+                                     fg_color="transparent",
+                                     hover_color="#d73a49",
+                                     text_color="#8b949e",
+                                     command=self.on_closing)
+        self.exit_btn.pack(side="right", padx=2, pady=2)
+        
+        # Bind title bar for dragging
+        self.title_bar.bind("<Button-1>", self.start_drag)
+        self.title_bar.bind("<B1-Motion>", self.on_drag)
+        self.title_label.bind("<Button-1>", self.start_drag)
+        self.title_label.bind("<B1-Motion>", self.on_drag)
+        
+        # Create tab view for compact navigation
+        self.tab_view = ctk.CTkTabview(self.main_frame, height=150, 
+                                       fg_color="#161b22", 
+                                       segmented_button_fg_color="#21262d",
+                                       segmented_button_selected_color="#30363d",
+                                       text_color="#f0f6fc")
+        self.tab_view.pack(fill="both", expand=True)
+        
+        # Add tabs with compact emoji icons
+        self.tab_view.add("📊")  # Dashboard
+        self.tab_view.add("⚙️")  # Settings  
+        self.tab_view.add("ℹ️")  # Credits
+        
+        self.create_dashboard_tab()
+        self.create_settings_tab()
+        self.create_credits_tab()
+        
+        # Monitor setup
+        self.monitor = ScreenMonitor()
+        self.monitor.notifications_enabled = True
+        self.monitor.sound_enabled = False
+        self.monitor.start_monitor()
+        
+        # Update timer for alerts
+        self.update_alerts_display()
+        
+        # Position window at right center of screen
+        self.update_idletasks()
+        screen_width = self.winfo_screenwidth()
+        screen_height = self.winfo_screenheight()
+        x = screen_width - 220
+        y = (screen_height - 180) // 2
+        self.geometry(f"200x160+{x}+{y}")
+        
+    def create_dashboard_tab(self):
+        dashboard = self.tab_view.tab("📊")
+        
+        # Program toggle switch
+        self.program_var = ctk.BooleanVar(value=True)
+        self.program_switch = ctk.CTkSwitch(dashboard, text="Program Active", 
+                                          variable=self.program_var,
+                                          command=self.on_program_toggled,
+                                          font=ctk.CTkFont(size=9),
+                                          text_color="#f0f6fc",
+                                          fg_color="#424549",
+                                          progress_color="#1f6feb")
+        self.program_switch.pack(pady=(4, 2), padx=6, anchor="w")
+        
+        # Status label with darker background
+        self.status_label = ctk.CTkLabel(dashboard, text="● Active", 
+                                        fg_color="#21262d", corner_radius=6,
+                                        text_color="#58a6ff",
+                                        font=ctk.CTkFont(size=11, weight="bold"))
+        self.status_label.pack(pady=(2, 4), padx=6, fill="x")
+        
+        # Temporary disable button
+        self.temp_disable_btn = ctk.CTkButton(dashboard, text="Disable 2min", 
+                                            height=24,
+                                            font=ctk.CTkFont(size=9),
+                                            fg_color="#d73a49",
+                                            hover_color="#cb2431",
+                                            text_color="#ffffff",
+                                            command=self.on_temp_disable)
+        self.temp_disable_btn.pack(fill="x", pady=(0, 4), padx=6)
+        
+        # Alerts scrollable frame with darker styling
+        self.alerts_frame = ctk.CTkScrollableFrame(dashboard, height=50, 
+                                                  fg_color="#0d1117", 
+                                                  corner_radius=6,
+                                                  scrollbar_button_color="#30363d",
+                                                  scrollbar_button_hover_color="#424549")
+        self.alerts_frame.pack(fill="both", expand=True, padx=6, pady=(0, 4))
+        
+        self.alerts_text = ctk.CTkLabel(self.alerts_frame, text="No alerts", 
+                                       font=ctk.CTkFont(size=9), 
+                                       text_color="#8b949e",
+                                       justify="left", anchor="nw")
+        self.alerts_text.pack(fill="both", expand=True, padx=4, pady=4)
+        
+    def create_settings_tab(self):
+        settings = self.tab_view.tab("⚙️")
+        
+        # Create scrollable frame for settings with dark styling
+        settings_scroll = ctk.CTkScrollableFrame(settings, fg_color="#0d1117",
+                                               scrollbar_button_color="#30363d")
+        settings_scroll.pack(fill="both", expand=True, padx=4, pady=4)
+        
+        # Alert sounds toggle switch
+        self.sound_var = ctk.BooleanVar(value=False)
+        self.sound_switch = ctk.CTkSwitch(settings_scroll, text="Alert Sounds",
+                                        variable=self.sound_var,
+                                        command=self.on_sound_toggled,
+                                        font=ctk.CTkFont(size=10),
+                                        text_color="#f0f6fc",
+                                        fg_color="#424549",
+                                        progress_color="#1f6feb")
+        self.sound_switch.pack(anchor="w", pady=6)
+        
+        # Notifications toggle switch  
+        self.notifications_var = ctk.BooleanVar(value=True)
+        self.notifications_switch = ctk.CTkSwitch(settings_scroll, text="Notifications",
+                                                variable=self.notifications_var,
+                                                command=self.on_notifications_toggled,
+                                                font=ctk.CTkFont(size=10),
+                                                text_color="#f0f6fc",
+                                                fg_color="#424549",
+                                                progress_color="#1f6feb")
+        self.notifications_switch.pack(anchor="w", pady=6)
+        
+    def create_credits_tab(self):
+        credits = self.tab_view.tab("ℹ️")
+        
+        credits_label = ctk.CTkLabel(credits, text="@Delexo & @Mai",
+                                   font=ctk.CTkFont(size=11, weight="bold"),
+                                   text_color="#58a6ff")
+        credits_label.pack(expand=True)
+        
+    def update_alerts_display(self):
+        if hasattr(self.monitor, "recent_alerts") and self.monitor.recent_alerts:
+            alerts_text = "\n".join(self.monitor.recent_alerts)
+            self.alerts_text.configure(text=alerts_text, text_color="#f85149")  # Red for alerts
+        else:
+            alerts_text = "No alerts"
+            self.alerts_text.configure(text=alerts_text, text_color="#8b949e")  # Gray for no alerts
+        self.after(3000, self.update_alerts_display)
+        
+    def on_program_toggled(self):
+        # Main program toggle - controls everything
+        if self.program_var.get():
+            self.status_label.configure(text="● Active", text_color="#58a6ff")
+            self.monitor.start_monitor()
+        else:
+            self.status_label.configure(text="● Disabled", text_color="#8b949e") 
+            self.monitor.stop_monitor()
+            
+    def on_notifications_toggled(self):
+        enabled = self.notifications_var.get()
+        self.monitor.notifications_enabled = enabled
+        
+    def on_sound_toggled(self):
+        enabled = self.sound_var.get()
+        self.monitor.sound_enabled = enabled
+        
+    def on_temp_disable(self):
+        # Temporary disable for 2 minutes
+        self.program_var.set(False)
+        self.status_label.configure(text="● Paused (2m)", text_color="#f85149")
+        self.monitor.stop_monitor()
+        
+        # Cancel existing timer if any
+        if hasattr(self, '_temp_timer'):
+            try:
+                self._temp_timer.cancel()
+            except Exception:
+                pass
+                
+        # Schedule re-enable after 2 minutes (120 seconds)
+        def reenable():
+            self.program_var.set(True)
+            self.status_label.configure(text="● Active", text_color="#58a6ff")
+            self.monitor.start_monitor()
+            
+        self._temp_timer = threading.Timer(120, reenable)
+        self._temp_timer.daemon = True
+        self._temp_timer.start()
+        
+    def on_closing(self):
+        # Properly stop the monitor thread and exit
+        if hasattr(self, 'monitor'):
+            self.monitor.stop_monitor()
+        if hasattr(self, '_temp_timer'):
+            try:
+                self._temp_timer.cancel()
+            except Exception:
+                pass
+        self.destroy()
+        
+    def start_drag(self, event):
+        self.x = event.x
+        self.y = event.y
+        
+    def on_drag(self, event):
+        deltax = event.x - self.x
+        deltay = event.y - self.y
+        x = self.winfo_x() + deltax
+        y = self.winfo_y() + deltay
+        self.geometry(f"200x160+{x}+{y}")
+
+# --- entry point ---
+if __name__ == "__main__":
+    app = MainWindow()
+    app.mainloop()

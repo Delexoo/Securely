@@ -1,0 +1,15 @@
+customtkinter
+Pillow
+mss
+pytesseract
+requests
+groq
+win10toast
+win11toast
+# Optional: load SECURELY_API_URL / SECURELY_API_JWT from .env
+python-dotenv
+
+# API / Vercel (Supabase, Stripe, JWT) — used by api/analyze.py
+supabase
+stripe
+PyJWT

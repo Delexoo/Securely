@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta name="format-detection" content="telephone=no">
+    <title>About - Securely</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            color: #000000;
+            background: #ffffff;
+            overflow-x: hidden;
+            max-width: 100vw;
+            margin: 0;
+            padding: 0;
+        }
+
+        nav {
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 100;
+            background: #ffffff;
+            border-bottom: 2px solid #000000;
+            transition: all 0.3s ease;
+            animation: navSlideDown 0.8s ease-out;
+            max-width: 100%;
+            box-sizing: border-box;
+        }
+
+        @keyframes navSlideDown {
+            from {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        nav.scrolled {
+            padding: 0.75rem 2rem;
+            border-bottom: 2px solid #000000;
+        }
+
+        .logo {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #000000;
+            text-decoration: none;
+            letter-spacing: 2px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .logo:hover {
+            color: #ff8900;
+            transform: scale(1.05);
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        nav a {
+            color: #000000;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1rem;
+            letter-spacing: 1px;
+            position: relative;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            white-space: nowrap;
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -12px;
+            left: 0;
+            width: 0;
+            height: 4px;
+            background: #ff8900;
+            transition: width 0.3s ease;
+        }
+
+        nav a:hover {
+            color: #ff8900;
+            transform: translateY(-4px) scale(1.05);
+        }
+
+        nav a:hover::after {
+            width: 100%;
+        }
+
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            padding: 8rem 2rem 4rem;
+            overflow: hidden;
+            max-width: 100%;
+            box-sizing: border-box;
+        }
+
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            animation: fadeInUp 1s ease-out;
+            max-width: 100%;
+            padding: 0 1rem;
+            box-sizing: border-box;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero h1 {
+            font-size: 6rem;
+            font-weight: 800;
+            line-height: 1.1;
+            letter-spacing: -2px;
+            color: #000000;
+            word-wrap: break-word;
+            max-width: 100%;
+            animation: heroTextFloat 3s ease-in-out infinite;
+        }
+
+        @keyframes heroTextFloat {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .about-section {
+            padding: 4rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            box-sizing: border-box;
+        }
+
+        .content-block {
+            background: #ffffff;
+            border: 3px solid #000000;
+            padding: 3rem;
+            margin-bottom: 3rem;
+            position: relative;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-sizing: border-box;
+        }
+
+        .content-block.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .content-block::before {
+            content: '';
+            position: absolute;
+            top: -3px;
+            left: -3px;
+            right: -3px;
+            bottom: -3px;
+            border: 2px solid #ff8900;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .content-block:hover::before {
+            opacity: 1;
+        }
+
+        .content-block:hover {
+            transform: translateY(-5px);
+            box-shadow: 10px 10px 0 rgba(255,137,0,0.2);
+        }
+
+        .content-block h2 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            line-height: 1.2;
+            letter-spacing: -1px;
+            margin-bottom: 2rem;
+            color: #000000;
+            border-bottom: 3px solid #000000;
+            padding-bottom: 1rem;
+            word-wrap: break-word;
+            max-width: 100%;
+            animation: headingSlideIn 0.8s ease-out backwards;
+        }
+
+        @keyframes headingSlideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .content-block p {
+            font-size: 1.25rem;
+            line-height: 1.7;
+            color: #333333;
+            margin-bottom: 1.5rem;
+            font-weight: 400;
+            word-wrap: break-word;
+            max-width: 100%;
+            animation: contentFadeIn 0.8s ease-out 0.2s backwards;
+        }
+
+        @keyframes contentFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .highlight-box {
+            background: #000000;
+            color: #ffffff;
+            padding: 4rem;
+            border: 3px solid #000000;
+            margin: 4rem 0;
+            position: relative;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-sizing: border-box;
+        }
+
+        .highlight-box.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .highlight-box::before {
+            content: '';
+            position: absolute;
+            top: -3px;
+            left: -3px;
+            right: -3px;
+            bottom: -3px;
+            border: 3px solid #ff8900;
+            animation: highlightPulse 3s ease-in-out infinite;
+        }
+
+        @keyframes highlightPulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.7;
+            }
+        }
+
+        .highlight-box h2 {
+            color: #ffffff;
+            font-size: 3.5rem;
+            margin-bottom: 2rem;
+            font-weight: 700;
+            letter-spacing: -1px;
+            border-bottom: 3px solid #ffffff;
+            padding-bottom: 1rem;
+            word-wrap: break-word;
+            max-width: 100%;
+        }
+
+        .highlight-box p {
+            color: #ffffff;
+            font-size: 1.25rem;
+            margin-bottom: 1.5rem;
+            line-height: 1.7;
+            word-wrap: break-word;
+            max-width: 100%;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .feature-card {
+            background: #ffffff;
+            border: 3px solid #000000;
+            padding: 2.5rem;
+            position: relative;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            opacity: 0;
+            transform: translateY(30px);
+            box-sizing: border-box;
+        }
+
+        .feature-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .feature-card:nth-child(1) { transition-delay: 0.1s; }
+        .feature-card:nth-child(2) { transition-delay: 0.2s; }
+        .feature-card:nth-child(3) { transition-delay: 0.3s; }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: -3px;
+            left: -3px;
+            right: -3px;
+            bottom: -3px;
+            border: 2px solid #ff8900;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .feature-card:hover::before {
+            opacity: 1;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 12px 12px 0 rgba(255,137,0,0.3);
+        }
+
+        .feature-card h3 {
+            font-size: 2.25rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: #000000;
+            letter-spacing: -0.5px;
+            border-bottom: 3px solid #000000;
+            padding-bottom: 0.75rem;
+            word-wrap: break-word;
+            max-width: 100%;
+        }
+
+        .feature-card p {
+            font-size: 1.15rem;
+            line-height: 1.7;
+            color: #333333;
+            font-weight: 400;
+            word-wrap: break-word;
+            max-width: 100%;
+        }
+
+        footer {
+            padding: 2rem;
+            text-align: center;
+            border-top: 2px solid #000000;
+            background: #000000;
+            color: #ffffff;
+            max-width: 100%;
+            box-sizing: border-box;
+        }
+
+        footer p {
+            font-size: 1rem;
+            font-weight: 400;
+            letter-spacing: 1px;
+        }
+
+        @media (max-width: 1024px) {
+            nav {
+                padding: 1rem 1.5rem;
+            }
+
+            .hero h1 {
+                font-size: 4.5rem;
+            }
+
+            .content-block h2,
+            .highlight-box h2 {
+                font-size: 2.75rem;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            nav {
+                padding: 0.75rem 1rem;
+                flex-direction: row;
+                gap: 0.5rem;
+                border-bottom: 2px solid #000000;
+                flex-wrap: wrap;
+            }
+
+            nav.scrolled {
+                padding: 0.5rem 1rem;
+            }
+
+            .logo {
+                font-size: 1.1rem;
+                letter-spacing: 1px;
+            }
+
+            nav ul {
+                gap: 0.75rem;
+                flex-wrap: wrap;
+                justify-content: center;
+                width: 100%;
+                margin-top: 0.5rem;
+            }
+
+            nav a {
+                font-size: 0.8rem;
+                padding: 0.25rem 0;
+            }
+
+            .hero {
+                padding: 7rem 1rem 2rem;
+                min-height: 80vh;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+                letter-spacing: -0.5px;
+            }
+
+            .about-section {
+                padding: 2.5rem 1rem;
+            }
+
+            .content-block,
+            .highlight-box {
+                padding: 2rem 1rem;
+                margin-bottom: 2rem;
+            }
+
+            .content-block h2,
+            .highlight-box h2 {
+                font-size: 1.75rem;
+                margin-bottom: 1.5rem;
+            }
+
+            .content-block p,
+            .highlight-box p {
+                font-size: 0.95rem;
+                line-height: 1.6;
+            }
+
+            .features-grid {
+                gap: 1.5rem;
+                margin-top: 2rem;
+            }
+
+            .feature-card {
+                padding: 2rem 1rem;
+            }
+
+            .feature-card h3 {
+                font-size: 1.5rem;
+                margin-bottom: 1rem;
+            }
+
+            .feature-card p {
+                font-size: 0.95rem;
+            }
+
+            footer {
+                padding: 1.5rem 1rem;
+            }
+
+            footer p {
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            nav {
+                padding: 0.5rem 0.75rem;
+            }
+
+            nav.scrolled {
+                padding: 0.4rem 0.75rem;
+            }
+
+            .logo {
+                font-size: 1rem;
+            }
+
+            nav ul {
+                gap: 0.5rem;
+            }
+
+            nav a {
+                font-size: 0.75rem;
+            }
+
+            .hero {
+                padding: 6rem 0.75rem 2rem;
+                min-height: 70vh;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+                letter-spacing: 0;
+            }
+
+            .about-section {
+                padding: 2rem 0.75rem;
+            }
+
+            .content-block,
+            .highlight-box {
+                padding: 1.5rem 0.75rem;
+            }
+
+            .content-block h2,
+            .highlight-box h2 {
+                font-size: 1.5rem;
+                margin-bottom: 1rem;
+            }
+
+            .content-block p,
+            .highlight-box p {
+                font-size: 0.9rem;
+            }
+
+            .feature-card h3 {
+                font-size: 1.25rem;
+            }
+
+            .feature-card p {
+                font-size: 0.9rem;
+            }
+
+            footer {
+                padding: 1.25rem 0.75rem;
+            }
+
+            footer p {
+                font-size: 0.85rem;
+            }
+        }
+    </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const nav = document.querySelector('nav');
+            window.addEventListener('scroll', () => {
+                if (window.pageYOffset > 100) {
+                    nav.classList.add('scrolled');
+                } else {
+                    nav.classList.remove('scrolled');
+                }
+            });
+
+            // Intersection Observer for animations
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, observerOptions);
+
+            const elements = document.querySelectorAll('.content-block, .highlight-box, .feature-card');
+            elements.forEach(el => observer.observe(el));
+        });
+    </script>
+</head>
+<body>
+    <nav>
+        <a href="index.html" class="logo">SECURELY</a>
+        <ul>
+            <li><a href="index.html">HOME</a></li>
+            <li><a href="download.html">DOWNLOAD</a></li>
+            <li><a href="about.html">ABOUT</a></li>
+            <li><a href="guide.html">GUIDE</a></li>
+            <li><a href="credits.html">CREDITS</a></li>
+        </ul>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-content">
+            <h1>ABOUT</h1>
+        </div>
+    </section>
+
+    <section class="about-section">
+        <div class="content-block">
+            <h2>WHAT IS SECURELY?</h2>
+            <p>Securely is an AI-powered cybersecurity monitoring application that protects you from phishing attacks, malware, and malicious URLs in real-time. Unlike traditional security tools that only protect files or networks, Securely operates at the visual layer - monitoring everything that appears on your screen before you can interact with it.</p>
+            <p>Using advanced OCR (Optical Character Recognition) technology and machine learning, Securely continuously scans your screen, extracts visible text, detects URLs, and analyzes them for threats. When a malicious link or suspicious pattern is detected, you receive an instant alert.</p>
+        </div>
+
+        <div class="highlight-box">
+            <h2>THE ORIGIN STORY</h2>
+            <p><strong>It Started With a Mistake</strong></p>
+            <p>"When I was a kid, I got doxxed. I wasn't technical at the time, and I made a mistake that exposed my personal information online. The fear, the helplessness, the violation of privacy - it changed me forever."</p>
+            <p>That moment defined everything. As a child facing the consequences of a digital threat, I made a promise to myself: I would find a way to protect myself and others.</p>
+        </div>
+
+        <div class="content-block">
+            <h2>YEARS OF SEARCHING</h2>
+            <p>For years, I searched for solutions. I looked at every security tool I could find. VPNs? Too complex. Antivirus software? Too reactive. Browser extensions? Too limited.</p>
+            <p>Nothing felt right. Nothing addressed the real problem: threats appear visually on your screen before you interact with them.</p>
+        </div>
+
+        <div class="content-block">
+            <h2>THE FOURTH OPTION</h2>
+            <p>"What if there was another security tool? Something that wasn't a VPN, wasn't an antivirus, but something completely new - a visual guardian that watches your screen and protects you from what you see?"</p>
+            <p>That's when Securely was born - not as software, but as an idea. A vision of a new category of security that filled the gap between network protection and file protection.</p>
+        </div>
+
+        <div class="content-block">
+            <h2>THE MISSION</h2>
+            <p>Securely isn't just software - it's protection born from experience. It's the tool I wish I had when I was young. It's the guardian I needed when I made that mistake. It's the fourth option that the cybersecurity world was missing.</p>
+            <p><strong>Now, it's here to protect you, and everyone else who doesn't want to experience what I did.</strong></p>
+        </div>
+
+        <div class="content-block">
+            <h2>FEATURES</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <h3>SCREEN MONITOR</h3>
+                    <p>Continuous monitoring using advanced OCR technology. Everything analyzed before you interact. Real-time protection that scans every pixel on your screen to detect potential threats before they can cause harm.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>AI ANALYSIS</h3>
+                    <p>Machine learning models trained on extensive threat databases for high-accuracy detection. Advanced neural networks that continuously learn from new threats and adapt to evolving cybersecurity challenges.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>PRIVACY FIRST</h3>
+                    <p>Local data processing. Your information stays under your control. No compromises. Complete privacy protection with zero data transmission to external servers or third-party services.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2026 SECURELY</p>
+    </footer>
+</body>
+</html>

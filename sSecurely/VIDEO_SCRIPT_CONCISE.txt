@@ -1,0 +1,83 @@
+SECURELY - CS50X VIDEO SCRIPT (CONCISE VERSION)
+================================================
+
+[0:00-0:15] OPENING
+Static slide:
+- Project Title: Securely
+- Name: [Your Name]
+- GitHub: [username]
+- edX: [username]
+- Location: [City, Country]
+- Date: [Date]
+
+VO: "Hi, I'm [Name]. This is Securely, my CS50x final project."
+
+
+[0:15-0:45] THE PROBLEM & SOLUTION
+VO: "Cyber threats like phishing and malware are everywhere. Securely monitors your screen in real-time using AI to detect security threats and alert you immediately."
+
+Show app window, click "Turn On"
+
+VO: "When enabled, it takes screenshots every second, extracts text with OCR, and analyzes content with Google's Gemini AI."
+
+Show threat detection - notification appears
+
+VO: "If a threat is detected, you get an instant desktop notification."
+
+
+[0:45-1:15] KEY FEATURES
+Navigate to Dashboard
+
+VO: "The Dashboard lets you run Quick Scans or enable continuous monitoring."
+
+Switch to Settings
+
+VO: "Settings allow customization—notifications, sounds, strict mode. It even auto-pauses on login pages to protect your credentials."
+
+Switch to Audit Log
+
+VO: "All threats are logged here for review."
+
+
+[1:15-1:45] HOW IT WORKS
+VO: "Built with Python, using pytesseract for OCR, mss for screen capture, and Gemini AI for analysis. The GUI uses CustomTkinter. Multi-threading keeps monitoring smooth in the background."
+
+Show code or architecture if desired
+
+
+[1:45-2:15] IMPACT
+VO: "Securely detects phishing emails, suspicious websites, malware warnings, and social engineering. The AI is trained to be aggressive—better safe than sorry."
+
+Show examples from audit log
+
+
+[2:15-2:30] CONCLUSION
+VO: "Securely provides proactive threat detection that works silently in the background, helping users stay safe online. Thank you! This was CS50x!"
+
+
+QUICK CHECKLIST FOR RECORDING
+==============================
+
+Before Recording:
+- Application is running and tested
+- Test threat examples prepared (or mockups)
+- Opening slide created
+- Screen recording software ready
+- Microphone tested
+- Script practiced 2-3 times
+
+During Recording:
+- Speak clearly and at moderate pace
+- Show application clearly (zoom if needed)
+- Demonstrate actual features (don't just describe)
+- Keep transitions smooth
+- Stay under 3 minutes
+
+After Recording:
+- Edit for clarity (remove long pauses)
+- Add captions if helpful
+- Upload to YouTube as unlisted
+- Test video playback
+- Note the URL for submission
+
+

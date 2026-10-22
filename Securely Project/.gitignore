@@ -1,0 +1,12 @@
+.env
+.env.local
+licenses.db
+__pycache__/
+venv/
+.venv/
+dist/
+build/
+*.pyc
+*.pyo
+instant_analysis/
+training_screenshots/

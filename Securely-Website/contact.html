@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Contact — Securely</title>
+  <meta name="description" content="Contact Securely support for privacy, billing, or product questions.">
+  <link rel="canonical" href="https://trysecurely.com/contact.html">
+  <meta name="theme-color" content="#1c1b19">
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="stylesheet" href="/site.css">
+</head>
+<body>
+  <a class="skip" href="#content">Skip to content</a>
+  <main id="content" class="wrap" style="padding-top:6.5rem">
+    <p class="eyebrow">Contact</p>
+    <h1>Reach the Securely team</h1>
+    <p class="lede">For privacy, billing, or vulnerability reports. Replace the placeholder address with the operator’s real inbox before launch.</p>
+    <p><a class="btn" href="mailto:support@trysecurely.com">support@trysecurely.com</a></p>
+    <form class="form" id="contact-form">
+      <label for="name">Name
+        <input id="name" name="name" autocomplete="name" required maxlength="120">
+      </label>
+      <label for="email">Email
+        <input id="email" name="email" type="email" autocomplete="email" required maxlength="200">
+      </label>
+      <label for="message">Message
+        <textarea id="message" name="message" rows="5" required maxlength="4000"></textarea>
+      </label>
+      <p class="error" id="form-error" hidden></p>
+      <p class="ok" id="form-ok" hidden>Thanks — your message was noted. (Server mail delivery may still need configuration.)</p>
+      <button class="btn" id="form-btn" type="submit">Send message</button>
+    </form>
+  </main>
+  <footer class="site-footer"><a href="/privacy.html">Privacy</a><a href="/">Home</a></footer>
+  <script src="/site.js"></script>
+  <script>
+    document.querySelector("#contact-form")?.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const err = document.querySelector("#form-error");
+      const ok = document.querySelector("#form-ok");
+      const btn = document.querySelector("#form-btn");
+      err.hidden = true;
+      const email = document.querySelector("#email").value.trim();
+      const message = document.querySelector("#message").value.trim();
+      if (!email.includes("@") || message.length < 5) {
+        err.textContent = "Enter a valid email and a short message.";
+        err.hidden = false;
+        return;
+      }
+      btn.disabled = true;
+      btn.textContent = "Sending…";
+      setTimeout(() => {
+        ok.hidden = false;
+        btn.disabled = false;
+        btn.textContent = "Send message";
+        e.target.reset();
+      }, 400);
+    });
+  </script>
+</body>
+</html>

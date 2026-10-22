@@ -1,0 +1,13 @@
+# Securely
+> AI-assisted Windows screen threat monitor (OCR + OpenRouter).
+
+## Pages
+- [Home](https://trysecurely.com/): product overview and download
+- [Pricing](https://trysecurely.com/pricing.html): Starter free, Pro $20/month
+- [Privacy](https://trysecurely.com/privacy.html)
+- [Terms](https://trysecurely.com/terms.html)
+- [Billing](https://trysecurely.com/billing.html)
+- [Contact](https://trysecurely.com/contact.html)
+
+## Notes
+Securely is assistive security software, not a guarantee against all phishing.

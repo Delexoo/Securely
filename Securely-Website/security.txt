@@ -1,0 +1,4 @@
+Contact: mailto:support@trysecurely.com
+Preferred-Languages: en
+Canonical: https://trysecurely.com/security.txt
+Policy: https://trysecurely.com/privacy.html

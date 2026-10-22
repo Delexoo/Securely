@@ -1,0 +1,1301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Preflight report — Securely</title>
+  <style>
+    :root { --paper: #f3eadc; --ink: #1b1612; --muted: #4a433b; --line: #d9cbb6; --hl-pass: #b7ebc6; --hl-warn: #ffe56a; --hl-miss: #ffb4ae; }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--paper); color: var(--ink); font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif; font-size: 1.05rem; line-height: 1.5; }
+    main { width: min(820px, calc(100% - 2rem)); margin: 2rem auto 4rem; }
+    .kicker, .status, .meta dt, table, .evidence span, .fix span, footer, .cat { font-family: ui-monospace, "Cascadia Mono", "Segoe UI Mono", Consolas, monospace; }
+    .kicker { letter-spacing: .12em; text-transform: uppercase; font-size: .72rem; margin: 0 0 .5rem; }
+    h1 { font-size: 2.6rem; line-height: 1; font-weight: 560; margin: 0 0 1rem; }
+    .meta { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin: 1.5rem 0; }
+    .meta div { border-top: 1px solid var(--ink); padding-top: .4rem; }
+    .meta dt { font-size: .68rem; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+    .meta dd { margin: .2rem 0 0; }
+    .score { border-top: 1px solid var(--ink); border-bottom: 1px solid var(--ink); padding: 1rem 0; display: flex; gap: 1.5rem; align-items: baseline; }
+    .fraction { font-size: 3rem; line-height: 1; margin: 0; font-variant-numeric: tabular-nums; }
+    .fraction span { font-size: 1.25rem; color: var(--muted); }
+    .score p { margin: 0; }
+    table { width: 100%; border-collapse: collapse; font-size: .85rem; }
+    caption { text-align: left; font-size: .72rem; letter-spacing: .08em; text-transform: uppercase; margin: 0 0 .4rem; }
+    th, td { text-align: left; padding: .45rem .5rem .45rem 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+    th:not(:first-child), td:not(:first-child) { text-align: right; font-variant-numeric: tabular-nums; }
+    h2 { font-size: 1.5rem; margin: 2rem 0 .6rem; }
+    .finding { border-top: 1px solid var(--line); padding: .9rem 0; }
+    .finding header { display: flex; justify-content: space-between; gap: 1rem; align-items: baseline; }
+    .finding h3 { margin: 0; font-size: 1.15rem; }
+    .cat { margin: 0 0 .15rem; font-size: .68rem; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+    .key { margin: 1rem 0 0; }
+    .mark, .status { color: var(--ink); background: transparent; padding: .08em .28em; box-decoration-break: clone; -webkit-box-decoration-break: clone; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .status { margin: 0; font-size: .72rem; letter-spacing: .06em; text-transform: uppercase; text-align: right; display: inline-block; }
+    .mark.pass, .finding.pass .status { background: var(--hl-pass); }
+    .mark.warn, .finding.warn .status { background: var(--hl-warn); }
+    .mark.miss, .finding.miss .status { background: var(--hl-miss); }
+    .context p { margin: .45rem 0; }
+    .why, .evidence, .fix { margin: .35rem 0 0; }
+    .evidence span, .fix span { font-size: .68rem; letter-spacing: .08em; text-transform: uppercase; display: block; color: var(--muted); }
+    .evidence, .fix { overflow-wrap: anywhere; }
+    .verdict-label { font-size: 1.7rem; line-height: 1.2; margin: 0 0 .4rem; display: inline; }
+    .fix-list { margin: .2rem 0 0; padding-left: 1.2rem; }
+    .fix-list li { margin: .45rem 0; }
+    footer { margin-top: 2rem; color: var(--muted); font-size: .85rem; }
+    @media (max-width: 640px) {
+      .meta, .score, .finding header { display: flex; flex-direction: column; align-items: flex-start; }
+      h1 { font-size: 2.1rem; }
+      .status { text-align: left; }
+    }
+    @media print { body { background: #fff; } main { width: auto; margin: 0; } }
+  </style>
+</head>
+<body>
+  <main>
+    <p class="kicker">Vibe Code Checklist</p>
+    <h1>Preflight report</h1>
+    <p class="key"><span class="mark pass">Done</span> already works. <span class="mark warn">Warning</span> can wait. <span class="mark miss">Missing</span> needs a fix before you ship.</p>
+    <dl class="meta">
+      <div><dt>Project</dt><dd>Securely</dd></div>
+      <div><dt>Generated</dt><dd>2026-10-22</dd></div>
+      <div><dt>Source</dt><dd>Workspace audit</dd></div>
+    </dl>
+    <section class="context">
+      <h2>What this app is</h2>
+      <p><strong>Goal.</strong> Ship a Windows desktop overlay that watches the primary screen with OCR + AI, flags phishing and scam UI, and support it with a marketing site plus a server-side analyze API — without embedding provider keys in the client.</p>
+      <p><strong>Who it is for.</strong> Consumers and individuals who want assistive, real-time screen threat warnings on Windows (security teams are mentioned in marketing copy).</p>
+      <p><strong>Checks that fit.</strong> Public marketing pages, dependency manifests, a paid LLM analyze API, and pricing/payment promises apply. Forms, accounts, blog, analytics, email marketing, uploads, UGC, and a real app database do not fit the shipped surface yet. Payments apply because pricing UI promises paid plans even though Stripe code is largely missing.</p>
+      <p class="evidence"><span>Based on</span>Securely-Website/index.html, pricing.html, demo.html, css/styles.css; securely-app/README.md, ui/public/, host/; Securely Project/Securely.py, supabase/functions/analyze/index.ts, api/README.md, .env.example, TERMS_OF_SERVICE.txt, vercel.json; sSecurely/Securely.py; Securely C#/SecurelyCore/Class1.cs; RECREATE_SECURELY_PROMPT.md</p>
+    </section>
+    <section class="score">
+      <p class="fraction">26<span>/64</span></p>
+      <p>41% of the checks that apply are in place. Not ready to ship. 18 required item(s) open; 20 recommended item(s) open.</p>
+    </section>
+    <section class="verdict">
+      <h2>Overall</h2>
+      <p class="verdict-label mark miss">Not ready to ship</p>
+      <p>18 required items are open. 20 recommended items are open.</p>
+    </section>
+    <section>
+      <h2>Fix these first</h2>
+      <ol class="fix-list">
+        <li><strong>Custom 404 page.</strong> Add Securely-Website/404.html branded with a Home link, and configure the static host to serve it.</li>
+        <li><strong>Friendly error state.</strong> Add a friendly website error page and catch WinForms/WebView exceptions so users see a short message instead of a stack dialog.</li>
+        <li><strong>Payment receipt or confirmation.</strong> After Stripe Checkout succeeds, land on a confirmation page that shows plan and amount.</li>
+        <li><strong>The price is shown before the charge.</strong> Wire Subscribe to Stripe Checkout that restates price and period before payment.</li>
+        <li><strong>Consistent name and facts.</strong> Align pricing claims with shipped features; update TERMS to current AI provider; remove unverified &quot;#1&quot; language.</li>
+        <li><strong>Privacy policy.</strong> Publish a Privacy Policy page describing screen OCR, OpenRouter/API transmission, and retention; link it in the footer.</li>
+        <li><strong>Terms of service.</strong> Publish HTML Terms linked from the footer, matching the actual product.</li>
+        <li><strong>Favicon set.</strong> Add favicon.ico, apple-touch-icon, and site.webmanifest to Securely-Website using the Securely logo.</li>
+        <li><strong>Compressed images.</strong> Compress docs images to WebP/optimized PNG under a few hundred KB.</li>
+        <li><strong>No secrets in the repo or client bundle.</strong> Remove hardcoded Groq keys from C#/Python trees, rotate those keys, and keep provider keys server-side only.</li>
+        <li><strong>.env is gitignored.</strong> Add a root .gitignore that ignores .env and confirm .env is never committed.</li>
+        <li><strong>HTTPS in production.</strong> Deploy the site on HTTPS and redirect HTTP once a production host exists.</li>
+        <li><strong>No known high-severity holes in dependencies.</strong> Add and run pip-audit / dotnet vulnerability scan (or Dependabot) and fix high/critical findings.</li>
+        <li><strong>Production hides internal errors.</strong> Disable debug exception UI in Release builds and show a generic error message.</li>
+        <li><strong>Payment webhooks check the signature.</strong> Implement Stripe webhook verification with the signing secret before granting entitlements.</li>
+        <li><strong>Refund or cancellation policy.</strong> Publish refund/cancellation terms and link them from pricing.</li>
+        <li><strong>Images, fonts, and code are licensed.</strong> Remove or clearly license third-party dumps; keep only assets you own or may use.</li>
+        <li><strong>Reviews and stats are real.</strong> Remove the &quot;#1&quot; claim or replace it with a statement you can substantiate.</li>
+      </ol>
+    </section>
+    <section>
+      <h2>By category</h2>
+      <table>
+        <caption>Results by category</caption>
+        <thead>
+          <tr><th>Category</th><th>Done</th><th>Missing</th><th>Warning</th><th>Does not apply</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Pages and flows</td><td>1</td><td>4</td><td>1</td><td>1</td></tr>
+          <tr><td>Search engine optimization</td><td>5</td><td>0</td><td>4</td><td>1</td></tr>
+          <tr><td>Generative engine optimization</td><td>2</td><td>0</td><td>3</td><td>0</td></tr>
+          <tr><td>Answer and chat engine optimization</td><td>1</td><td>1</td><td>1</td><td>0</td></tr>
+          <tr><td>Legal and consent</td><td>2</td><td>5</td><td>1</td><td>6</td></tr>
+          <tr><td>Identity and appearance</td><td>4</td><td>1</td><td>1</td><td>0</td></tr>
+          <tr><td>Accessibility</td><td>3</td><td>0</td><td>2</td><td>0</td></tr>
+          <tr><td>Performance</td><td>3</td><td>1</td><td>2</td><td>0</td></tr>
+          <tr><td>Security</td><td>2</td><td>5</td><td>4</td><td>17</td></tr>
+          <tr><td>Forms</td><td>0</td><td>0</td><td>0</td><td>4</td></tr>
+          <tr><td>Accounts and settings</td><td>0</td><td>0</td><td>0</td><td>8</td></tr>
+          <tr><td>Project hygiene</td><td>3</td><td>1</td><td>1</td><td>1</td></tr>
+        </tbody>
+      </table>
+    </section>
+    <section>
+      <h2>Missing</h2>
+      <article class="finding miss">
+        <header>
+          <div>
+            <p class="cat">Pages and flows</p>
+            <h3>Custom 404 page</h3>
+          </div>
+          <p class="status">Missing</p>
+        </header>
+        <p class="why">A missing route should still feel like the product and offer a way onward.</p>
+        <p class="evidence"><span>Evidence</span>Custom 404 page not found under Securely-Website/ or securely-app/. No 404.html or host rewrite.</p>
+        <p class="fix"><span>How to fix</span>Add Securely-Website/404.html branded with a Home link, and configure the static host to serve it.</p>
+      </article>
+      <article class="finding miss">
+        <header>
+          <div>
+            <p class="cat">Pages and flows</p>
+            <h3>Friendly error state</h3>
+          </div>
+          <p class="status">Missing</p>
+        </header>
+        <p class="why">A crash or a failed request should explain what happened instead of a blank screen or a stack trace.</p>
+        <p class="evidence"><span>Evidence</span>No designed production error UI on the marketing site. Windows host can show an Unhandled Exception dialog with stack traces (observed ObjectDisposedException on JsonDocument).</p>
+        <p class="fix"><span>How to fix</span>Add a friendly website error page and catch WinForms/WebView exceptions so users see a short message instead of a stack dialog.</p>
+      </article>
+      <article class="finding miss">
+        <header>
+          <div>
+            <p class="cat">Pages and flows</p>
+            <h3>Payment receipt or confirmation</h3>
+          </div>
+          <p class="status">Missing</p>
+        </header>
+        <p class="why">A charge needs a receipt the person can recognize, with the amount and what they bought.</p>
+        <p class="evidence"><span>Evidence</span>Pricing promises paid plans but there is no post-payment receipt page or Stripe success flow. Subscribe links point to index.html.</p>
+        <p class="fix"><span>How to fix</span>After Stripe Checkout succeeds, land on a confirmation page that shows plan and amount.</p>
+      </article>
+      <article class="finding miss">
+        <header>
+          <div>
+            <p class="cat">Pages and flows</p>
+            <h3>The price is shown before the charge</h3>
+          </div>
+          <p class="status">Missing</p>
+        </header>
+        <p class="why">A person who never saw the amount, what it buys, or that a free trial becomes a paid plan can dispute the charge.</p>
+        <p class="evidence"><span>Evidence</span>Amounts appear on Securely-Website/pricing.html, but there is no real payment confirmation step before a charge — Subscribe does not start Stripe Checkout.</p>
+        <p class="fix"><span>How to fix</span>Wire Subscribe to Stripe Checkout that restates price and period before payment.</p>
+      </article>
+      <article class="finding miss">
+        <header>
+          <div>
+            <p class="cat">Answer and chat engine optimization</p>
+            <h3>Consistent name and facts</h3>
+          </div>
+          <p class="status">Missing</p>
+        </header>
+        <p class="why">If the name, price, or promise changes from page to page, both people and chat engines will mix them up.</p>
+        <p class="evidence"><span>Evidence</span>Product name is consistent, but pricing promises cloud sync/SSO/admin features not present in clients; TERMS_OF_SERVICE.txt still references Google Gemini while code uses Groq; homepage claims &quot;#1&quot; without evidence.</p>
+        <p class="fix"><span>How to fix</span>Align pricing claims with shipped features; update TERMS to current AI provider; remove unverified &quot;#1&quot; language.</p>
+      </article>
+      <article class="finding miss">
+        <header>
+          <div>
+            <p class="cat">Legal and consent</p>
+            <h3>Privacy policy</h3>
+          </div>
+          <p class="status">Missing</p>
+        </header>
+        <p class="why">People should be able to read what the app collects, why, and who receives it.</p>
+        <p class="evidence"><span>Evidence</span>No privacy policy page linked from the public footer. TERMS_OF_SERVICE.txt exists under Securely Project/ but is not a reachable website privacy policy.</p>
+        <p class="fix"><span>How to fix</span>Publish a Privacy Policy page describing screen OCR, OpenRouter/API transmission, and retention; link it in the footer.</p>
+      </article>
+      <article class="finding miss">
+        <header>
+          <div>
+            <p class="cat">Legal and consent</p>
+            <h3>Terms of service</h3>
+          </div>
+          <p class="status">Missing</p>
+        </header>
+        <p class="why">Terms set the rules of use before someone creates an account, pays, or relies on the app.</p>
+        <p class="evidence"><span>Evidence</span>TERMS_OF_SERVICE.txt exists in Securely Project/ and sSecurely/, but Securely-Website has no Terms link in the footer and no HTML terms page.</p>
+        <p class="fix"><span>How to fix</span>Publish HTML Terms linked from the footer, matching the actual product.</p>
+      </article>
+      <article class="finding miss">
+        <header>
+          <div>
+            <p class="cat">Identity and appearance</p>
+            <h3>Favicon set</h3>
+          </div>
+          <p class="status">Missing</p>
+        </header>
+        <p class="why">Tabs, bookmarks, and home-screen icons should show this product, not the framework logo.</p>
+        <p class="evidence"><span>Evidence</span>Securely-Website HTML has no favicon, apple-touch-icon, or web manifest. (Widget UI under securely-app/ui/public/ does have icons, but the public marketing site does not.)</p>
+        <p class="fix"><span>How to fix</span>Add favicon.ico, apple-touch-icon, and site.webmanifest to Securely-Website using the Securely logo.</p>
+      </article>
+      <article class="finding miss">
+        <header>
+          <div>
+            <p class="cat">Performance</p>
+            <h3>Compressed images</h3>
+          </div>
+          <p class="status">Missing</p>
+        </header>
+        <p class="why">Uncompressed screenshots and camera files dominate the page weight of a vibe-coded app.</p>
+        <p class="evidence"><span>Evidence</span>Securely-Website/docs includes multi-megabyte assets (e.g. SecurelyLogo.png ~1.4MB, Background*.jpg up to ~2.7MB).</p>
+        <p class="fix"><span>How to fix</span>Compress docs images to WebP/optimized PNG under a few hundred KB.</p>
+      </article>
+      <article class="finding miss">
+        <header>
+          <div>
+            <p class="cat">Security</p>
+            <h3>No secrets in the repo or client bundle</h3>
+          </div>
+          <p class="status">Missing</p>
+        </header>
+        <p class="why">A service key in the client, or in git history people can clone, is already public.</p>
+        <p class="evidence"><span>Evidence</span>Hardcoded Groq API keys (gsk_…) found in Securely C#/SecurelyCore/Class1.cs, Securely C#/lockinnigga/Config.cs, and legacy Python trees. Kind of secret: provider API key. Values not copied here.</p>
+        <p class="fix"><span>How to fix</span>Remove hardcoded Groq keys from C#/Python trees, rotate those keys, and keep provider keys server-side only.</p>
+      </article>
+      <article class="finding miss">
+        <header>
+          <div>
+            <p class="cat">Security</p>
+            <h3>.env is gitignored</h3>
+          </div>
+          <p class="status">Missing</p>
+        </header>
+        <p class="why">Environment files are where local secrets land. If git can see them, they will be committed.</p>
+        <p class="evidence"><span>Evidence</span>Root workspace has .env and no root .gitignore. Securely Project/.gitignore ignores .env, but the workspace root is unprotected.</p>
+        <p class="fix"><span>How to fix</span>Add a root .gitignore that ignores .env and confirm .env is never committed.</p>
+      </article>
+      <article class="finding miss">
+        <header>
+          <div>
+            <p class="cat">Security</p>
+            <h3>HTTPS in production</h3>
+          </div>
+          <p class="status">Missing</p>
+        </header>
+        <p class="why">A shipped app on plain HTTP leaks sessions and looks unfinished.</p>
+        <p class="evidence"><span>Evidence</span>No production public URL or HTTPS host config found in the workspace. Localhost alone does not pass.</p>
+        <p class="fix"><span>How to fix</span>Deploy the site on HTTPS and redirect HTTP once a production host exists.</p>
+      </article>
+      <article class="finding miss">
+        <header>
+          <div>
+            <p class="cat">Project hygiene</p>
+            <h3>No known high-severity holes in dependencies</h3>
+          </div>
+          <p class="status">Missing</p>
+        </header>
+        <p class="why">A vibe-coded app often installs packages and never checks them. A published hole in a dependency is already public.</p>
+        <p class="evidence"><span>Evidence</span>No npm/pip-audit/Dependabot configuration found for product trees. Dependencies exist (requirements.txt, *.csproj) without an audit setup.</p>
+        <p class="fix"><span>How to fix</span>Add and run pip-audit / dotnet vulnerability scan (or Dependabot) and fix high/critical findings.</p>
+      </article>
+      <article class="finding miss">
+        <header>
+          <div>
+            <p class="cat">Security</p>
+            <h3>Production hides internal errors</h3>
+          </div>
+          <p class="status">Missing</p>
+        </header>
+        <p class="why">A stack trace, SQL error, or debug screen tells a stranger your paths, versions, and queries.</p>
+        <p class="evidence"><span>Evidence</span>Host can surface Unhandled Exception UI with stack details to the user; no global production-friendly error boundary for the website.</p>
+        <p class="fix"><span>How to fix</span>Disable debug exception UI in Release builds and show a generic error message.</p>
+      </article>
+      <article class="finding miss">
+        <header>
+          <div>
+            <p class="cat">Security</p>
+            <h3>Payment webhooks check the signature</h3>
+          </div>
+          <p class="status">Missing</p>
+        </header>
+        <p class="why">A webhook that trusts the body can be told a payment succeeded when nobody paid.</p>
+        <p class="evidence"><span>Evidence</span>Stripe webhook handler not found (api/webhook.py missing despite docs).</p>
+        <p class="fix"><span>How to fix</span>Implement Stripe webhook verification with the signing secret before granting entitlements.</p>
+      </article>
+      <article class="finding miss">
+        <header>
+          <div>
+            <p class="cat">Legal and consent</p>
+            <h3>Refund or cancellation policy</h3>
+          </div>
+          <p class="status">Missing</p>
+        </header>
+        <p class="why">Charging people with no written refund or cancellation rule is how a small app ends up in a dispute. A subscription has to say when it renews and how to cancel, next to the button that starts it.</p>
+        <p class="evidence"><span>Evidence</span>No refund/cancellation policy linked from pricing or terms on the website.</p>
+        <p class="fix"><span>How to fix</span>Publish refund/cancellation terms and link them from pricing.</p>
+      </article>
+      <article class="finding miss">
+        <header>
+          <div>
+            <p class="cat">Legal and consent</p>
+            <h3>Images, fonts, and code are licensed</h3>
+          </div>
+          <p class="status">Missing</p>
+        </header>
+        <p class="why">Shipping someone else&#x27;s photo, font, icon set, or code without a license is a copyright problem.</p>
+        <p class="evidence"><span>Evidence</span>Workspace contains third-party site dumps (Securely-Website/Cluely Website/) without a clear license note for those assets; product logo appears original.</p>
+        <p class="fix"><span>How to fix</span>Remove or clearly license third-party dumps; keep only assets you own or may use.</p>
+      </article>
+      <article class="finding miss">
+        <header>
+          <div>
+            <p class="cat">Legal and consent</p>
+            <h3>Reviews and stats are real</h3>
+          </div>
+          <p class="status">Missing</p>
+        </header>
+        <p class="why">Invented reviews, user counts, or awards are a deception problem.</p>
+        <p class="evidence"><span>Evidence</span>Homepage h1 claims &quot;#1 AI-powered Security Tool&quot; without substantiation (Securely-Website/index.html).</p>
+        <p class="fix"><span>How to fix</span>Remove the &quot;#1&quot; claim or replace it with a statement you can substantiate.</p>
+      </article>
+    </section>
+    <section>
+      <h2>Warnings</h2>
+      <article class="finding warn">
+        <header>
+          <div>
+            <p class="cat">Pages and flows</p>
+            <h3>Empty states</h3>
+          </div>
+          <p class="status">Warning</p>
+        </header>
+        <p class="why">A list, search, or dashboard with nothing in it still needs a sentence and a next step.</p>
+        <p class="evidence"><span>Evidence</span>Threat stream #thread can be empty; CSS hides empty content but there is no empty-state sentence or next action in securely-app/ui/public/.</p>
+        <p class="fix"><span>How to fix</span>When the threat list is empty, show a short sentence and a Quick Scan action in the widget.</p>
+      </article>
+      <article class="finding warn">
+        <header>
+          <div>
+            <p class="cat">Search engine optimization</p>
+            <h3>Canonical URL</h3>
+          </div>
+          <p class="status">Warning</p>
+        </header>
+        <p class="why">A canonical link tells search engines which URL is the one to keep when the same page has aliases.</p>
+        <p class="evidence"><span>Evidence</span>rel=canonical not found on Securely-Website public pages.</p>
+        <p class="fix"><span>How to fix</span>Add absolute https canonical links on each public page once the production domain is known.</p>
+      </article>
+      <article class="finding warn">
+        <header>
+          <div>
+            <p class="cat">Search engine optimization</p>
+            <h3>Open Graph and Twitter cards</h3>
+          </div>
+          <p class="status">Warning</p>
+        </header>
+        <p class="why">Shared links should show the right title, description, and image instead of a random scrape.</p>
+        <p class="evidence"><span>Evidence</span>og:title / og:description / Twitter card tags not found on Securely-Website pages.</p>
+        <p class="fix"><span>How to fix</span>Add og:title, og:description, og:image, and Twitter card tags on public pages.</p>
+      </article>
+      <article class="finding warn">
+        <header>
+          <div>
+            <p class="cat">Search engine optimization</p>
+            <h3>Sitemap</h3>
+          </div>
+          <p class="status">Warning</p>
+        </header>
+        <p class="why">A sitemap lists the public URLs you actually want discovered.</p>
+        <p class="evidence"><span>Evidence</span>sitemap.xml not found under Securely-Website/.</p>
+        <p class="fix"><span>How to fix</span>Publish sitemap.xml listing index, pricing, and demo URLs.</p>
+      </article>
+      <article class="finding warn">
+        <header>
+          <div>
+            <p class="cat">Search engine optimization</p>
+            <h3>robots.txt</h3>
+          </div>
+          <p class="status">Warning</p>
+        </header>
+        <p class="why">Crawlers need an explicit allow or disallow, plus a pointer to the sitemap when one exists.</p>
+        <p class="evidence"><span>Evidence</span>robots.txt not found under Securely-Website/.</p>
+        <p class="fix"><span>How to fix</span>Add robots.txt allowing public pages and pointing at the sitemap.</p>
+      </article>
+      <article class="finding warn">
+        <header>
+          <div>
+            <p class="cat">Generative engine optimization</p>
+            <h3>llms.txt</h3>
+          </div>
+          <p class="status">Warning</p>
+        </header>
+        <p class="why">A short llms.txt file gives assistants a map of what the site is and which pages to trust.</p>
+        <p class="evidence"><span>Evidence</span>llms.txt not found at the website root.</p>
+        <p class="fix"><span>How to fix</span>Add llms.txt naming Securely and linking the main pages.</p>
+      </article>
+      <article class="finding warn">
+        <header>
+          <div>
+            <p class="cat">Generative engine optimization</p>
+            <h3>Organization or author attribution</h3>
+          </div>
+          <p class="status">Warning</p>
+        </header>
+        <p class="why">Named authorship or a named organization is how engines attach claims to a real entity.</p>
+        <p class="evidence"><span>Evidence</span>Footer names Demo/Pricing only; no named organization or operator credit on the public site.</p>
+        <p class="fix"><span>How to fix</span>Name the operator/company in the site footer or an About page.</p>
+      </article>
+      <article class="finding warn">
+        <header>
+          <div>
+            <p class="cat">Generative engine optimization</p>
+            <h3>Structured data for the main entity</h3>
+          </div>
+          <p class="status">Warning</p>
+        </header>
+        <p class="why">JSON-LD lets search and answer engines read the product, organization, or articles as data.</p>
+        <p class="evidence"><span>Evidence</span>JSON-LD for Organization/SoftwareApplication not found on Securely-Website pages.</p>
+        <p class="fix"><span>How to fix</span>Add JSON-LD SoftwareApplication/Organization that matches visible copy.</p>
+      </article>
+      <article class="finding warn">
+        <header>
+          <div>
+            <p class="cat">Answer and chat engine optimization</p>
+            <h3>FAQ or question-style headings</h3>
+          </div>
+          <p class="status">Warning</p>
+        </header>
+        <p class="why">Questions with direct answers are the unit chat engines prefer to quote.</p>
+        <p class="evidence"><span>Evidence</span>No FAQ section with question headings and direct answers on the public site.</p>
+        <p class="fix"><span>How to fix</span>Add a short FAQ with real questions and direct answers.</p>
+      </article>
+      <article class="finding warn">
+        <header>
+          <div>
+            <p class="cat">Legal and consent</p>
+            <h3>A way to reach a person</h3>
+          </div>
+          <p class="status">Warning</p>
+        </header>
+        <p class="why">Privacy questions and support need a real contact path, not only a social icon.</p>
+        <p class="evidence"><span>Evidence</span>No contact page, support email, or form on Securely-Website.</p>
+        <p class="fix"><span>How to fix</span>Add a contact email or form in the footer.</p>
+      </article>
+      <article class="finding warn">
+        <header>
+          <div>
+            <p class="cat">Identity and appearance</p>
+            <h3>Theme color</h3>
+          </div>
+          <p class="status">Warning</p>
+        </header>
+        <p class="why">The browser chrome should pick up the product color instead of a default gray or white strip.</p>
+        <p class="evidence"><span>Evidence</span>theme-color meta not set on Securely-Website pages.</p>
+        <p class="fix"><span>How to fix</span>Add a theme-color meta tag on public pages.</p>
+      </article>
+      <article class="finding warn">
+        <header>
+          <div>
+            <p class="cat">Accessibility</p>
+            <h3>Skip link</h3>
+          </div>
+          <p class="status">Warning</p>
+        </header>
+        <p class="why">A skip link lets keyboard users jump past a repeated header to the main content.</p>
+        <p class="evidence"><span>Evidence</span>Skip to content link not found on Securely-Website pages.</p>
+        <p class="fix"><span>How to fix</span>Add a Skip to content link as the first focusable element.</p>
+      </article>
+      <article class="finding warn">
+        <header>
+          <div>
+            <p class="cat">Accessibility</p>
+            <h3>Links say where they go</h3>
+          </div>
+          <p class="status">Warning</p>
+        </header>
+        <p class="why">&quot;Click here&quot; and &quot;Read more&quot; repeated ten times are useless out of context.</p>
+        <p class="evidence"><span>Evidence</span>Repeated generic CTAs such as Get for Windows / Subscribe without distinctive destinations on pricing.</p>
+        <p class="fix"><span>How to fix</span>Rename Subscribe/Get CTAs so each names the destination (e.g. Download for Windows).</p>
+      </article>
+      <article class="finding warn">
+        <header>
+          <div>
+            <p class="cat">Performance</p>
+            <h3>Below-the-fold images lazy load</h3>
+          </div>
+          <p class="status">Warning</p>
+        </header>
+        <p class="why">Images a person has not reached yet should not compete with the first screen.</p>
+        <p class="evidence"><span>Evidence</span>Below-the-fold images do not use loading=&quot;lazy&quot; on Securely-Website pages.</p>
+        <p class="fix"><span>How to fix</span>Add loading=lazy to below-the-fold images; keep the hero eager.</p>
+      </article>
+      <article class="finding warn">
+        <header>
+          <div>
+            <p class="cat">Security</p>
+            <h3>Security headers</h3>
+          </div>
+          <p class="status">Warning</p>
+        </header>
+        <p class="why">Headers such as Content-Security-Policy, nosniff, Referrer-Policy, and a frame policy close common browser abuses.</p>
+        <p class="evidence"><span>Evidence</span>No CSP / nosniff / Referrer-Policy / frame policy in Securely-Website or vercel.json. Edge function sets CORS * only.</p>
+        <p class="fix"><span>How to fix</span>Set CSP, nosniff, Referrer-Policy, and frame protections on the host.</p>
+      </article>
+      <article class="finding warn">
+        <header>
+          <div>
+            <p class="cat">Project hygiene</p>
+            <h3>Lockfile committed</h3>
+          </div>
+          <p class="status">Warning</p>
+        </header>
+        <p class="why">Without a lockfile, the next install can pull different versions than the ones you shipped.</p>
+        <p class="evidence"><span>Evidence</span>No package-lock/poetry.lock/Cargo.lock committed for product trees. Python uses requirements.txt without a lockfile.</p>
+        <p class="fix"><span>How to fix</span>Introduce a lockfile for Python (e.g. pip-tools/poetry) and commit it.</p>
+      </article>
+      <article class="finding warn">
+        <header>
+          <div>
+            <p class="cat">Security</p>
+            <h3>Each person has a request ceiling</h3>
+          </div>
+          <p class="status">Warning</p>
+        </header>
+        <p class="why">A route a script can call with no per-person limit is how a host decides the app is abuse and suspends it.</p>
+        <p class="evidence"><span>Evidence</span>Edge analyze endpoint has no per-caller rate limit or quota in index.ts.</p>
+        <p class="fix"><span>How to fix</span>Add per-IP or per-license rate limits on the analyze function.</p>
+      </article>
+      <article class="finding warn">
+        <header>
+          <div>
+            <p class="cat">Security</p>
+            <h3>API origins are limited</h3>
+          </div>
+          <p class="status">Warning</p>
+        </header>
+        <p class="why">An API that trusts every website can let another site act as a signed-in person.</p>
+        <p class="evidence"><span>Evidence</span>analyze Edge Function sets Access-Control-Allow-Origin: *.</p>
+        <p class="fix"><span>How to fix</span>Restrict CORS to known Securely origins instead of *.</p>
+      </article>
+      <article class="finding warn">
+        <header>
+          <div>
+            <p class="cat">Security</p>
+            <h3>Email, paid APIs, and uploads have a ceiling</h3>
+          </div>
+          <p class="status">Warning</p>
+        </header>
+        <p class="why">Hosts suspend apps that send unlimited email, call a paid API with no cap, or accept unlimited uploads.</p>
+        <p class="evidence"><span>Evidence</span>Analyze path calls a paid LLM API (Groq today) without a documented per-user/day ceiling in the Edge Function.</p>
+        <p class="fix"><span>How to fix</span>Enforce per-user daily analyze quotas before calling the paid AI API.</p>
+      </article>
+      <article class="finding warn">
+        <header>
+          <div>
+            <p class="cat">Performance</p>
+            <h3>Text responses are compressed</h3>
+          </div>
+          <p class="status">Warning</p>
+        </header>
+        <p class="why">Uncompressed HTML, CSS, and JavaScript make the first visit slower than it looks.</p>
+        <p class="evidence"><span>Evidence</span>No production host config found enabling gzip/brotli.</p>
+        <p class="fix"><span>How to fix</span>Enable gzip/brotli on the production host for HTML/CSS/JS.</p>
+      </article>
+    </section>
+    <section>
+      <h2>Done</h2>
+      <article class="finding pass">
+        <header>
+          <div>
+            <p class="cat">Pages and flows</p>
+            <h3>Loading states</h3>
+          </div>
+          <p class="status">Done</p>
+        </header>
+        <p class="why">Waits should look intentional, so people do not click twice or assume the app froze.</p>
+        <p class="evidence"><span>Evidence</span>Widget shows status text and running state on Quick Scan (securely-app/ui/public/app.js, index.html). Demo UI has interactive feedback in Securely-Website/js/main.js.</p>
+      </article>
+      <article class="finding pass">
+        <header>
+          <div>
+            <p class="cat">Search engine optimization</p>
+            <h3>Unique meta title per page</h3>
+          </div>
+          <p class="status">Done</p>
+        </header>
+        <p class="why">Tabs, search results, and shares all use the title. One reused title makes every page look unfinished.</p>
+        <p class="evidence"><span>Evidence</span>index.html, pricing.html, and demo.html each have distinct &lt;title&gt; values.</p>
+      </article>
+      <article class="finding pass">
+        <header>
+          <div>
+            <p class="cat">Search engine optimization</p>
+            <h3>Unique meta description per page</h3>
+          </div>
+          <p class="status">Done</p>
+        </header>
+        <p class="why">The description is the sentence search engines and previews show under the title.</p>
+        <p class="evidence"><span>Evidence</span>Each of the three public pages has its own meta description.</p>
+      </article>
+      <article class="finding pass">
+        <header>
+          <div>
+            <p class="cat">Search engine optimization</p>
+            <h3>One clear h1 per page</h3>
+          </div>
+          <p class="status">Done</p>
+        </header>
+        <p class="why">The h1 is the page&#x27;s title for people and for parsers. Competing h1s blur what the page is.</p>
+        <p class="evidence"><span>Evidence</span>Each public page has one primary h1 (home, pricing, demo).</p>
+      </article>
+      <article class="finding pass">
+        <header>
+          <div>
+            <p class="cat">Search engine optimization</p>
+            <h3>Descriptive alt text</h3>
+          </div>
+          <p class="status">Done</p>
+        </header>
+        <p class="why">Images that carry meaning need a text equivalent. Decorative images need an empty alt.</p>
+        <p class="evidence"><span>Evidence</span>Header logos use alt=&quot;Securely&quot;; decorative footer logos use alt=&quot;&quot;.</p>
+      </article>
+      <article class="finding pass">
+        <header>
+          <div>
+            <p class="cat">Search engine optimization</p>
+            <h3>Viewport meta tag</h3>
+          </div>
+          <p class="status">Done</p>
+        </header>
+        <p class="why">Without a viewport tag, phones scale the desktop layout and the app feels broken.</p>
+        <p class="evidence"><span>Evidence</span>viewport meta with width=device-width is present on public pages.</p>
+      </article>
+      <article class="finding pass">
+        <header>
+          <div>
+            <p class="cat">Generative engine optimization</p>
+            <h3>Who, what, and who it is for</h3>
+          </div>
+          <p class="status">Done</p>
+        </header>
+        <p class="why">Generative engines quote a clear entity. A homepage that never says who operates it is easy to misidentify.</p>
+        <p class="evidence"><span>Evidence</span>Homepage states Securely is AI-powered real-time threat detection for Windows users (Securely-Website/index.html).</p>
+      </article>
+      <article class="finding pass">
+        <header>
+          <div>
+            <p class="cat">Generative engine optimization</p>
+            <h3>Quotable facts</h3>
+          </div>
+          <p class="status">Done</p>
+        </header>
+        <p class="why">Specific facts are what assistants can cite. Vague slogans get paraphrased into something you did not say.</p>
+        <p class="evidence"><span>Evidence</span>Copy describes phishing/scam/malware screen monitoring with OCR+AI in concrete sentences.</p>
+      </article>
+      <article class="finding pass">
+        <header>
+          <div>
+            <p class="cat">Answer and chat engine optimization</p>
+            <h3>The first screen answers what this is</h3>
+          </div>
+          <p class="status">Done</p>
+        </header>
+        <p class="why">Chat engines lift the opening of a page. If the answer is below a long animation, they miss it.</p>
+        <p class="evidence"><span>Evidence</span>Hero copy answers what Securely is on the first screen of index.html.</p>
+      </article>
+      <article class="finding pass">
+        <header>
+          <div>
+            <p class="cat">Identity and appearance</p>
+            <h3>Responsive layout</h3>
+          </div>
+          <p class="status">Done</p>
+        </header>
+        <p class="why">A phone and a desktop should both be able to read and use the app without horizontal chaos.</p>
+        <p class="evidence"><span>Evidence</span>Securely-Website/css/styles.css includes responsive layout rules for phone and desktop widths.</p>
+      </article>
+      <article class="finding pass">
+        <header>
+          <div>
+            <p class="cat">Identity and appearance</p>
+            <h3>Readable contrast</h3>
+          </div>
+          <p class="status">Done</p>
+        </header>
+        <p class="why">Low-contrast gray on a tinted background looks designed and then fails in daylight.</p>
+        <p class="evidence"><span>Evidence</span>Primary marketing text uses dark ink on light backgrounds in styles.css; readable at a glance from source.</p>
+      </article>
+      <article class="finding pass">
+        <header>
+          <div>
+            <p class="cat">Identity and appearance</p>
+            <h3>Visible keyboard focus</h3>
+          </div>
+          <p class="status">Done</p>
+        </header>
+        <p class="why">If focus is removed, keyboard users cannot see where they are.</p>
+        <p class="evidence"><span>Evidence</span>styles.css defines :focus-visible styles for interactive controls (e.g. tooltip-term, demo buttons).</p>
+      </article>
+      <article class="finding pass">
+        <header>
+          <div>
+            <p class="cat">Identity and appearance</p>
+            <h3>Reduced motion</h3>
+          </div>
+          <p class="status">Done</p>
+        </header>
+        <p class="why">People who ask the system for less motion should not get large looping animations.</p>
+        <p class="evidence"><span>Evidence</span>prefers-reduced-motion media queries present in Securely-Website/css/styles.css.</p>
+      </article>
+      <article class="finding pass">
+        <header>
+          <div>
+            <p class="cat">Accessibility</p>
+            <h3>Language of the page</h3>
+          </div>
+          <p class="status">Done</p>
+        </header>
+        <p class="why">Screen readers pronounce the page with the lang attribute. A missing lang is announced as the wrong language.</p>
+        <p class="evidence"><span>Evidence</span>html lang=&quot;en&quot; on public pages and securely-app widget.</p>
+      </article>
+      <article class="finding pass">
+        <header>
+          <div>
+            <p class="cat">Accessibility</p>
+            <h3>Keyboard access</h3>
+          </div>
+          <p class="status">Done</p>
+        </header>
+        <p class="why">Every control that a pointer can use needs a keyboard path.</p>
+        <p class="evidence"><span>Evidence</span>Primary controls are buttons and links; menu toggle uses a button element.</p>
+      </article>
+      <article class="finding pass">
+        <header>
+          <div>
+            <p class="cat">Accessibility</p>
+            <h3>Color is not the only signal</h3>
+          </div>
+          <p class="status">Done</p>
+        </header>
+        <p class="why">Errors, success, and status that are only a color disappear for some people.</p>
+        <p class="evidence"><span>Evidence</span>Threat/status messaging uses text labels in the widget and demo, not color alone.</p>
+      </article>
+      <article class="finding pass">
+        <header>
+          <div>
+            <p class="cat">Performance</p>
+            <h3>Images reserve their space</h3>
+          </div>
+          <p class="status">Done</p>
+        </header>
+        <p class="why">Width and height, or a reserved aspect ratio, keep the page from jumping when images arrive.</p>
+        <p class="evidence"><span>Evidence</span>Logo img tags set width and height attributes on public pages.</p>
+      </article>
+      <article class="finding pass">
+        <header>
+          <div>
+            <p class="cat">Security</p>
+            <h3>API input is checked on the server</h3>
+          </div>
+          <p class="status">Done</p>
+        </header>
+        <p class="why">A route that trusts the body or the query string can be talked into work you did not mean to do.</p>
+        <p class="evidence"><span>Evidence</span>supabase/functions/analyze/index.ts rejects non-POST, invalid JSON, and non-string text before calling the model.</p>
+      </article>
+      <article class="finding pass">
+        <header>
+          <div>
+            <p class="cat">Project hygiene</p>
+            <h3>README explains how to run the app</h3>
+          </div>
+          <p class="status">Done</p>
+        </header>
+        <p class="why">A vibe-coded repo that only runs inside one chat session is not finished.</p>
+        <p class="evidence"><span>Evidence</span>securely-app/README.md documents dotnet run; Securely Project/README.md and SUPABASE_SETUP.md cover the Python/API path.</p>
+      </article>
+      <article class="finding pass">
+        <header>
+          <div>
+            <p class="cat">Project hygiene</p>
+            <h3>.env.example without secrets</h3>
+          </div>
+          <p class="status">Done</p>
+        </header>
+        <p class="why">People need the variable names. They should never receive a real secret in the example file.</p>
+        <p class="evidence"><span>Evidence</span>Securely Project/.env.example lists SECURELY_API_URL and related names with placeholder values.</p>
+      </article>
+      <article class="finding pass">
+        <header>
+          <div>
+            <p class="cat">Project hygiene</p>
+            <h3>Supported framework and runtime</h3>
+          </div>
+          <p class="status">Done</p>
+        </header>
+        <p class="why">Unsupported frameworks and runtimes stop receiving security fixes.</p>
+        <p class="evidence"><span>Evidence</span>securely-app targets net10.0-windows with recent WebView2 package references; no EOL runtime named in the rewrite host.</p>
+      </article>
+      <article class="finding pass">
+        <header>
+          <div>
+            <p class="cat">Security</p>
+            <h3>Redirects stay on your site</h3>
+          </div>
+          <p class="status">Done</p>
+        </header>
+        <p class="why">A redirect that trusts a URL from the query string can send people to a lookalike site.</p>
+        <p class="evidence"><span>Evidence</span>No redirects built from visitor query parameters found on Securely-Website or Edge analyze.</p>
+      </article>
+      <article class="finding pass">
+        <header>
+          <div>
+            <p class="cat">Legal and consent</p>
+            <h3>The payment processor allows this business</h3>
+          </div>
+          <p class="status">Done</p>
+        </header>
+        <p class="why">Stripe and PayPal freeze the account and hold the money when a product sits on their restricted list.</p>
+        <p class="evidence"><span>Evidence</span>Product is consumer security software (threat monitoring), an ordinary category; no live restricted-business signals in the marketing offer.</p>
+      </article>
+      <article class="finding pass">
+        <header>
+          <div>
+            <p class="cat">Legal and consent</p>
+            <h3>Fonts load from your own site</h3>
+          </div>
+          <p class="status">Done</p>
+        </header>
+        <p class="why">A font file loaded from Google or another company sends the visitor&#x27;s address to that company.</p>
+        <p class="evidence"><span>Evidence</span>Product Securely-Website uses system font stacks in css/styles.css; no Google Fonts link on product pages.</p>
+      </article>
+      <article class="finding pass">
+        <header>
+          <div>
+            <p class="cat">Performance</p>
+            <h3>The first page is not a huge script</h3>
+          </div>
+          <p class="status">Done</p>
+        </header>
+        <p class="why">A vibe-coded app often sends every library on the first page.</p>
+        <p class="evidence"><span>Evidence</span>Marketing pages are mostly static HTML/CSS with modest JS (main.js); not a heavy SPA first load.</p>
+      </article>
+      <article class="finding pass">
+        <header>
+          <div>
+            <p class="cat">Performance</p>
+            <h3>Text stays visible while fonts load</h3>
+          </div>
+          <p class="status">Done</p>
+        </header>
+        <p class="why">A custom font that blocks rendering leaves the page blank on a slow connection.</p>
+        <p class="evidence"><span>Evidence</span>System fonts; no custom font blocking render on the product site.</p>
+      </article>
+    </section>
+    <section>
+      <h2>Does not apply</h2>
+      <article class="finding na">
+        <header>
+          <div>
+            <p class="cat">Pages and flows</p>
+            <h3>Thank-you or confirmation page</h3>
+          </div>
+          <p class="status">Does not apply</p>
+        </header>
+        <p class="why">After a signup, checkout, or important form, people need a clear end to the flow.</p>
+        <p class="evidence"><span>Evidence</span>Product website has no signup, checkout, or contact form to complete.</p>
+      </article>
+      <article class="finding na">
+        <header>
+          <div>
+            <p class="cat">Search engine optimization</p>
+            <h3>Dates on articles</h3>
+          </div>
+          <p class="status">Does not apply</p>
+        </header>
+        <p class="why">A published or updated date tells readers and citation systems whether a post is current.</p>
+        <p class="evidence"><span>Evidence</span>Securely does not publish articles or a blog.</p>
+      </article>
+      <article class="finding na">
+        <header>
+          <div>
+            <p class="cat">Legal and consent</p>
+            <h3>Cookie banner and a refusal path</h3>
+          </div>
+          <p class="status">Does not apply</p>
+        </header>
+        <p class="why">Non-essential cookies and analytics need a choice, including the choice to refuse them.</p>
+        <p class="evidence"><span>Evidence</span>Product Securely-Website pages set no analytics or non-essential cookies (Lenis CSS only). Cluely Website dump is not the product site.</p>
+      </article>
+      <article class="finding na">
+        <header>
+          <div>
+            <p class="cat">Legal and consent</p>
+            <h3>Session replay is off or inputs are masked</h3>
+          </div>
+          <p class="status">Does not apply</p>
+        </header>
+        <p class="why">A recording tool that catches passwords, cards, or messages stores more than a page view.</p>
+        <p class="evidence"><span>Evidence</span>No session-replay SDK on product Securely-Website pages.</p>
+      </article>
+      <article class="finding na">
+        <header>
+          <div>
+            <p class="cat">Security</p>
+            <h3>Protected routes</h3>
+          </div>
+          <p class="status">Does not apply</p>
+        </header>
+        <p class="why">Account data, settings, and admin tools must not render for a signed-out visitor.</p>
+        <p class="evidence"><span>Evidence</span>No signed-in account UI or private member routes shipped on the website or widget.</p>
+      </article>
+      <article class="finding na">
+        <header>
+          <div>
+            <p class="cat">Security</p>
+            <h3>Each person can only reach their own data</h3>
+          </div>
+          <p class="status">Does not apply</p>
+        </header>
+        <p class="why">A signed-in person who changes an id in the URL or the request can read, edit, or delete someone else&#x27;s data.</p>
+        <p class="evidence"><span>Evidence</span>No per-user account data APIs or private records UI in the shipped product surface.</p>
+      </article>
+      <article class="finding na">
+        <header>
+          <div>
+            <p class="cat">Security</p>
+            <h3>Private pages stay out of search</h3>
+          </div>
+          <p class="status">Does not apply</p>
+        </header>
+        <p class="why">Inbox, settings, and admin URLs should not be indexed.</p>
+        <p class="evidence"><span>Evidence</span>No private account routes to index.</p>
+      </article>
+      <article class="finding na">
+        <header>
+          <div>
+            <p class="cat">Security</p>
+            <h3>Session cookie flags</h3>
+          </div>
+          <p class="status">Does not apply</p>
+        </header>
+        <p class="why">A session cookie should be HttpOnly and Secure, with SameSite set, so scripts and stray requests have a harder time carrying it.</p>
+        <p class="evidence"><span>Evidence</span>No session-cookie auth implemented in the shipped app/site.</p>
+      </article>
+      <article class="finding na">
+        <header>
+          <div>
+            <p class="cat">Security</p>
+            <h3>The session is not in local storage</h3>
+          </div>
+          <p class="status">Does not apply</p>
+        </header>
+        <p class="why">A token in local storage can be read by any script on the page. An HttpOnly cookie cannot.</p>
+        <p class="evidence"><span>Evidence</span>No account session tokens in the shipped product.</p>
+      </article>
+      <article class="finding na">
+        <header>
+          <div>
+            <p class="cat">Security</p>
+            <h3>Sessions expire</h3>
+          </div>
+          <p class="status">Does not apply</p>
+        </header>
+        <p class="why">A login that never ends means the next person on a shared computer is still signed in.</p>
+        <p class="evidence"><span>Evidence</span>No accounts.</p>
+      </article>
+      <article class="finding na">
+        <header>
+          <div>
+            <p class="cat">Security</p>
+            <h3>Server-side validation on public forms</h3>
+          </div>
+          <p class="status">Does not apply</p>
+        </header>
+        <p class="why">Browser checks are a convenience. The server still has to reject bad or hostile input.</p>
+        <p class="evidence"><span>Evidence</span>No public website forms.</p>
+      </article>
+      <article class="finding na">
+        <header>
+          <div>
+            <p class="cat">Security</p>
+            <h3>Visitor input is not glued into a query or command</h3>
+          </div>
+          <p class="status">Does not apply</p>
+        </header>
+        <p class="why">Text from a visitor, pasted into SQL or a shell command, lets them change what the server runs.</p>
+        <p class="evidence"><span>Evidence</span>No application database schema or query layer found (Edge analyze only; no migrations/RLS).</p>
+      </article>
+      <article class="finding na">
+        <header>
+          <div>
+            <p class="cat">Security</p>
+            <h3>The server chooses which fields are saved</h3>
+          </div>
+          <p class="status">Does not apply</p>
+        </header>
+        <p class="why">Saving the whole request body lets a person set their own role, price, or admin flag.</p>
+        <p class="evidence"><span>Evidence</span>No database writes of visitor bodies.</p>
+      </article>
+      <article class="finding na">
+        <header>
+          <div>
+            <p class="cat">Forms</p>
+            <h3>Every input has a label</h3>
+          </div>
+          <p class="status">Does not apply</p>
+        </header>
+        <p class="why">Placeholder text disappears while typing and is not a name for the field.</p>
+        <p class="evidence"><span>Evidence</span>No public forms.</p>
+      </article>
+      <article class="finding na">
+        <header>
+          <div>
+            <p class="cat">Forms</p>
+            <h3>Inline errors</h3>
+          </div>
+          <p class="status">Does not apply</p>
+        </header>
+        <p class="why">An error has to say which field failed and how to fix it.</p>
+        <p class="evidence"><span>Evidence</span>No public forms.</p>
+      </article>
+      <article class="finding na">
+        <header>
+          <div>
+            <p class="cat">Forms</p>
+            <h3>Pending submit state</h3>
+          </div>
+          <p class="status">Does not apply</p>
+        </header>
+        <p class="why">A slow submit without a pending state gets clicked again.</p>
+        <p class="evidence"><span>Evidence</span>No public forms.</p>
+      </article>
+      <article class="finding na">
+        <header>
+          <div>
+            <p class="cat">Forms</p>
+            <h3>Success confirmation</h3>
+          </div>
+          <p class="status">Does not apply</p>
+        </header>
+        <p class="why">Silence after submit looks like a failure.</p>
+        <p class="evidence"><span>Evidence</span>No public forms.</p>
+      </article>
+      <article class="finding na">
+        <header>
+          <div>
+            <p class="cat">Accounts and settings</p>
+            <h3>Account settings</h3>
+          </div>
+          <p class="status">Does not apply</p>
+        </header>
+        <p class="why">People who can sign in need a place to see and change the account.</p>
+        <p class="evidence"><span>Evidence</span>No accounts.</p>
+      </article>
+      <article class="finding na">
+        <header>
+          <div>
+            <p class="cat">Accounts and settings</p>
+            <h3>A signed-in person can sign out</h3>
+          </div>
+          <p class="status">Does not apply</p>
+        </header>
+        <p class="why">Sign-up, sign-in, and a reset path still leave someone stuck in the account on a shared computer if they cannot sign out.</p>
+        <p class="evidence"><span>Evidence</span>No accounts.</p>
+      </article>
+      <article class="finding na">
+        <header>
+          <div>
+            <p class="cat">Accounts and settings</p>
+            <h3>Signup confirms the person is old enough</h3>
+          </div>
+          <p class="status">Does not apply</p>
+        </header>
+        <p class="why">An account that collects an email from a child under 13, with no parent involved, is a COPPA problem.</p>
+        <p class="evidence"><span>Evidence</span>No signup.</p>
+      </article>
+      <article class="finding na">
+        <header>
+          <div>
+            <p class="cat">Accounts and settings</p>
+            <h3>Email is verified before the account is active</h3>
+          </div>
+          <p class="status">Does not apply</p>
+        </header>
+        <p class="why">A signup that trusts a typed email can lock a real person out, or open an account they never asked for.</p>
+        <p class="evidence"><span>Evidence</span>No accounts.</p>
+      </article>
+      <article class="finding na">
+        <header>
+          <div>
+            <p class="cat">Accounts and settings</p>
+            <h3>Password reset or equivalent</h3>
+          </div>
+          <p class="status">Does not apply</p>
+        </header>
+        <p class="why">Password accounts need a recovery path. Passwordless accounts need a way back in if the email or device changes.</p>
+        <p class="evidence"><span>Evidence</span>No accounts.</p>
+      </article>
+      <article class="finding na">
+        <header>
+          <div>
+            <p class="cat">Accounts and settings</p>
+            <h3>People can delete their personal data</h3>
+          </div>
+          <p class="status">Does not apply</p>
+        </header>
+        <p class="why">If the app stores personal data, people need a way to delete it. Keeping it with no way out is a problem in a lot of places, including Europe, even when you are based somewhere else.</p>
+        <p class="evidence"><span>Evidence</span>No accounts; checklist item is accounts-scoped.</p>
+      </article>
+      <article class="finding na">
+        <header>
+          <div>
+            <p class="cat">Legal and consent</p>
+            <h3>Forms ask only for data the app uses</h3>
+          </div>
+          <p class="status">Does not apply</p>
+        </header>
+        <p class="why">A phone number, birthday, or address the product never uses is data you cannot justify keeping.</p>
+        <p class="evidence"><span>Evidence</span>No forms.</p>
+      </article>
+      <article class="finding na">
+        <header>
+          <div>
+            <p class="cat">Legal and consent</p>
+            <h3>A plan for telling people about a breach</h3>
+          </div>
+          <p class="status">Does not apply</p>
+        </header>
+        <p class="why">If account data leaks, you are expected to tell the people affected. A plan written after the breach is late.</p>
+        <p class="evidence"><span>Evidence</span>No accounts / no breach-notification note required under accounts appliesWhen.</p>
+      </article>
+      <article class="finding na">
+        <header>
+          <div>
+            <p class="cat">Accounts and settings</p>
+            <h3>Autocomplete on auth fields</h3>
+          </div>
+          <p class="status">Does not apply</p>
+        </header>
+        <p class="why">Password managers need autocomplete hints such as username, current-password, and new-password.</p>
+        <p class="evidence"><span>Evidence</span>No auth fields.</p>
+      </article>
+      <article class="finding na">
+        <header>
+          <div>
+            <p class="cat">Project hygiene</p>
+            <h3>Database backups</h3>
+          </div>
+          <p class="status">Does not apply</p>
+        </header>
+        <p class="why">A database with no backup can lose people&#x27;s data from one bad command.</p>
+        <p class="evidence"><span>Evidence</span>No application database deployed in-repo.</p>
+      </article>
+      <article class="finding na">
+        <header>
+          <div>
+            <p class="cat">Security</p>
+            <h3>Visitor text is escaped</h3>
+          </div>
+          <p class="status">Does not apply</p>
+        </header>
+        <p class="why">Text a visitor typed, dropped straight into the page as HTML, lets them run script in someone else&#x27;s browser.</p>
+        <p class="evidence"><span>Evidence</span>No visitor-submitted form text rendered on the site. (Note: widget uses innerHTML for threat rows from local/AI text — separate risk outside this forms check.)</p>
+      </article>
+      <article class="finding na">
+        <header>
+          <div>
+            <p class="cat">Security</p>
+            <h3>Passwords are hashed</h3>
+          </div>
+          <p class="status">Does not apply</p>
+        </header>
+        <p class="why">A database of readable passwords is a breach the moment it leaks.</p>
+        <p class="evidence"><span>Evidence</span>App does not handle passwords.</p>
+      </article>
+      <article class="finding na">
+        <header>
+          <div>
+            <p class="cat">Accounts and settings</p>
+            <h3>Passwords have a minimum length</h3>
+          </div>
+          <p class="status">Does not apply</p>
+        </header>
+        <p class="why">A very short password is easy to guess. Requiring a symbol does not fix a password that can be one character long.</p>
+        <p class="evidence"><span>Evidence</span>No password fields.</p>
+      </article>
+      <article class="finding na">
+        <header>
+          <div>
+            <p class="cat">Security</p>
+            <h3>The database is not open to the internet</h3>
+          </div>
+          <p class="status">Does not apply</p>
+        </header>
+        <p class="why">A database that accepts connections from any address can be guessed at by the whole internet.</p>
+        <p class="evidence"><span>Evidence</span>No database host settings in-repo.</p>
+      </article>
+      <article class="finding na">
+        <header>
+          <div>
+            <p class="cat">Security</p>
+            <h3>Sign-in failures and server errors are logged</h3>
+          </div>
+          <p class="status">Does not apply</p>
+        </header>
+        <p class="why">Without a log, a burst of failed sign-ins or bad requests is invisible until something breaks.</p>
+        <p class="evidence"><span>Evidence</span>No accounts / sign-in handlers.</p>
+      </article>
+      <article class="finding na">
+        <header>
+          <div>
+            <p class="cat">Security</p>
+            <h3>Public forms are rate-limited</h3>
+          </div>
+          <p class="status">Does not apply</p>
+        </header>
+        <p class="why">A public form with no limit is easy to hammer with a script.</p>
+        <p class="evidence"><span>Evidence</span>No public forms.</p>
+      </article>
+      <article class="finding na">
+        <header>
+          <div>
+            <p class="cat">Security</p>
+            <h3>Failed sign-ins get slowed or blocked</h3>
+          </div>
+          <p class="status">Does not apply</p>
+        </header>
+        <p class="why">Unlimited password guesses are how accounts get broken into.</p>
+        <p class="evidence"><span>Evidence</span>No accounts.</p>
+      </article>
+      <article class="finding na">
+        <header>
+          <div>
+            <p class="cat">Security</p>
+            <h3>Uploads are limited</h3>
+          </div>
+          <p class="status">Does not apply</p>
+        </header>
+        <p class="why">An upload with no type or size limit is how untrusted files land on the server.</p>
+        <p class="evidence"><span>Evidence</span>Nobody uploads files through the website or widget forms.</p>
+      </article>
+      <article class="finding na">
+        <header>
+          <div>
+            <p class="cat">Security</p>
+            <h3>Cookie actions check the sender</h3>
+          </div>
+          <p class="status">Does not apply</p>
+        </header>
+        <p class="why">A cookie session that accepts a request from any site can be triggered by another page.</p>
+        <p class="evidence"><span>Evidence</span>No cookie session mutating routes.</p>
+      </article>
+      <article class="finding na">
+        <header>
+          <div>
+            <p class="cat">Legal and consent</p>
+            <h3>Marketing email is opt-in</h3>
+          </div>
+          <p class="status">Does not apply</p>
+        </header>
+        <p class="why">Marketing email without consent, with no way to stop, or with no postal address, is a legal problem in many places.</p>
+        <p class="evidence"><span>Evidence</span>No marketing email sending implemented.</p>
+      </article>
+      <article class="finding na">
+        <header>
+          <div>
+            <p class="cat">Legal and consent</p>
+            <h3>A way to report and remove user content</h3>
+          </div>
+          <p class="status">Does not apply</p>
+        </header>
+        <p class="why">If visitors can post or upload, a host or a copyright owner will contact you. One illegal or copyrighted file with nobody to reach is how the app gets suspended. Hosting that content for people in the United States also needs a DMCA designated agent on file with the Copyright Office.</p>
+        <p class="evidence"><span>Evidence</span>Visitors cannot publish UGC that the app stores or shows.</p>
+      </article>
+    </section>
+    <footer>The score counts checks that are done, out of the checks that apply. A warning still counts. Something that does not apply does not. This file is the report. It does not change the app. Checklist: Vibe Code Checklist v9 (Delexoo/vibe-code-checklist).</footer>
+  </main>
+</body>
+</html>

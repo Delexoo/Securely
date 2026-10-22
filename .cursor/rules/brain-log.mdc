@@ -1,0 +1,36 @@
+---
+description: Record every Securely change in the brain log for commit messages and release notes
+alwaysApply: true
+---
+
+# Brain log
+
+`brain/log.json` is the source for commit messages and release notes for **Securely**. The current version is `package.json` `version` (keep `securely-app/host/SecurelyShell.csproj` `<Version>` in sync). A commit, update, or deploy raises that version everywhere listed in the commit-and-deploy rule before it ships. This commit's notes belong to the new version, not the one that already shipped.
+
+Before you finish, audit the current version. Every change a person would notice, and every fix that belongs in a commit, gets one sentence. Put that sentence in exactly one list:
+
+- `added` for something new, changed, or removed on purpose
+- `fixes` for something that was broken and now works
+
+Check these product areas:
+
+- **Widget** — island pill, scan modes, drag, icons, status
+- **Dashboard** — Monitoring, Settings, Audit, Credits
+- **Host** — SecurelyShell WinForms + WebView2
+- **Core** — OCR, analyze, threat pipeline
+- **Site** — Securely-Website marketing pages
+- **API** — Stripe checkout/webhook, OpenRouter analyze proxy
+- **Security** — secrets, headers, RLS, honest claims
+
+Add a heading only when none of those fit.
+
+```json
+{ "heading": "Widget", "added": ["The scan control is a colored pill for Quick, Timed, and 24/7."], "fixes": ["Dragging the pill no longer hits an invisible lower border."] }
+```
+
+- If that version has no entry, add one with today's date as `YYYY-MM-DD` and a short title.
+- If it exists, append the sentence. Leave older notes as they are.
+- Do not log formatting-only churn, reverted work, or a change that is already written there.
+- One note is one change. Do not use a `notes` list.
+- Run `npm run notes` so `brain/releases.json`, `Securely-Website/releases.json`, `Securely-Website/releases.html`, and `securely-app/ui/public/releases.json` (dashboard) match the log.
+- Do not commit or publish only because the log changed.

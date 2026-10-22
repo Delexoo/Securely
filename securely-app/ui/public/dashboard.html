@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en" data-appearance="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dashboard · Securely</title>
+  <meta name="theme-color" content="#eceef2">
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="preload" href="/fonts/manrope-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/fonts.css">
+  <link rel="stylesheet" href="/dash.css">
+</head>
+<body data-page="dashboard">
+  <a class="skip" href="#content">Skip to content</a>
+  <div class="dash" id="content">
+    <nav class="side" aria-label="Dashboard">
+      <div class="side-top">
+        <p class="brand">Securely</p>
+        <button id="side-collapse" type="button" aria-label="Collapse sidebar" aria-expanded="true">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="14" rx="2"/><path d="M9 5v14"/></svg>
+        </button>
+      </div>
+      <div class="side-nav">
+        <button type="button" data-open="monitor" aria-current="true" title="Monitoring">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="7.2"/><path d="M12 8.2v4.2l2.6 1.6"/></svg>
+          <span>Monitoring</span>
+        </button>
+        <button type="button" data-open="settings" title="Settings">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h16"/><path d="M4 16h16"/><circle cx="9" cy="8" r="2.1"/><circle cx="15" cy="16" r="2.1"/></svg>
+          <span>Settings</span>
+        </button>
+        <button type="button" data-open="audit" title="Audit log">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5h6.8L18 8.7V19a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 6 19V6A1.5 1.5 0 0 1 7.5 4.5z"/><path d="M13.5 4.8V9H17.6"/></svg>
+          <span>Audit log</span>
+        </button>
+        <p class="side-label">About</p>
+        <button type="button" data-open="releases" data-group="about" title="Release notes">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5h6.8L18 8.7V19a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 6 19V6A1.5 1.5 0 0 1 7.5 4.5z"/><path d="M13.5 4.8V9H17.6"/></svg>
+          <span>Release notes</span>
+        </button>
+        <button type="button" data-open="credits" data-group="about" title="Credits">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 10.5v5"/><path d="M12 7.8h.01"/></svg>
+          <span>Credits</span>
+        </button>
+      </div>
+      <button id="toggle-pill" class="pin" type="button">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 14.5H7.2A1.7 1.7 0 0 1 5.5 12.8V7.2A1.7 1.7 0 0 1 7.2 5.5h5.6A1.7 1.7 0 0 1 14.5 7.2V10"/><path d="M13 11.2 19 5.2"/><path d="M14.2 5.2H19v4.8"/></svg>
+        <span>Show / hide pill</span>
+      </button>
+      <button id="quit-securely" class="pin" type="button">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 7V5.5A1.5 1.5 0 0 1 11.5 4h7A1.5 1.5 0 0 1 20 5.5v13a1.5 1.5 0 0 1-1.5 1.5h-7A1.5 1.5 0 0 1 10 18.5V17"/><path d="M13 12H4"/><path d="m7 9-3 3 3 3"/></svg>
+        <span>Quit Securely</span>
+      </button>
+    </nav>
+
+    <main class="main">
+      <p class="status" id="status"></p>
+
+      <section data-section="monitor" data-title="Monitoring">
+        <h1>Monitoring</h1>
+        <p class="note">Quick, timed, or continuous scans on your primary monitor. OCR text is analyzed through Securely’s OpenRouter proxy.</p>
+        <h2 class="dash-group">Scan mode</h2>
+        <p class="note">Choose one mode, then start. Continuous asks for consent first.</p>
+        <div class="rows">
+          <div class="row">
+            <span class="mark" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 19V6"/><path d="M6.8 11.2 12 6l5.2 5.2"/></svg></span>
+            <div class="row-copy"><strong>Mode</strong><span>Quick is one-shot. Timed runs for a duration. 24/7 loops until you stop.</span></div>
+            <div class="modes modes-3" role="radiogroup" aria-label="Scan mode">
+              <span class="modes-thumb" aria-hidden="true"></span>
+              <button type="button" data-mode="quick" aria-checked="true">Quick</button>
+              <button type="button" data-mode="timed" aria-checked="false">Timed</button>
+              <button type="button" data-mode="continuous" aria-checked="false">24/7</button>
+            </div>
+          </div>
+          <div class="row" id="duration-row">
+            <span class="mark" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="7.2"/><path d="M12 8.2v4.2l2.6 1.6"/></svg></span>
+            <div class="row-copy"><strong>Timed duration</strong><span>How long a timed scan runs before stopping.</span></div>
+            <select id="dash-timed-mins" class="field" aria-label="Timed duration">
+              <option value="1">1 min</option>
+              <option value="5" selected>5 min</option>
+              <option value="15">15 min</option>
+              <option value="30">30 min</option>
+              <option value="60">60 min</option>
+            </select>
+          </div>
+          <div class="row">
+            <span class="mark" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="7.5"/><circle cx="12" cy="12" r="2.2"/></svg></span>
+            <div class="row-copy"><strong>Status</strong><span id="dash-countdown">Timed remaining: none · Pause: none</span></div>
+            <span id="dash-status" class="tag">Idle</span>
+          </div>
+        </div>
+        <div class="actions">
+          <button type="button" id="dash-start" class="btn">Start</button>
+          <button type="button" id="dash-stop" class="ghost">Stop</button>
+        </div>
+        <h2 class="dash-group">Latest alerts</h2>
+        <p class="note">Recent findings from scans on this computer.</p>
+        <div id="dash-alerts" class="alert-list" role="log" aria-live="polite">
+          <p class="empty-state">No threats logged yet. Run a Quick Scan to start.</p>
+        </div>
+      </section>
+
+      <section data-section="settings" data-title="Settings" hidden>
+        <h1>Settings</h1>
+        <p class="note">Detection, notifications, and how the pill looks on this computer.</p>
+        <h2 class="dash-group">Detection &amp; overlay</h2>
+        <div class="rows">
+          <div class="row">
+            <span class="mark" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4.5" y="4.5" width="15" height="15" rx="2"/><path d="M8 12h8M12 8v8"/></svg></span>
+            <div class="row-copy"><strong>Hitboxes</strong><span>Draw translucent boxes over OCR matches when a threat is flagged.</span></div>
+            <label class="switch"><input id="set-hitboxes" type="checkbox"><i></i></label>
+          </div>
+          <div class="row">
+            <span class="mark" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 4v16M4 12h16"/></svg></span>
+            <div class="row-copy"><strong>Strict / keyword scan</strong><span>Extra local keyword checks before or alongside AI.</span></div>
+            <label class="switch"><input id="set-strict" type="checkbox"><i></i></label>
+          </div>
+          <div class="row">
+            <span class="mark" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 4v4M12 16v4"/><circle cx="12" cy="12" r="3"/></svg></span>
+            <div class="row-copy"><strong>Test Mode</strong><span>Fake threats without calling live AI. Offline friendly.</span></div>
+            <label class="switch"><input id="set-test" type="checkbox"><i></i></label>
+          </div>
+        </div>
+        <h2 class="dash-group">Notifications</h2>
+        <div class="rows">
+          <div class="row">
+            <span class="mark" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 9a6 6 0 0 1 12 0c0 7 3 7 3 7H3s3 0 3-7"/><path d="M10 19a2 2 0 0 0 4 0"/></svg></span>
+            <div class="row-copy"><strong>Desktop notifications</strong><span>Toast when a threat is classified.</span></div>
+            <label class="switch"><input id="set-notify" type="checkbox" checked><i></i></label>
+          </div>
+          <div class="row">
+            <span class="mark" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 10v4h3l5 4V6L7 10H4z"/><path d="M16 9.5a3 3 0 0 1 0 5"/></svg></span>
+            <div class="row-copy"><strong>Sound</strong><span>Play a short alert with notifications.</span></div>
+            <label class="switch"><input id="set-sound" type="checkbox" checked><i></i></label>
+          </div>
+          <div class="row">
+            <span class="mark" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 4v4M12 16v4"/><circle cx="12" cy="12" r="3"/></svg></span>
+            <div class="row-copy"><strong>Test notification</strong><span>Write a sample event to the audit log.</span></div>
+            <button type="button" id="set-test-notify" class="ghost">Send test</button>
+          </div>
+        </div>
+        <h2 class="dash-group">Appearance</h2>
+        <p class="note">Light or dark for this window, plus pill opacity.</p>
+        <div class="rows">
+          <div class="row">
+            <span class="mark" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M12 3.4v1.8M12 18.8v1.8M3.4 12h1.8M18.8 12h1.8"/></svg></span>
+            <div class="row-copy"><strong>Dashboard</strong><span>Light or dark for this window.</span></div>
+            <div class="modes" role="radiogroup" aria-label="Dashboard appearance">
+              <span class="modes-thumb" aria-hidden="true"></span>
+              <button type="button" data-dashboard-mode="light" aria-checked="true">Light</button>
+              <button type="button" data-dashboard-mode="dark" aria-checked="false">Dark</button>
+            </div>
+          </div>
+          <div class="row">
+            <span class="mark" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3.5" y="7" width="17" height="10" rx="5"/><circle cx="15.2" cy="12" r="2.2"/></svg></span>
+            <div class="row-copy"><strong>Widget glass</strong><span>Light or dark wash on the pill.</span></div>
+            <div class="modes" role="radiogroup" aria-label="Widget appearance">
+              <span class="modes-thumb" aria-hidden="true"></span>
+              <button type="button" data-widget-mode="light" aria-checked="false">Light</button>
+              <button type="button" data-widget-mode="dark" aria-checked="true">Dark</button>
+            </div>
+          </div>
+          <div class="row">
+            <span class="mark" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="7.2"/></svg></span>
+            <div class="row-copy"><strong>Pill opacity</strong><span>How strong the glass wash is.</span></div>
+            <div class="color-control">
+              <div class="opacity-line">
+                <input class="slider" id="opacity" type="range" min="10" max="100" step="5" value="50" aria-label="Opacity">
+                <span id="opacity-value">50%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section data-section="audit" data-title="Audit log" hidden>
+        <h1>Audit log</h1>
+        <p class="note">Threat events and scan notes stored on this computer.</p>
+        <div class="actions" style="margin-top:0;margin-bottom:16px">
+          <button type="button" id="audit-refresh" class="ghost">Refresh</button>
+          <button type="button" id="audit-clear" class="ghost">Clear log</button>
+          <button type="button" id="audit-quick" class="btn">Quick Scan</button>
+        </div>
+        <div id="audit-list" class="alert-list" role="log">
+          <p class="empty-state">Audit log is empty. Threats and scan events will appear here.</p>
+        </div>
+      </section>
+
+      <section data-section="releases" data-title="Release notes" hidden>
+        <h1>Release notes</h1>
+        <p class="note">What changed in each Securely build. Same list as the website and GitHub Releases.</p>
+        <div id="release-notes" class="release-log" aria-live="polite">
+          <p class="empty-state">Loading release notes…</p>
+        </div>
+      </section>
+
+      <section data-section="credits" data-title="Credits" hidden>
+        <h1>Credits</h1>
+        <p class="note">Securely is an assistive Windows threat monitor — not a guarantee of safety.</p>
+        <div class="rows">
+          <div class="row">
+            <span class="mark" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 4v16M4 12h16"/></svg></span>
+            <div class="row-copy"><strong>AI analysis</strong><span>OpenRouter (server-side). Keys never ship in the desktop binary.</span></div>
+          </div>
+          <div class="row">
+            <span class="mark" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4" y="6" width="16" height="12" rx="2"/></svg></span>
+            <div class="row-copy"><strong>OCR</strong><span>Tesseract on the local machine.</span></div>
+          </div>
+          <div class="row">
+            <span class="mark" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m5 8 7 5 7-5"/><rect x="4" y="6" width="16" height="12" rx="2"/></svg></span>
+            <div class="row-copy"><strong>Links</strong><span><a href="https://trysecurely.com" target="_blank" rel="noopener">Website</a> · <a href="/privacy.html" target="_blank" rel="noopener">Privacy</a> · <a href="/terms.html" target="_blank" rel="noopener">Terms</a></span></div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+  <style>
+    .modes-3 { grid-template-columns: 1fr 1fr 1fr; min-width: 220px; }
+    .modes-3 .modes-thumb { width: calc(33.333% - 2px); }
+    .modes-3:has(button:nth-of-type(2)[aria-checked="true"]) .modes-thumb { transform: translateX(100%); }
+    .modes-3:has(button:nth-of-type(3)[aria-checked="true"]) .modes-thumb { transform: translateX(200%); }
+    .field {
+      min-width: 7rem;
+      border: 0;
+      border-radius: 10px;
+      background: var(--inset);
+      padding: 8px 12px;
+      font-weight: 600;
+    }
+    .actions { display: flex; gap: 10px; margin-top: 18px; flex-wrap: wrap; }
+    .alert-list { display: flex; flex-direction: column; gap: 8px; }
+    .threat-row {
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: var(--inset);
+      font-size: 14px;
+    }
+    .threat-row .kind { font-weight: 700; margin-right: 8px; }
+    .threat-row .muted { margin-top: 4px; color: var(--muted); font-size: 12px; }
+    .empty-state {
+      margin: 0;
+      padding: 14px;
+      border-radius: 14px;
+      background: var(--inset);
+      color: var(--muted);
+      font-size: 14px;
+    }
+  </style>
+  <script src="/dashboard.js"></script>
+</body>
+</html>

@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ApplicationHighDpiMode>PerMonitorV2</ApplicationHighDpiMode>
+    <AssemblyName>SecurelyShell</AssemblyName>
+    <Company>Securely</Company>
+    <Authors>Securely</Authors>
+    <Product>Securely</Product>
+    <Copyright>Copyright (C) 2026</Copyright>
+    <Version>0.1.0</Version>
+    <!-- Keep in sync with package.json version; bump both on every commit/deploy. -->
+    <AssemblyTitle>Securely</AssemblyTitle>
+    <Description>Securely desktop threat-monitoring overlay</Description>
+    <ApplicationIcon>securely.ico</ApplicationIcon>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.2792.45" />
+    <PackageReference Include="NAudio" Version="2.2.1" />
+    <PackageReference Include="System.Speech" Version="9.0.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="securely.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+</Project>

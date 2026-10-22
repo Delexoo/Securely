@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>Securely.Core</RootNamespace>
+    <AssemblyName>Securely.Core</AssemblyName>
+    <Description>Capture, OCR, analyze, audit — Securely rewrite core</Description>
+  </PropertyGroup>
+</Project>

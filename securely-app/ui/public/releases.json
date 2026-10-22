@@ -1,0 +1,38 @@
+{
+  "product": "Securely",
+  "repo": "Delexoo/Securely",
+  "updates": [
+    {
+      "version": "0.1.0",
+      "date": "2026-10-22",
+      "title": "Hooxie-style shell with colored scan modes",
+      "tag": "v0.1.0",
+      "url": "https://github.com/Delexoo/Securely/releases/tag/v0.1.0",
+      "sections": [
+        {
+          "heading": "Widget",
+          "added": [
+            "Compact island with SVG toolbar icons and a colored scan pill: red Quick, green Timed, blue 24/7 (right-click cycles mode).",
+            "Drag uses host cursor-follow so the pill can move the full working area without an invisible border."
+          ],
+          "fixes": [
+            "Scan and window chrome no longer rely on emoji glyphs."
+          ]
+        },
+        {
+          "heading": "Dashboard",
+          "added": [
+            "Hooxie-style light sidebar dashboard for Monitoring, Settings, Audit log, and Credits.",
+            "Release notes appear in the dashboard About section from the same brain log as the website."
+          ]
+        },
+        {
+          "heading": "Site",
+          "added": [
+            "Release notes pipeline from brain/log.json into the website and GitHub Releases on commit/deploy."
+          ]
+        }
+      ]
+    }
+  ]
+}

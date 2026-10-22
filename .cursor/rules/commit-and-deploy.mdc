@@ -1,0 +1,30 @@
+---
+description: On every commit, update, or deploy request, bump Securely version, update the brain log, commit, push, publish the GitHub Release, and redeploy Vercel production
+alwaysApply: true
+---
+
+# Commit and deploy Securely
+
+Whenever the user asks to **commit**, **update**, **push**, **release**, or **deploy** Securely, raise the version first, then ship that same source. Do this before you tell the user the update is done. Do not wait to be asked for the version bump. Do not ship two commits on the same version.
+
+Follow the same discipline as Hooxie and TradeSafe: brain log → notes → commit → push → GitHub Release → production deploy.
+
+The version is one number. If the user did not name the next one, raise the patch number. Write that same number in every place below before you commit or deploy:
+
+- `package.json` `version` (and `package-lock.json` root/`packages[""]` when present)
+- `securely-app/host/SecurelyShell.csproj` `<Version>`
+- `brain/log.json`: this commit's notes go on a **new top entry** for that version, dated today. Leave shipped versions as they are. If the top entry is still the shipped version, add the new entry and move the unreleased notes into it. Run `npm run notes` so `brain/releases.json`, `Securely-Website/releases.json`, and `Securely-Website/releases.html` match.
+
+1. Raise the version. Add unlogged changes to the new `brain/log.json` entry under `added` or `fixes` (headings from the brain-log rule), then run `npm run notes`.
+2. Smoke-check the widget/dashboard when UI changed. Build the host with `dotnet build securely-app/host/SecurelyShell.csproj` when host code changed.
+3. Commit source, website, brain log, and rendered release notes together. Never commit `.env` or secrets. Prefer `E:\MasterVault\Securely`.
+4. Commit message from the new version title + `added`/`fixes` (concise, why-focused). Follow git safety rules.
+5. Push when the user asked to push, update, or deploy. Remote is `https://github.com/Delexoo/Securely` (create it if missing). Use `GITHUB_TOKEN` / `GH_TOKEN` from `.env` when `gh` is not signed in; never print the token.
+6. After every successful **push** to GitHub, publish the matching GitHub Release so notes appear under the repo **Releases** tab: run `npm run notes` then `npm run release:github`. Set `GITHUB_RELEASE_TARGET` to the pushed commit SHA when useful. Do not skip this when a token is available.
+7. On **update**, **push**, or **deploy**, publish production from that same commit:
+   - **Vercel production** (required for site changes): from `Securely-Website/`, run `npx vercel --prod --yes` with `VERCEL_TOKEN` from `.env` (never print it). Set `VERCEL_ORG_ID` / `VERCEL_PROJECT_ID` when needed. Confirm `https://trysecurely.com` (or the linked production alias) serves this commit.
+   - **GitHub Release** (required): step 6.
+   - When an installer exists later, also attach `Securely-Setup-<version>.exe` to the release and copy it to `Securely-Website/download/Securely-Setup.exe` like Hooxie — until then, ship site + notes only.
+8. Report the version, commit summary, GitHub Release URL, and the production site URL.
+
+If the user only asked to commit, do steps 1–4. If they also asked to update, push, or deploy, do the push, the GitHub Release, and the Vercel production deploy. If they only asked to update the brain log, do not bump or commit.

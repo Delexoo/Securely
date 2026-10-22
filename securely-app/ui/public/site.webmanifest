@@ -1,0 +1,13 @@
+{
+  "name": "Securely",
+  "short_name": "Securely",
+  "description": "AI-assisted screen threat monitoring for Windows.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#111111",
+  "theme_color": "#111111",
+  "icons": [
+    { "src": "/favicon.png", "sizes": "64x64", "type": "image/png" },
+    { "src": "/logo.png", "sizes": "1024x1024", "type": "image/png" }
+  ]
+}
