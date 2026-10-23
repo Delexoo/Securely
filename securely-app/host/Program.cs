@@ -776,6 +776,30 @@ internal sealed class ShellForm : Form
                     BeginInvoke(() => StartCaptureReply(requestId));
                     break;
                 }
+                case "notify-pill":
+                {
+                    // Dashboard → pill: re-apply look / mode after settings change.
+                    var notifyType = root.TryGetProperty("type", out var typeEl) ? typeEl.GetString() ?? "look" : "look";
+                    if (string.IsNullOrWhiteSpace(notifyType)) notifyType = "look";
+                    var safeChars = new System.Text.StringBuilder(notifyType.Length);
+                    foreach (var ch in notifyType)
+                    {
+                        if (char.IsLetterOrDigit(ch) || ch is '-' or '_') safeChars.Append(ch);
+                    }
+                    var safeType = safeChars.Length > 0 ? safeChars.ToString() : "look";
+                    BeginInvoke(() =>
+                    {
+                        try
+                        {
+                            view.CoreWebView2?.PostWebMessageAsJson($"{{\"type\":\"{safeType}\"}}");
+                        }
+                        catch (Exception ex)
+                        {
+                            System.Diagnostics.Debug.WriteLine("notify-pill: " + ex.Message);
+                        }
+                    });
+                    break;
+                }
             }
         }
         catch (Exception ex)

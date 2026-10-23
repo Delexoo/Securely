@@ -36,6 +36,7 @@ let pillShown = true;
 function saveSettings() {
   localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
   localStorage.setItem(LOOK_KEY, JSON.stringify({ opacity: settings.opacity, light: settings.light }));
+  hostPost({ cmd: "notify-pill", type: "look" });
 }
 
 function setAppearance(modeName) {
@@ -49,8 +50,85 @@ function setAppearance(modeName) {
 function syncWidgetModes() {
   document.querySelectorAll("[data-widget-mode]").forEach((btn) => {
     const light = btn.dataset.widgetMode === "light";
-    btn.setAttribute("aria-checked", String(!!settings.light === light));
+    btn.setAttribute("aria-checked", String(Boolean(settings.light) === light));
   });
+}
+
+const EDUCATION = {
+  PHISHING: {
+    explain:
+      "This screen looked like a phishing or scam page — something designed to steal passwords, codes, or money by pretending to be a trusted site or person.",
+    tips: [
+      "Do not type passwords, codes, or card numbers on that screen.",
+      "Check the real address bar (https + exact domain). Close the tab and reopen the site from a bookmark you trust.",
+      "If you already entered a password, change it on the real site and turn on two-factor authentication.",
+      "Never approve unexpected authenticator or bank prompts.",
+    ],
+  },
+  SUSPICIOUS: {
+    explain:
+      "Securely saw warning signs that are common in scams or unsafe pages, but it is not 100% sure. Treat the screen carefully until you verify it.",
+    tips: [
+      "Pause before clicking download, “verify account,” or payment buttons.",
+      "Compare the URL and branding with the official site or app.",
+      "If someone messaged you the link, contact them through a channel you already trust — not by replying in that chat.",
+      "When unsure, navigate to the service yourself instead of using the link on screen.",
+    ],
+  },
+  UNSURE: {
+    explain:
+      "Securely could not confidently classify this screen (weak OCR, blocked upload, or unclear content). That does not mean it is safe.",
+    tips: [
+      "If anything asks for money, secrets, or remote access, stop and verify out-of-band.",
+      "Run another Quick Scan after the page fully loads.",
+      "Keep Windows and your browser updated.",
+    ],
+  },
+  WARNING: {
+    explain: "Securely flagged a warning on this activity. Review the summary and avoid rushing into logins or payments.",
+    tips: [
+      "Double-check who you are interacting with before sharing personal data.",
+      "Prefer official apps and bookmarked sites over links from ads or messages.",
+    ],
+  },
+  SAFE: {
+    explain: "No strong phishing or scam signals were found on this capture. Stay alert — AI assist is not a guarantee.",
+    tips: [
+      "Still use unique passwords and two-factor authentication.",
+      "Be careful with unexpected pop-ups even on familiar sites.",
+    ],
+  },
+  PRIVACY: {
+    explain: "Sensitive details were detected on screen. Securely held them back from AI until you chose what to do.",
+    tips: [
+      "Hide or blur secrets before scanning when you can.",
+      "Prefer Continue only when you accept redacted text may still be analyzed.",
+    ],
+  },
+  SCAN: {
+    explain: "This is a scan lifecycle note (start, finish, or stop), not a threat verdict.",
+    tips: ["Use Quick for a one-shot check; Timed or 24/7 for longer watching from the pill."],
+  },
+  DEFAULT: {
+    explain: "Review this entry’s summary. When Securely marks Suspicious or Phishing, treat the screen as untrusted until verified.",
+    tips: [
+      "Verify domains yourself.",
+      "Never share one-time codes with callers or chat pop-ups.",
+      "Keep Securely updated and Windows Security enabled.",
+    ],
+  },
+};
+
+function educationFor(kind) {
+  const key = String(kind || "").toUpperCase();
+  if (key.includes("PHISH") || key === "MALICIOUS" || key === "DANGER") return EDUCATION.PHISHING;
+  if (key.includes("SUSPICIOUS")) return EDUCATION.SUSPICIOUS;
+  if (key.includes("UNSURE")) return EDUCATION.UNSURE;
+  if (key.includes("WARN")) return EDUCATION.WARNING;
+  if (key === "SAFE" || key.startsWith("LEGITIMATE")) return EDUCATION.SAFE;
+  if (key === "PRIVACY") return EDUCATION.PRIVACY;
+  if (key === "SCAN") return EDUCATION.SCAN;
+  return EDUCATION.DEFAULT;
 }
 
 const SITE_ORIGIN = "https://trysecurely.vercel.app";
@@ -90,18 +168,90 @@ function setMode(next) {
   });
   const durationRow = document.querySelector("#duration-row");
   if (durationRow) durationRow.hidden = mode !== "timed";
+  hostPost({ cmd: "notify-pill", type: "mode" });
+}
+
+function syncDashStatus() {
+  const status = document.querySelector("#dash-status");
+  const countdown = document.querySelector("#dash-countdown");
+  try {
+    const runtime = JSON.parse(localStorage.getItem("securely-runtime") || "null");
+    if (status && runtime?.label) status.textContent = runtime.label;
+    if (countdown) {
+      countdown.textContent =
+        mode === "timed"
+          ? `Timed mode · ${settings.timedMins || 5} min duration · start/stop from the pill`
+          : mode === "continuous"
+            ? "24/7 mode · start/stop from the pill"
+            : "Quick mode · start/stop from the pill";
+    }
+  } catch {
+    if (status) status.textContent = "Idle";
+  }
+}
+
+function openAuditDetail(row) {
+  const dialog = document.querySelector("#audit-detail");
+  if (!dialog || !row) return;
+  const kind = String(row.kind || "EVENT");
+  const edu = educationFor(kind);
+  const kindEl = document.querySelector("#audit-detail-kind");
+  const whenEl = document.querySelector("#audit-detail-when");
+  const summaryEl = document.querySelector("#audit-detail-summary");
+  const explainEl = document.querySelector("#audit-detail-explain");
+  const tipsEl = document.querySelector("#audit-detail-tips");
+  const shotWrap = document.querySelector("#audit-detail-shot");
+  const img = document.querySelector("#audit-detail-img");
+  const ocrEl = document.querySelector("#audit-detail-ocr");
+  if (kindEl) kindEl.textContent = kind;
+  if (whenEl) whenEl.textContent = new Date(row.t).toLocaleString();
+  if (summaryEl) {
+    summaryEl.textContent =
+      row.summary ||
+      row.text ||
+      "No detailed summary was stored for this entry.";
+  }
+  if (explainEl) explainEl.textContent = row.explain || edu.explain;
+  if (tipsEl) {
+    tipsEl.replaceChildren();
+    const tips = Array.isArray(row.tips) && row.tips.length ? row.tips : edu.tips;
+    for (const tip of tips) {
+      const li = document.createElement("li");
+      li.textContent = tip;
+      tipsEl.append(li);
+    }
+  }
+  const hasShot = !!(row.image && String(row.image).length > 32);
+  if (shotWrap && img) {
+    shotWrap.hidden = !hasShot;
+    if (hasShot) {
+      const mime = row.mimeType && String(row.mimeType).startsWith("image/") ? row.mimeType : "image/jpeg";
+      img.src = `data:${mime};base64,${row.image}`;
+    } else {
+      img.removeAttribute("src");
+    }
+  }
+  if (ocrEl) {
+    const snippet = row.ocrSnippet ? String(row.ocrSnippet).trim() : "";
+    ocrEl.hidden = !snippet;
+    ocrEl.textContent = snippet ? `OCR excerpt: ${snippet}` : "";
+  }
+  if (typeof dialog.showModal === "function") dialog.showModal();
+  else dialog.setAttribute("open", "");
 }
 
 function renderAudit(target) {
   const rows = JSON.parse(localStorage.getItem(AUDIT_KEY) || "[]");
   if (!rows.length) {
-    target.innerHTML = `<p class="empty-state">No threats logged yet. Run a Quick Scan to start.</p>`;
+    target.innerHTML = `<p class="empty-state">No threats logged yet. Run a Quick Scan from the pill to start.</p>`;
     return;
   }
   target.replaceChildren();
   for (const row of rows.slice(0, 80)) {
-    const el = document.createElement("div");
+    const el = document.createElement("button");
+    el.type = "button";
     el.className = "threat-row";
+    if (row.image) el.classList.add("has-shot");
     const kind = document.createElement("span");
     kind.className = "kind";
     kind.textContent = row.kind || "EVENT";
@@ -111,6 +261,7 @@ function renderAudit(target) {
     when.className = "muted";
     when.textContent = new Date(row.t).toLocaleString();
     el.append(kind, body, when);
+    el.addEventListener("click", () => openAuditDetail(row));
     target.appendChild(el);
   }
 }
@@ -232,10 +383,10 @@ function bindSettings() {
   const opacity = document.querySelector("#opacity");
   const opacityValue = document.querySelector("#opacity-value");
   if (opacity) {
-    opacity.value = String(settings.opacity ?? 50);
+    opacity.value = String(Math.max(40, settings.opacity ?? 100));
     if (opacityValue) opacityValue.textContent = `${opacity.value}%`;
     opacity.addEventListener("input", () => {
-      settings.opacity = Number(opacity.value) || 50;
+      settings.opacity = Math.max(40, Number(opacity.value) || 100);
       if (opacityValue) opacityValue.textContent = `${settings.opacity}%`;
       saveSettings();
     });
@@ -253,12 +404,17 @@ document.querySelectorAll(".side-nav [data-open]").forEach((btn) => {
 });
 
 document.querySelectorAll("[data-mode]").forEach((btn) => {
-  btn.addEventListener("click", () => setMode(btn.dataset.mode));
+  btn.addEventListener("click", () => {
+    setMode(btn.dataset.mode);
+    syncDashStatus();
+  });
 });
 
 document.querySelector("#dash-timed-mins")?.addEventListener("change", (e) => {
   settings.timedMins = Number(e.target.value) || 5;
   saveSettings();
+  syncDashStatus();
+  hostPost({ cmd: "notify-pill", type: "settings" });
 });
 
 document.querySelectorAll("[data-dashboard-mode]").forEach((btn) => {
@@ -271,6 +427,48 @@ document.querySelectorAll("[data-widget-mode]").forEach((btn) => {
     saveSettings();
     syncWidgetModes();
   });
+});
+
+window.addEventListener("storage", (e) => {
+  if (e.key === "securely-scan-mode" && e.newValue) {
+    if (["quick", "timed", "continuous"].includes(e.newValue)) {
+      mode = e.newValue;
+      document.querySelectorAll("[data-mode]").forEach((btn) => {
+        btn.setAttribute("aria-checked", String(btn.dataset.mode === mode));
+      });
+      const durationRow = document.querySelector("#duration-row");
+      if (durationRow) durationRow.hidden = mode !== "timed";
+      syncDashStatus();
+    }
+  }
+  if (e.key === SETTINGS_KEY || e.key === LOOK_KEY) {
+    settings = loadSettings();
+    syncWidgetModes();
+    const map = {
+      "set-hitboxes": "hitboxes",
+      "set-strict": "strict",
+      "set-test": "testMode",
+      "set-notify": "notifications",
+      "set-sound": "sound",
+    };
+    for (const [id, key] of Object.entries(map)) {
+      const el = document.querySelector(`#${id}`);
+      if (el) el.checked = !!settings[key];
+    }
+    const opacity = document.querySelector("#opacity");
+    const opacityValue = document.querySelector("#opacity-value");
+    if (opacity) {
+      opacity.value = String(Math.max(40, settings.opacity ?? 100));
+      if (opacityValue) opacityValue.textContent = `${opacity.value}%`;
+    }
+    const timedSel = document.querySelector("#dash-timed-mins");
+    if (timedSel && settings.timedMins) timedSel.value = String(settings.timedMins);
+    syncDashStatus();
+  }
+  if (e.key === "securely-runtime" || e.key === AUDIT_KEY) {
+    syncDashStatus();
+    syncAlerts();
+  }
 });
 
 function loadLicense() {
@@ -453,45 +651,6 @@ window.addEventListener("focus", () => {
   } catch { /* ignore */ }
 });
 
-document.querySelector("#dash-start")?.addEventListener("click", () => {
-  const lic = loadLicense();
-  if (!lic?.active) {
-    openSection("billing");
-    const msg = document.querySelector("#license-message");
-    if (msg) msg.textContent = "Subscribe with Stripe before scanning.";
-    return;
-  }
-  if (mode === "continuous") {
-    localStorage.setItem("securely-continuous-ok", "1");
-  }
-  const mins = Number(document.querySelector("#dash-timed-mins")?.value) || 5;
-  const status = document.querySelector("#dash-status");
-  if (status) {
-    status.textContent = mode === "timed" ? `Timed ${mins}m` : mode === "continuous" ? "Active" : "Scanning…";
-  }
-  if (mode === "quick") {
-    const kind = settings.testMode ? "SUSPICIOUS" : "SAFE";
-    const text = settings.testMode ? "Test Mode: fake phishing cue." : "Dashboard Quick Scan complete.";
-    const rows = JSON.parse(localStorage.getItem(AUDIT_KEY) || "[]");
-    rows.unshift({ t: Date.now(), kind, text });
-    localStorage.setItem(AUDIT_KEY, JSON.stringify(rows.slice(0, 200)));
-    syncAlerts();
-    setTimeout(() => {
-      if (status) status.textContent = "Idle";
-    }, 700);
-  }
-});
-
-document.querySelector("#dash-stop")?.addEventListener("click", () => {
-  const status = document.querySelector("#dash-status");
-  if (status) status.textContent = "Idle";
-});
-
-document.querySelector("#audit-quick")?.addEventListener("click", () => {
-  setMode("quick");
-  openSection("monitor");
-  document.querySelector("#dash-start")?.click();
-});
 document.querySelector("#audit-refresh")?.addEventListener("click", syncAlerts);
 document.querySelector("#audit-clear")?.addEventListener("click", () => {
   localStorage.setItem(AUDIT_KEY, "[]");
@@ -535,6 +694,7 @@ const savedMode = localStorage.getItem("securely-scan-mode") || "quick";
 setMode(["quick", "timed", "continuous"].includes(savedMode) ? savedMode : "quick");
 const timedSelect = document.querySelector("#dash-timed-mins");
 if (timedSelect && settings.timedMins) timedSelect.value = String(settings.timedMins);
+syncDashStatus();
 syncAlerts();
 paintBilling();
 try {

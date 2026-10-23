@@ -65,7 +65,7 @@
         <h1>Monitoring</h1>
         <p class="note">Quick, timed, or continuous scans on your primary monitor. OCR text is analyzed through Securely’s OpenRouter proxy.</p>
         <h2 class="dash-group">Scan mode</h2>
-        <p class="note">Choose one mode, then start. Continuous asks for consent first.</p>
+        <p class="note">Choose a mode here. Start and stop from the island pill. Continuous asks for consent the first time.</p>
         <div class="rows">
           <div class="row">
             <span class="mark" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 19V6"/><path d="M6.8 11.2 12 6l5.2 5.2"/></svg></span>
@@ -77,9 +77,9 @@
               <button type="button" data-mode="continuous" aria-checked="false">24/7</button>
             </div>
           </div>
-          <div class="row" id="duration-row">
+          <div class="row" id="duration-row" hidden>
             <span class="mark" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="7.2"/><path d="M12 8.2v4.2l2.6 1.6"/></svg></span>
-            <div class="row-copy"><strong>Timed duration</strong><span>How long a timed scan runs before stopping.</span></div>
+            <div class="row-copy"><strong>Timed duration</strong><span>How long a timed scan runs before stopping. Start/stop from the pill.</span></div>
             <select id="dash-timed-mins" class="field" aria-label="Timed duration">
               <option value="1">1 min</option>
               <option value="5" selected>5 min</option>
@@ -90,13 +90,9 @@
           </div>
           <div class="row">
             <span class="mark" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="7.5"/><circle cx="12" cy="12" r="2.2"/></svg></span>
-            <div class="row-copy"><strong>Status</strong><span id="dash-countdown">Timed remaining: none · Pause: none</span></div>
+            <div class="row-copy"><strong>Status</strong><span id="dash-countdown">Use the pill’s colored scan control to start or stop.</span></div>
             <span id="dash-status" class="tag">Idle</span>
           </div>
-        </div>
-        <div class="actions">
-          <button type="button" id="dash-start" class="btn">Start</button>
-          <button type="button" id="dash-stop" class="ghost">Stop</button>
         </div>
         <h2 class="dash-group">Latest alerts</h2>
         <p class="note">Recent findings from scans on this computer.</p>
@@ -145,7 +141,7 @@
           </div>
         </div>
         <h2 class="dash-group">Appearance</h2>
-        <p class="note">Light or dark for this window, plus pill opacity.</p>
+        <p class="note">Light or dark for this window, plus the island’s look and brightness.</p>
         <div class="rows">
           <div class="row">
             <span class="mark" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M12 3.4v1.8M12 18.8v1.8M3.4 12h1.8M18.8 12h1.8"/></svg></span>
@@ -158,7 +154,7 @@
           </div>
           <div class="row">
             <span class="mark" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3.5" y="7" width="17" height="10" rx="5"/><circle cx="15.2" cy="12" r="2.2"/></svg></span>
-            <div class="row-copy"><strong>Widget glass</strong><span>Light or dark wash on the pill.</span></div>
+            <div class="row-copy"><strong>Widget look</strong><span>Light or dark charcoal on the floating island.</span></div>
             <div class="modes" role="radiogroup" aria-label="Widget appearance">
               <span class="modes-thumb" aria-hidden="true"></span>
               <button type="button" data-widget-mode="light" aria-checked="false">Light</button>
@@ -167,11 +163,11 @@
           </div>
           <div class="row">
             <span class="mark" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="7.2"/></svg></span>
-            <div class="row-copy"><strong>Pill opacity</strong><span>How strong the glass wash is.</span></div>
+            <div class="row-copy"><strong>Pill brightness</strong><span>How bright the solid island charcoal is (always opaque).</span></div>
             <div class="color-control">
               <div class="opacity-line">
-                <input class="slider" id="opacity" type="range" min="10" max="100" step="5" value="50" aria-label="Opacity">
-                <span id="opacity-value">50%</span>
+                <input class="slider" id="opacity" type="range" min="40" max="100" step="5" value="100" aria-label="Pill brightness">
+                <span id="opacity-value">100%</span>
               </div>
             </div>
           </div>
@@ -197,15 +193,35 @@
 
       <section data-section="audit" data-title="Audit log" hidden>
         <h1>Audit log</h1>
-        <p class="note">Threat events and scan notes stored on this computer.</p>
+        <p class="note">Threat events and scan notes stored on this computer. Click a row for the screenshot, summary, and protection tips.</p>
         <div class="actions" style="margin-top:0;margin-bottom:16px">
           <button type="button" id="audit-refresh" class="ghost">Refresh</button>
           <button type="button" id="audit-clear" class="ghost">Clear log</button>
-          <button type="button" id="audit-quick" class="btn">Quick Scan</button>
         </div>
         <div id="audit-list" class="alert-list" role="log">
           <p class="empty-state">Audit log is empty. Threats and scan events will appear here.</p>
         </div>
+        <dialog id="audit-detail" class="audit-detail">
+          <form method="dialog" class="audit-detail-inner">
+            <header class="audit-detail-head">
+              <div>
+                <p class="audit-detail-kind" id="audit-detail-kind">Event</p>
+                <p class="audit-detail-when muted" id="audit-detail-when"></p>
+              </div>
+              <button type="submit" class="ghost" value="close" aria-label="Close">Close</button>
+            </header>
+            <div class="audit-detail-shot" id="audit-detail-shot" hidden>
+              <img id="audit-detail-img" alt="Screen captured for this audit entry">
+            </div>
+            <h2 class="dash-group">Summary</h2>
+            <p class="audit-detail-body" id="audit-detail-summary"></p>
+            <h2 class="dash-group" id="audit-detail-explain-title">What this means</h2>
+            <p class="audit-detail-body" id="audit-detail-explain"></p>
+            <h2 class="dash-group" id="audit-detail-protect-title">How to protect yourself</h2>
+            <ul class="audit-detail-tips" id="audit-detail-tips"></ul>
+            <p class="muted" id="audit-detail-ocr" hidden></p>
+          </form>
+        </dialog>
       </section>
 
       <section data-section="releases" data-title="Release notes" hidden>
@@ -256,9 +272,23 @@
       border-radius: 14px;
       background: var(--inset);
       font-size: 14px;
+      border: 0;
+      width: 100%;
+      text-align: left;
+      cursor: pointer;
+      font: inherit;
+      color: inherit;
     }
+    .threat-row:hover { filter: brightness(0.98); }
+    .threat-row:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
     .threat-row .kind { font-weight: 700; margin-right: 8px; }
     .threat-row .muted { margin-top: 4px; color: var(--muted); font-size: 12px; }
+    .threat-row.has-shot .kind::after {
+      content: " · photo";
+      font-weight: 600;
+      color: var(--muted);
+      font-size: 12px;
+    }
     .empty-state {
       margin: 0;
       padding: 14px;
@@ -267,6 +297,39 @@
       color: var(--muted);
       font-size: 14px;
     }
+    #duration-row[hidden] { display: none !important; }
+    .audit-detail {
+      border: 0;
+      border-radius: 18px;
+      padding: 0;
+      max-width: min(560px, 94vw);
+      width: 100%;
+      background: var(--surface);
+      color: var(--text);
+      box-shadow: 0 24px 60px rgb(0 0 0 / 28%);
+    }
+    .audit-detail::backdrop { background: rgb(0 0 0 / 42%); }
+    .audit-detail-inner { margin: 0; padding: 18px 18px 20px; display: grid; gap: 10px; }
+    .audit-detail-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+    .audit-detail-kind { margin: 0; font-size: 18px; font-weight: 750; }
+    .audit-detail-when { margin: 4px 0 0; }
+    .audit-detail-shot {
+      border-radius: 14px;
+      overflow: hidden;
+      background: var(--inset);
+      max-height: 280px;
+    }
+    .audit-detail-shot img {
+      display: block;
+      width: 100%;
+      height: auto;
+      max-height: 280px;
+      object-fit: contain;
+      background: #0b0d12;
+    }
+    .audit-detail-body { margin: 0; font-size: 14px; line-height: 1.45; }
+    .audit-detail-tips { margin: 0; padding-left: 1.15rem; display: grid; gap: 6px; font-size: 14px; line-height: 1.4; }
+    .audit-detail .dash-group { margin: 8px 0 0; }
   </style>
   <script src="/dashboard.js"></script>
 </body>

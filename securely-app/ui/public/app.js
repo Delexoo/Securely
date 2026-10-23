@@ -93,7 +93,19 @@ if (window.chrome?.webview) {
         return;
       }
     }
-    if (!data || typeof data !== "object" || !data.id || !hostPending.has(data.id)) return;
+    if (!data || typeof data !== "object") return;
+    if (data.type === "look" || data.type === "settings") {
+      settings = loadSettings();
+      applyLook();
+      return;
+    }
+    if (data.type === "mode") {
+      const raw = localStorage.getItem(MODE_KEY) || "quick";
+      if (MODES.some((m) => m.id === raw)) setScanMode(raw);
+      settings = loadSettings();
+      return;
+    }
+    if (!data.id || !hostPending.has(data.id)) return;
     const entry = hostPending.get(data.id);
     hostPending.delete(data.id);
     clearTimeout(entry.timer);
@@ -271,6 +283,12 @@ function setStatus(keyOrText, state) {
   }
   const live = document.querySelector("#status");
   if (live) live.textContent = label;
+  try {
+    localStorage.setItem(
+      "securely-runtime",
+      JSON.stringify({ label, state: nextState, t: Date.now(), mode: scanMode }),
+    );
+  } catch { /* ignore */ }
 }
 
 function setScanMode(next) {
@@ -444,14 +462,124 @@ function fitTrace() {
   }
 }
 
-function appendAudit(kind, text) {
+const AUDIT_EDU = {
+  PHISHING: {
+    explain:
+      "This screen looked like a phishing or scam page — something designed to steal passwords, codes, or money by pretending to be a trusted site or person.",
+    tips: [
+      "Do not type passwords, codes, or card numbers on that screen.",
+      "Check the real address bar (https + exact domain). Close the tab and reopen the site from a bookmark you trust.",
+      "If you already entered a password, change it on the real site and turn on two-factor authentication.",
+      "Never approve unexpected authenticator or bank prompts.",
+    ],
+  },
+  SUSPICIOUS: {
+    explain:
+      "Securely saw warning signs that are common in scams or unsafe pages, but it is not 100% sure. Treat the screen carefully until you verify it.",
+    tips: [
+      "Pause before clicking download, “verify account,” or payment buttons.",
+      "Compare the URL and branding with the official site or app.",
+      "If someone messaged you the link, contact them through a channel you already trust.",
+      "When unsure, navigate to the service yourself instead of using the link on screen.",
+    ],
+  },
+  UNSURE: {
+    explain:
+      "Securely could not confidently classify this screen. That does not mean it is safe.",
+    tips: [
+      "If anything asks for money, secrets, or remote access, stop and verify out-of-band.",
+      "Run another Quick Scan after the page fully loads.",
+    ],
+  },
+  SAFE: {
+    explain: "No strong phishing or scam signals were found on this capture. Stay alert — assistive scanning is not a guarantee.",
+    tips: ["Still use unique passwords and two-factor authentication."],
+  },
+  PRIVACY: {
+    explain: "Sensitive details were detected on screen. Securely held them back from AI until you chose what to do.",
+    tips: ["Hide or blur secrets before scanning when you can."],
+  },
+  DEFAULT: {
+    explain: "Review this entry’s summary. When Securely marks Suspicious or Phishing, treat the screen as untrusted until verified.",
+    tips: ["Verify domains yourself.", "Never share one-time codes with callers or chat pop-ups."],
+  },
+};
+
+function auditEdu(kind) {
+  const key = String(kind || "").toUpperCase();
+  if (key.includes("PHISH") || key === "MALICIOUS" || key === "DANGER") return AUDIT_EDU.PHISHING;
+  if (key.includes("SUSPICIOUS") || key.includes("WARN")) return AUDIT_EDU.SUSPICIOUS;
+  if (key.includes("UNSURE")) return AUDIT_EDU.UNSURE;
+  if (key === "SAFE" || key.startsWith("LEGITIMATE")) return AUDIT_EDU.SAFE;
+  if (key === "PRIVACY") return AUDIT_EDU.PRIVACY;
+  return AUDIT_EDU.DEFAULT;
+}
+
+function makeAuditSummary(kind, text) {
+  const raw = String(text || "").trim();
+  const label = String(kind || "EVENT").toUpperCase();
+  if (!raw) return `${label}: No classifier text was stored.`;
+  if (raw.toUpperCase().startsWith(label)) return raw;
+  return `${label}: ${raw}`;
+}
+
+async function makeThumb(base64, mimeType = "image/jpeg") {
+  if (!base64 || typeof base64 !== "string") return null;
+  // Keep localStorage small — only store a compact JPEG for the audit detail view.
+  if (base64.length > 2_400_000) return null;
+  try {
+    const blob = await (await fetch(`data:${mimeType};base64,${base64}`)).blob();
+    const bmp = await createImageBitmap(blob);
+    const maxW = 720;
+    const scale = Math.min(1, maxW / Math.max(1, bmp.width));
+    const w = Math.max(1, Math.round(bmp.width * scale));
+    const h = Math.max(1, Math.round(bmp.height * scale));
+    const canvas = document.createElement("canvas");
+    canvas.width = w;
+    canvas.height = h;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return null;
+    ctx.drawImage(bmp, 0, 0, w, h);
+    bmp.close?.();
+    const dataUrl = canvas.toDataURL("image/jpeg", 0.62);
+    const parts = dataUrl.split(",");
+    const out = parts[1] || "";
+    return out.length > 900_000 ? null : out;
+  } catch {
+    return null;
+  }
+}
+
+function appendAudit(kind, text, extra = {}) {
+  const edu = auditEdu(kind);
   const rows = JSON.parse(localStorage.getItem("securely-audit") || "[]");
-  rows.unshift({ t: Date.now(), kind, text });
+  const entry = {
+    t: Date.now(),
+    kind,
+    text: String(text || ""),
+    summary: extra.summary || makeAuditSummary(kind, text),
+    explain: extra.explain || edu.explain,
+    tips: Array.isArray(extra.tips) ? extra.tips : edu.tips,
+    ocrSnippet: extra.ocrSnippet ? String(extra.ocrSnippet).slice(0, 500) : "",
+    image: extra.image || "",
+    mimeType: extra.mimeType || "image/jpeg",
+  };
+  rows.unshift(entry);
+  // Drop heavy images from older rows to stay under typical localStorage limits.
+  let withImages = 0;
+  for (let i = 0; i < rows.length; i += 1) {
+    if (rows[i].image) {
+      withImages += 1;
+      if (withImages > 24 || i > 60) {
+        rows[i] = { ...rows[i], image: "", mimeType: "" };
+      }
+    }
+  }
   localStorage.setItem("securely-audit", JSON.stringify(rows.slice(0, 200)));
 }
 
-function finishQuickLike(kind, text) {
-  appendAudit(kind, text);
+function finishQuickLike(kind, text, extra = {}) {
+  appendAudit(kind, text, extra);
   let statusKey = "safe";
   if (kind === "PHISHING" || kind === "DANGER" || kind === "MALICIOUS") statusKey = "phishing";
   else if (kind === "SUSPICIOUS" || kind === "UNSURE" || kind === "WARNING") statusKey = "warning";
@@ -565,7 +693,17 @@ async function runQuickScan() {
     );
     result = mergeLocalHint(result, localHint);
     if (!running) return;
-    finishQuickLike(result.kind, result.text);
+    // Store a thumbnail only when the user allowed image analysis (never after privacy redact).
+    let thumb = "";
+    if (allowImage && shot.image) {
+      thumb = (await makeThumb(shot.image, shot.mimeType)) || "";
+    }
+    finishQuickLike(result.kind, result.text, {
+      image: thumb,
+      mimeType: "image/jpeg",
+      ocrSnippet: String(textForAi || "").slice(0, 500),
+      summary: makeAuditSummary(result.kind, result.text),
+    });
   } catch (err) {
     if (!running) return;
     const message = err instanceof Error ? err.message : "Quick Scan failed.";
