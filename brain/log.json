@@ -3,6 +3,46 @@
   "product": "Securely",
   "updates": [
     {
+      "version": "0.1.1",
+      "date": "2026-10-22",
+      "title": "Real Quick Scan, billing promo, tighter dashboard",
+      "sections": [
+        {
+          "heading": "Widget",
+          "added": [
+            "Quick Scan captures the primary screen, runs Windows OCR, and classifies Safe / Warning / Phishing via the site analyze API.",
+            "Scan sounds play through the host so done and alert chimes work after the click gesture.",
+            "Pill is slightly taller with a wider Quick/Timed/24/7 scan control."
+          ],
+          "fixes": [
+            "Dashboard opens from the pill only for subscription activation, not during a normal scan."
+          ]
+        },
+        {
+          "heading": "Dashboard",
+          "added": [
+            "Billing form stacks Stripe email and optional SECURELY-DEV promo, then starts Checkout from the app."
+          ],
+          "fixes": [
+            "Billing email field no longer overlaps its label; main panel padding fits the window."
+          ]
+        },
+        {
+          "heading": "API",
+          "added": [
+            "OpenRouter /api/analyze proxy accepts OCR text and optional screenshot for threat classification.",
+            "Checkout accepts promo SECURELY-DEV for 100% off when STRIPE_PROMO_ID is configured."
+          ]
+        },
+        {
+          "heading": "Site",
+          "added": [
+            "Pricing page includes an optional promo field for SECURELY-DEV."
+          ]
+        }
+      ]
+    },
+    {
       "version": "0.1.0",
       "date": "2026-10-22",
       "title": "Hooxie-style shell with colored scan modes",

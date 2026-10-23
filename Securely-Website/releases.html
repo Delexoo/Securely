@@ -58,11 +58,51 @@
     <p class="lede">The same list as the <a href="https://github.com/Delexoo/Securely/releases">GitHub releases</a>.</p>
     <div class="release-log">
       <!-- brain:notes -->
+      <article class="release" id="v0.1.1">
+        <div class="release-body">
+          <header class="release-meta">
+            <a class="release-tag" href="https://github.com/Delexoo/Securely/releases/tag/v0.1.1">v0.1.1</a>
+            <span class="release-latest">Latest</span>
+            <time datetime="2026-10-22">22 Oct 2026</time>
+          </header>
+          <div class="release-card">
+            <h2>Real Quick Scan, billing promo, tighter dashboard</h2>
+            <h3>Added</h3>
+            <h4>Widget</h4>
+            <ul>
+              <li>Quick Scan captures the primary screen, runs Windows OCR, and classifies Safe / Warning / Phishing via the site analyze API.</li>
+              <li>Scan sounds play through the host so done and alert chimes work after the click gesture.</li>
+              <li>Pill is slightly taller with a wider Quick/Timed/24/7 scan control.</li>
+            </ul>
+            <h4>Dashboard</h4>
+            <ul>
+              <li>Billing form stacks Stripe email and optional SECURELY-DEV promo, then starts Checkout from the app.</li>
+            </ul>
+            <h4>API</h4>
+            <ul>
+              <li>OpenRouter /api/analyze proxy accepts OCR text and optional screenshot for threat classification.</li>
+              <li>Checkout accepts promo SECURELY-DEV for 100% off when STRIPE_PROMO_ID is configured.</li>
+            </ul>
+            <h4>Site</h4>
+            <ul>
+              <li>Pricing page includes an optional promo field for SECURELY-DEV.</li>
+            </ul>
+            <h3>Bug fixes</h3>
+            <h4>Widget</h4>
+            <ul>
+              <li>Dashboard opens from the pill only for subscription activation, not during a normal scan.</li>
+            </ul>
+            <h4>Dashboard</h4>
+            <ul>
+              <li>Billing email field no longer overlaps its label; main panel padding fits the window.</li>
+            </ul>
+          </div>
+        </div>
+      </article>
       <article class="release" id="v0.1.0">
         <div class="release-body">
           <header class="release-meta">
             <a class="release-tag" href="https://github.com/Delexoo/Securely/releases/tag/v0.1.0">v0.1.0</a>
-            <span class="release-latest">Latest</span>
             <time datetime="2026-10-22">22 Oct 2026</time>
           </header>
           <div class="release-card">

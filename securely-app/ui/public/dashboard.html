@@ -30,6 +30,10 @@
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h16"/><path d="M4 16h16"/><circle cx="9" cy="8" r="2.1"/><circle cx="15" cy="16" r="2.1"/></svg>
           <span>Settings</span>
         </button>
+        <button type="button" data-open="billing" title="Billing">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18"/></svg>
+          <span>Billing</span>
+        </button>
         <button type="button" data-open="audit" title="Audit log">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5h6.8L18 8.7V19a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 6 19V6A1.5 1.5 0 0 1 7.5 4.5z"/><path d="M13.5 4.8V9H17.6"/></svg>
           <span>Audit log</span>
@@ -48,11 +52,11 @@
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 14.5H7.2A1.7 1.7 0 0 1 5.5 12.8V7.2A1.7 1.7 0 0 1 7.2 5.5h5.6A1.7 1.7 0 0 1 14.5 7.2V10"/><path d="M13 11.2 19 5.2"/><path d="M14.2 5.2H19v4.8"/></svg>
         <span>Show / hide pill</span>
       </button>
-      <button id="quit-securely" class="pin" type="button">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 7V5.5A1.5 1.5 0 0 1 11.5 4h7A1.5 1.5 0 0 1 20 5.5v13a1.5 1.5 0 0 1-1.5 1.5h-7A1.5 1.5 0 0 1 10 18.5V17"/><path d="M13 12H4"/><path d="m7 9-3 3 3 3"/></svg>
-        <span>Quit Securely</span>
-      </button>
-    </nav>
+        <button id="quit-securely" class="pin" type="button">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 7V5.5A1.5 1.5 0 0 1 11.5 4h7A1.5 1.5 0 0 1 20 5.5v13a1.5 1.5 0 0 1-1.5 1.5h-7A1.5 1.5 0 0 1 10 18.5V17"/><path d="M13 12H4"/><path d="m7 9-3 3 3 3"/></svg>
+          <span>Quit Securely</span>
+        </button>
+      </nav>
 
     <main class="main">
       <p class="status" id="status"></p>
@@ -131,7 +135,7 @@
           </div>
           <div class="row">
             <span class="mark" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 10v4h3l5 4V6L7 10H4z"/><path d="M16 9.5a3 3 0 0 1 0 5"/></svg></span>
-            <div class="row-copy"><strong>Sound</strong><span>Play a short alert with notifications.</span></div>
+            <div class="row-copy"><strong>Sound</strong><span>Hooxie chimes for scan start, done, threats, and hide.</span></div>
             <label class="switch"><input id="set-sound" type="checkbox" checked><i></i></label>
           </div>
           <div class="row">
@@ -172,6 +176,39 @@
             </div>
           </div>
         </div>
+      </section>
+
+      <section data-section="billing" data-title="Billing" hidden>
+        <h1>Billing</h1>
+        <p class="note">Securely is <strong>$3 USD per month</strong>. No Securely account — pay with Stripe using an email, then activate here. Cancel anytime in the Stripe customer portal.</p>
+        <h2 class="dash-group">Subscription</h2>
+        <div class="rows">
+          <div class="row">
+            <span class="mark" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="7.5"/><circle cx="12" cy="12" r="2.2"/></svg></span>
+            <div class="row-copy"><strong>Status</strong><span id="license-status-copy">Checking…</span></div>
+            <span id="license-status" class="tag">Unknown</span>
+          </div>
+        </div>
+        <div class="billing-form">
+          <label class="billing-label" for="license-email">
+            <strong>Stripe email</strong>
+            <span>The email from checkout / your receipt.</span>
+          </label>
+          <input id="license-email" class="field-control" type="email" autocomplete="email" placeholder="you@example.com" aria-label="Stripe email">
+          <label class="billing-label" for="license-promo">
+            <strong>Promo code</strong>
+            <span>Optional. Use <code>SECURELY-DEV</code> for 100% off while testing.</span>
+          </label>
+          <input id="license-promo" class="field-control" type="text" autocomplete="off" placeholder="SECURELY-DEV" spellcheck="false" aria-label="Promo code">
+        </div>
+        <div class="actions billing-actions">
+          <button type="button" id="license-activate" class="btn">Activate</button>
+          <button type="button" id="license-subscribe" class="ghost">Subscribe — $3/mo</button>
+          <button type="button" id="license-portal" class="ghost">Manage / cancel</button>
+        </div>
+        <p id="license-message" class="note" role="status"></p>
+        <h2 class="dash-group">How it works</h2>
+        <p class="note">1) Subscribe with Stripe (enter <code>SECURELY-DEV</code> for free testing). 2) Activate with that email. 3) Scans unlock while the subscription is active. Cancel in Manage / cancel — no Securely password required.</p>
       </section>
 
       <section data-section="audit" data-title="Audit log" hidden>

@@ -4,13 +4,12 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Pricing — Securely</title>
-  <meta name="description" content="Securely pricing: free Starter and Pro at $20/month for unlimited AI checks on Windows.">
+  <meta name="description" content="Securely is $3/month for Windows. Pay with Stripe — no Securely account. Cancel anytime.">
   <link rel="canonical" href="https://trysecurely.com/pricing.html">
   <meta property="og:title" content="Pricing — Securely">
-  <meta property="og:description" content="Starter free. Pro $20/month for unlimited AI-assisted checks.">
+  <meta property="og:description" content="$3/month. Stripe checkout. Cancel anytime.">
   <meta property="og:type" content="website">
   <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="Pricing — Securely">
   <meta name="theme-color" content="#1c1b19">
   <link rel="icon" href="/favicon.ico" sizes="any">
   <link rel="stylesheet" href="/site.css">
@@ -23,7 +22,6 @@
     <nav class="menu-screen" id="site-menu" aria-label="Pages">
       <a href="/">Home</a>
       <a href="/pricing.html">Pricing</a>
-      
       <a href="/releases.html">Releases</a>
       <a href="/billing.html">Billing</a>
       <a href="/contact.html">Contact</a>
@@ -31,38 +29,29 @@
   </header>
   <main id="content" class="wrap-wide" style="padding-top:6.5rem">
     <p class="eyebrow">Pricing</p>
-    <h1>Simple pricing</h1>
-    <p class="lede">Amounts below are shown before you pay. Pro renews monthly until you cancel. See <a href="/billing.html">Billing</a>.</p>
-    <div class="price-grid">
-      <article class="price-card">
-        <h2>Starter</h2>
-        <p class="subhead">Try Securely on one Windows PC.</p>
-        <p class="price">Free</p>
-        <a class="btn" href="/#download">Download for Windows</a>
-        <ul>
-          <li>Quick Scan and timed scans</li>
-          <li>Local audit log</li>
-          <li>Limited AI checks (fair use)</li>
-        </ul>
-      </article>
+    <h1>One plan. $3 a month.</h1>
+    <p class="lede">Securely only runs with an active subscription. No Securely account — pay with Stripe using your email, then Activate that email in the app. Cancel anytime in the Stripe portal. See <a href="/billing.html">Billing</a>.</p>
+    <div class="price-grid" style="grid-template-columns:minmax(0,28rem)">
       <article class="price-card featured">
-        <h2>Pro</h2>
-        <p class="subhead">For daily monitoring.</p>
-        <p class="price">$20 <small>/ month, renews until canceled</small></p>
+        <h2>Securely</h2>
+        <p class="subhead">Full Windows threat monitor for one PC.</p>
+        <p class="price">$3 <small>/ month, renews until canceled</small></p>
         <form id="checkout-form" class="form" action="/api/checkout" method="post">
-          <input type="hidden" name="plan" value="pro">
-          <label for="email">Email for receipt
+          <label for="email">Email for receipt &amp; activation
             <input id="email" name="email" type="email" autocomplete="email" required maxlength="200" placeholder="you@example.com">
+          </label>
+          <label for="promo">Promo code <span class="muted">(optional)</span>
+            <input id="promo" name="promo" type="text" autocomplete="off" maxlength="40" placeholder="SECURELY-DEV" spellcheck="false">
           </label>
           <p class="error" id="checkout-error" hidden></p>
           <p class="ok" id="checkout-ok" hidden></p>
-          <button class="btn" id="checkout-btn" type="submit">Subscribe to Pro — $20/month</button>
+          <button class="btn" id="checkout-btn" type="submit">Subscribe — $3/month</button>
         </form>
         <ul>
-          <li>Everything in Starter</li>
-          <li>24/7 continuous mode</li>
-          <li>Higher AI analyze quota</li>
-          <li>Cancel anytime via Billing</li>
+          <li>Quick, Timed, and 24/7 monitoring</li>
+          <li>OCR + server-side AI analysis</li>
+          <li>Dashboard, audit log, hitboxes</li>
+          <li>Cancel anytime — no Securely password</li>
         </ul>
       </article>
     </div>
@@ -85,10 +74,11 @@
       btn.disabled = true; btn.textContent = "Starting checkout…";
       try {
         const email = document.querySelector("#email").value.trim();
+        const promo = document.querySelector("#promo")?.value.trim() || "";
         const res = await fetch("/api/checkout", {
           method: "POST",
           headers: { "content-type": "application/json" },
-          body: JSON.stringify({ plan: "pro", email }),
+          body: JSON.stringify({ plan: "securely", email, promo }),
         });
         const data = await res.json().catch(() => ({}));
         if (!res.ok || !data.url) throw new Error(data.error || "Checkout is not available yet.");
@@ -100,7 +90,7 @@
         err.hidden = false;
       } finally {
         btn.disabled = false;
-        btn.textContent = "Subscribe to Pro — $20/month";
+        btn.textContent = "Subscribe — $3/month";
       }
     });
   </script>

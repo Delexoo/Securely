@@ -53,11 +53,15 @@ function syncWidgetModes() {
   });
 }
 
+const SITE_ORIGIN = "https://trysecurely.com";
+const LICENSE_KEY = "securely-license";
+
 function openSection(name) {
-  const allowed = ["monitor", "settings", "audit", "releases", "credits"];
+  const allowed = ["monitor", "settings", "billing", "audit", "releases", "credits"];
   const tabMap = {
     dashboard: "monitor",
     settings: "settings",
+    billing: "billing",
     audit: "audit",
     releases: "releases",
     credits: "credits",
@@ -73,6 +77,7 @@ function openSection(name) {
   history.replaceState(null, "", `${location.pathname}?tab=${id === "monitor" ? "dashboard" : id}`);
   if (id === "audit" || id === "monitor") syncAlerts();
   if (id === "releases") paintReleaseNotes();
+  if (id === "billing") paintBilling();
 }
 
 window.openSecurelySection = openSection;
@@ -268,10 +273,117 @@ document.querySelectorAll("[data-widget-mode]").forEach((btn) => {
   });
 });
 
+function loadLicense() {
+  try {
+    return JSON.parse(localStorage.getItem(LICENSE_KEY) || "null");
+  } catch {
+    return null;
+  }
+}
+
+function paintBilling() {
+  const lic = loadLicense();
+  const tag = document.querySelector("#license-status");
+  const copy = document.querySelector("#license-status-copy");
+  const emailEl = document.querySelector("#license-email");
+  if (emailEl && lic?.email && !emailEl.value) emailEl.value = lic.email;
+  if (tag) tag.textContent = lic?.active ? "Active" : "Inactive";
+  if (copy) {
+    copy.textContent = lic?.active
+      ? `Licensed to ${lic.email}. Scans are unlocked.`
+      : "No active subscription on this computer yet.";
+  }
+}
+
+async function activateLicense() {
+  const msg = document.querySelector("#license-message");
+  const email = document.querySelector("#license-email")?.value?.trim() || "";
+  if (msg) msg.textContent = "Checking Stripe…";
+  try {
+    const res = await fetch(`${SITE_ORIGIN}/api/license`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ email }),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.error || "Could not verify subscription.");
+    localStorage.setItem(
+      LICENSE_KEY,
+      JSON.stringify({
+        email: email.toLowerCase(),
+        active: !!data.active,
+        status: data.status || "",
+        checkedAt: Date.now(),
+      }),
+    );
+    paintBilling();
+    if (msg) {
+      msg.textContent = data.active
+        ? "Subscription active. You can run scans from the pill."
+        : "No active $3/month subscription for that email. Subscribe first, then Activate again.";
+    }
+  } catch (err) {
+    if (msg) msg.textContent = err.message || "Activation failed.";
+  }
+}
+
+document.querySelector("#license-activate")?.addEventListener("click", () => activateLicense());
+document.querySelector("#license-subscribe")?.addEventListener("click", async () => {
+  const msg = document.querySelector("#license-message");
+  const email = document.querySelector("#license-email")?.value?.trim() || "";
+  const promo = document.querySelector("#license-promo")?.value?.trim() || "";
+  if (!email) {
+    if (msg) msg.textContent = "Enter your Stripe email before Subscribe.";
+    return;
+  }
+  if (msg) msg.textContent = "Starting Stripe checkout…";
+  try {
+    const res = await fetch(`${SITE_ORIGIN}/api/checkout`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ email, promo }),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok || !data.url) throw new Error(data.error || "Checkout unavailable.");
+    window.open(data.url, "_blank", "noopener");
+    if (msg) {
+      msg.textContent = promo
+        ? "Checkout opened. Complete payment (promo applied if valid), then Activate."
+        : "Checkout opened. Complete payment, then Activate with the same email.";
+    }
+  } catch (err) {
+    if (msg) msg.textContent = err.message || "Could not start checkout.";
+  }
+});
+document.querySelector("#license-portal")?.addEventListener("click", async () => {
+  const msg = document.querySelector("#license-message");
+  const email = document.querySelector("#license-email")?.value?.trim() || loadLicense()?.email || "";
+  if (msg) msg.textContent = "Opening Stripe portal…";
+  try {
+    const res = await fetch(`${SITE_ORIGIN}/api/portal`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ email }),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok || !data.url) throw new Error(data.error || "Portal unavailable.");
+    window.open(data.url, "_blank", "noopener");
+    if (msg) msg.textContent = "Stripe portal opened in your browser.";
+  } catch (err) {
+    if (msg) msg.textContent = err.message || "Could not open the portal.";
+  }
+});
+
 document.querySelector("#dash-start")?.addEventListener("click", () => {
+  const lic = loadLicense();
+  if (!lic?.active) {
+    openSection("billing");
+    const msg = document.querySelector("#license-message");
+    if (msg) msg.textContent = "Subscribe or Activate with your Stripe email before scanning.";
+    return;
+  }
   if (mode === "continuous") {
-    const ok = window.confirm("Enable 24/7 continuous monitoring?\n\nSecurely will capture your primary screen and send OCR text for analysis.");
-    if (!ok) return;
+    localStorage.setItem("securely-continuous-ok", "1");
   }
   const mins = Number(document.querySelector("#dash-timed-mins")?.value) || 5;
   const status = document.querySelector("#dash-status");
@@ -306,12 +418,25 @@ document.querySelector("#audit-clear")?.addEventListener("click", () => {
   localStorage.setItem(AUDIT_KEY, "[]");
   syncAlerts();
 });
+async function playDashSound(file) {
+  if (settings.sound === false) return;
+  try {
+    const audio = new Audio(`/sounds/${file}`);
+    await audio.play();
+  } catch { /* ignore */ }
+}
+
 document.querySelector("#set-test-notify")?.addEventListener("click", () => {
   const rows = JSON.parse(localStorage.getItem(AUDIT_KEY) || "[]");
   rows.unshift({ t: Date.now(), kind: "UNSURE", text: "Test notification — desktop toast wires through core next." });
   localStorage.setItem(AUDIT_KEY, JSON.stringify(rows.slice(0, 200)));
+  playDashSound("notification-alert.mp3");
   syncAlerts();
   openSection("audit");
+});
+
+document.querySelector("#set-sound")?.addEventListener("change", (e) => {
+  if (e.target.checked) playDashSound("new-notification.mp3");
 });
 
 document.querySelector("#toggle-pill")?.addEventListener("click", () => {

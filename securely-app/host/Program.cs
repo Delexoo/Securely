@@ -1,10 +1,14 @@
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Globalization;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Speech.Recognition;
 using System.Text.Json;
 using Microsoft.Web.WebView2.Core;
 using Microsoft.Web.WebView2.WinForms;
+using Windows.Graphics.Imaging;
+using Windows.Media.Ocr;
+using Windows.Storage.Streams;
 
 namespace SecurelyShell;
 
@@ -45,7 +49,7 @@ internal sealed class ShellForm : Form
     private readonly WebView2 view = new() { Dock = DockStyle.Fill };
     private readonly System.Windows.Forms.Timer anim = new() { Interval = 12 };
     private readonly System.Windows.Forms.Timer reveal = new() { Interval = 8 };
-    private readonly System.Windows.Forms.Timer pin = new() { Interval = 200 };
+    private readonly System.Windows.Forms.Timer pin = new() { Interval = 1500 };
     private bool userMoved;
     private bool animating;
     private bool excludeCapture;
@@ -104,8 +108,12 @@ internal sealed class ShellForm : Form
         {
             await OpenPage(url);
         };
-        var reader = new Thread(ReadCommands) { IsBackground = true };
-        reader.Start();
+        // Stdin IPC only when a parent pipes commands — avoid allocating a console window.
+        if (Console.IsInputRedirected)
+        {
+            var reader = new Thread(ReadCommands) { IsBackground = true };
+            reader.Start();
+        }
     }
 
     protected override CreateParams CreateParams
@@ -631,7 +639,8 @@ internal sealed class ShellForm : Form
         };
         var settings = view.CoreWebView2.Settings;
         settings.AreDefaultContextMenusEnabled = false;
-        settings.AreDevToolsEnabled = true;
+        settings.AreDefaultScriptDialogsEnabled = false; // alert/confirm freeze the shaped overlay
+        settings.AreDevToolsEnabled = false;
         settings.IsStatusBarEnabled = false;
         settings.IsZoomControlEnabled = false;
         settings.IsPinchZoomEnabled = false;
@@ -743,12 +752,82 @@ internal sealed class ShellForm : Form
                         Application.Exit();
                     });
                     break;
+                case "play":
+                {
+                    // Basename only — UI sends Hooxie pack filenames under ui/public/sounds.
+                    var soundFile = root.TryGetProperty("file", out var fileEl) ? fileEl.GetString() ?? "" : "";
+                    if (string.IsNullOrWhiteSpace(soundFile) && root.TryGetProperty("path", out var pathEl))
+                        soundFile = pathEl.GetString() ?? "";
+                    soundFile = Path.GetFileName(soundFile.Trim());
+                    if (string.IsNullOrWhiteSpace(soundFile)) break;
+                    var uiRoot = ResolveUiPublic();
+                    if (uiRoot == null) break;
+                    var fullPath = Path.Combine(uiRoot, "sounds", soundFile);
+                    BeginInvoke(() =>
+                    {
+                        try { audioIo.Play(fullPath); }
+                        catch (Exception ex) { System.Diagnostics.Debug.WriteLine("play: " + ex.Message); }
+                    });
+                    break;
+                }
+                case "capture":
+                {
+                    var requestId = root.TryGetProperty("id", out var captureIdEl) ? captureIdEl.GetString() ?? "" : "";
+                    BeginInvoke(() => StartCaptureReply(requestId));
+                    break;
+                }
             }
         }
         catch (Exception ex)
         {
             System.Diagnostics.Debug.WriteLine("HandleUiMessage: " + ex.Message);
         }
+    }
+
+    private void ReplyToUi(object body)
+    {
+        try
+        {
+            var json = JsonSerializer.Serialize(body);
+            if (view.CoreWebView2 == null) return;
+            view.CoreWebView2.PostWebMessageAsJson(json);
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine("ReplyToUi: " + ex.Message);
+        }
+    }
+
+    private void StartCaptureReply(string requestId)
+    {
+        _ = Task.Run(async () =>
+        {
+            try
+            {
+                var image = "";
+                Invoke(() => image = CaptureScreen());
+                var text = string.IsNullOrWhiteSpace(image)
+                    ? ""
+                    : await RecognizeJpegBase64Async(image).ConfigureAwait(false);
+                BeginInvoke(() => ReplyToUi(new
+                {
+                    id = requestId,
+                    ok = true,
+                    image,
+                    text,
+                    mimeType = "image/jpeg",
+                }));
+            }
+            catch (Exception ex)
+            {
+                BeginInvoke(() => ReplyToUi(new
+                {
+                    id = requestId,
+                    ok = false,
+                    error = ex.Message.Length > 160 ? ex.Message[..160] : ex.Message,
+                }));
+            }
+        });
     }
 
     private static bool IsCursorSite(string? uri)
@@ -972,6 +1051,7 @@ internal sealed class ShellForm : Form
                 if (window.IsDisposed || page.CoreWebView2 == null) return;
                 var settings = page.CoreWebView2.Settings;
                 settings.AreDefaultContextMenusEnabled = false;
+                settings.AreDefaultScriptDialogsEnabled = false;
                 settings.AreDevToolsEnabled = false;
                 settings.IsStatusBarEnabled = false;
                 settings.IsZoomControlEnabled = false;
@@ -994,6 +1074,7 @@ internal sealed class ShellForm : Form
                 var section = tab switch
                 {
                     "settings" => "settings",
+                    "billing" => "billing",
                     "audit" => "audit",
                     "releases" => "releases",
                     "credits" => "credits",
@@ -1811,22 +1892,26 @@ internal sealed class ShellForm : Form
 
     private string CaptureScreen()
     {
-        var screen = Screen.FromControl(this);
+        var screen = Screen.PrimaryScreen ?? Screen.FromControl(this);
         var bounds = screen.Bounds;
         var wasVisible = Visible;
+        var dashWasVisible = dashboard != null && !dashboard.IsDisposed && dashboard.Visible;
         try
         {
-            if (wasVisible)
+            if (wasVisible) Visible = false;
+            if (dashWasVisible && dashboard != null) dashboard.Visible = false;
+            if (wasVisible || dashWasVisible)
             {
-                Visible = false;
                 Application.DoEvents();
                 Thread.Sleep(140);
             }
+
             using var full = new Bitmap(bounds.Width, bounds.Height, PixelFormat.Format24bppRgb);
             using (var graphics = Graphics.FromImage(full))
             {
                 graphics.CopyFromScreen(bounds.Left, bounds.Top, 0, 0, bounds.Size, CopyPixelOperation.SourceCopy);
             }
+            MaskNotificationTray(full);
             using var fitted = FitWidth(full, 1600);
             using var stream = new MemoryStream();
             SaveJpeg(fitted, stream, 62);
@@ -1834,12 +1919,46 @@ internal sealed class ShellForm : Form
         }
         finally
         {
+            if (dashWasVisible && dashboard != null && !dashboard.IsDisposed)
+                dashboard.Visible = true;
             if (wasVisible)
             {
                 Visible = true;
                 PinTopmost();
             }
         }
+    }
+
+    private static void MaskNotificationTray(Bitmap bitmap)
+    {
+        // Bottom-right tray / toast region — ignore Securely and system toasts.
+        var w = Math.Max(1, (int)Math.Round(bitmap.Width * 0.15));
+        var h = Math.Max(1, (int)Math.Round(bitmap.Height * 0.25));
+        using var graphics = Graphics.FromImage(bitmap);
+        using var brush = new SolidBrush(Color.Black);
+        graphics.FillRectangle(brush, bitmap.Width - w, bitmap.Height - h, w, h);
+    }
+
+    private static async Task<string> RecognizeJpegBase64Async(string imageBase64)
+    {
+        var bytes = Convert.FromBase64String(imageBase64);
+        using var stream = new MemoryStream(bytes);
+        return await RecognizeStreamAsync(stream).ConfigureAwait(false);
+    }
+
+    private static async Task<string> RecognizeStreamAsync(Stream stream)
+    {
+        var engine = OcrEngine.TryCreateFromUserProfileLanguages()
+            ?? OcrEngine.TryCreateFromLanguage(new Windows.Globalization.Language("en-US"));
+        if (engine == null) return "";
+
+        using IRandomAccessStream ra = stream.AsRandomAccessStream();
+        var decoder = await BitmapDecoder.CreateAsync(ra);
+        using var softwareBitmap = await decoder.GetSoftwareBitmapAsync(
+            BitmapPixelFormat.Bgra8,
+            BitmapAlphaMode.Premultiplied);
+        var result = await engine.RecognizeAsync(softwareBitmap);
+        return result?.Text?.Trim() ?? "";
     }
 
     private static Bitmap FitWidth(Bitmap source, int maxWidth)
@@ -1869,8 +1988,16 @@ internal sealed class ShellForm : Form
 
     private static void Emit(object body)
     {
-        Console.Out.WriteLine(JsonSerializer.Serialize(body));
-        Console.Out.Flush();
+        if (!Console.IsOutputRedirected) return;
+        try
+        {
+            Console.Out.WriteLine(JsonSerializer.Serialize(body));
+            Console.Out.Flush();
+        }
+        catch
+        {
+            /* No console pipe — desktop-only run. */
+        }
     }
 
     private static readonly IntPtr HWND_TOPMOST = new(-1);
