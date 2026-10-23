@@ -1332,7 +1332,9 @@ internal sealed class ShellForm : Form
 
     private Rectangle TargetBounds(int cssWidth, int cssHeight)
     {
-        lastCssWidth = Math.Clamp(cssWidth, 160, 2000);
+        // Compact layouts (small square) are under 160 CSS px — do not force a wider host
+        // or transparent side bands show as a soft “halo” around the island.
+        lastCssWidth = Math.Clamp(cssWidth, 96, 2000);
         lastCssHeight = Math.Clamp(cssHeight, 48, 4000);
         var area = CurrentWorkArea();
         var margin = ScaleDelta(12);

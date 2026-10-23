@@ -16,10 +16,10 @@ const MODES = [
 
 /** Widget reshape cycle — each form has its own chrome in securely.css */
 const LAYOUTS = [
-  { id: "normal", label: "Normal pill", width: 312, height: 68, privacyH: 128, radius: "pill" },
-  { id: "square", label: "Small square", width: 118, height: 118, privacyH: 168, radius: 28 },
-  { id: "vertical", label: "Vertical", width: 132, height: 304, privacyH: 360, radius: 32 },
-  { id: "big", label: "Big square", width: 248, height: 248, privacyH: 300, radius: 36 },
+  { id: "normal", label: "Normal pill", width: 340, height: 64, privacyH: 140, radius: "pill" },
+  { id: "square", label: "Small square", width: 148, height: 168, privacyH: 220, radius: 28 },
+  { id: "vertical", label: "Vertical", width: 168, height: 340, privacyH: 400, radius: 32 },
+  { id: "big", label: "Big square", width: 268, height: 292, privacyH: 360, radius: 36 },
 ];
 
 const LAYOUT_ICONS = {
@@ -326,6 +326,9 @@ function applyFrameSize() {
     frameEl.style.maxWidth = `${w}px`;
     frameEl.classList.toggle("is-privacy", privacyOpen);
   }
+  if (shellEl) {
+    shellEl.style.width = "100%";
+  }
 }
 
 function frameWidth() {
@@ -335,7 +338,11 @@ function frameWidth() {
 
 function measureFrame() {
   const meta = layoutMeta();
-  return privacyOpen ? meta.privacyH : meta.height;
+  const floor = privacyOpen ? meta.privacyH : meta.height;
+  // Prefer live shell height so tools are never clipped by a too-short fit.
+  const live = shellEl ? Math.ceil(shellEl.getBoundingClientRect().height) : 0;
+  const pad = 2; // tiny safety so WinForms region does not bite anti-aliased edges
+  return Math.max(floor, live + pad);
 }
 
 function setPrivacyOpen(on) {
@@ -396,6 +403,8 @@ async function fitWindow(instant = false) {
   }
   fitFlight = true;
   try {
+    applyFrameSize();
+    await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
     const width = frameWidth();
     const height = measureFrame();
     const next = `${width}x${height}`;

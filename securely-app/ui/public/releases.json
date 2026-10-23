@@ -3,6 +3,25 @@
   "repo": "Delexoo/Securely",
   "updates": [
     {
+      "version": "0.1.9",
+      "date": "2026-10-22",
+      "title": "Solid widget chrome — no halo, no clipped tools",
+      "tag": "v0.1.9",
+      "url": "https://github.com/Delexoo/Securely/releases/tag/v0.1.9",
+      "sections": [
+        {
+          "heading": "Widget",
+          "added": [
+            "Island layouts use tighter fit sizing with real measured height so scan and tool buttons are no longer cut off.",
+            "Vertical reshape is wider; small and big squares get more padding; outer drop-shadow and frame pad are removed for a clean solid edge."
+          ],
+          "fixes": [
+            "Host no longer forces a 160px minimum width, which left a soft halo beside compact layouts."
+          ]
+        }
+      ]
+    },
+    {
       "version": "0.1.8",
       "date": "2026-10-22",
       "title": "Rounded Securely logo in the installer",

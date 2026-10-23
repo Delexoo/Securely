@@ -1,6 +1,6 @@
 #define MyAppName "Securely"
 #ifndef MyAppVersion
-#define MyAppVersion "0.1.8"
+#define MyAppVersion "0.1.9"
 #endif
 #define MyAppPublisher "Delexoo"
 #define MyAppURL "https://trysecurely.vercel.app"

@@ -14,27 +14,28 @@
 .skip:focus { top: 0.5rem; }
 
 #frame {
-  width: 312px !important;
-  max-width: 312px !important;
-  padding: 6px;
+  width: 340px !important;
+  max-width: 340px !important;
+  /* No outer pad — pad paints as a soft halo outside the shaped WinForms region */
+  padding: 0 !important;
   transition: width 180ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 #frame[data-layout="normal"] {
-  width: 312px !important;
-  max-width: 312px !important;
+  width: 340px !important;
+  max-width: 340px !important;
 }
 #frame[data-layout="square"] {
-  width: 118px !important;
-  max-width: 118px !important;
+  width: 148px !important;
+  max-width: 148px !important;
 }
 #frame[data-layout="vertical"] {
-  width: 132px !important;
-  max-width: 132px !important;
+  width: 168px !important;
+  max-width: 168px !important;
 }
 #frame[data-layout="big"] {
-  width: 248px !important;
-  max-width: 248px !important;
+  width: 268px !important;
+  max-width: 268px !important;
 }
 #frame.is-privacy {
   width: 320px !important;
@@ -45,10 +46,9 @@
   border-radius: 999px !important;
   overflow: hidden;
   background: var(--pill) !important;
-  box-shadow:
-    inset 0 0 0 1px var(--pill-border),
-    0 10px 28px rgb(0 0 0 / 38%);
-  transition: border-radius 180ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 180ms ease;
+  /* Solid island only — no drop shadow (shows as a glitchy glow on transparent host) */
+  box-shadow: inset 0 0 0 1px var(--pill-border);
+  transition: border-radius 180ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 #shell.is-pill[data-layout="normal"] {
@@ -76,12 +76,12 @@
   flex-direction: row !important;
   flex-wrap: nowrap !important;
   align-items: center !important;
-  gap: 6px !important;
-  padding: 8px 10px !important;
-  height: 56px !important;
-  min-height: 56px !important;
+  gap: 8px !important;
+  padding: 10px 12px !important;
+  height: 64px !important;
+  min-height: 64px !important;
   box-sizing: border-box;
-  overflow: visible;
+  overflow: hidden;
 }
 
 .secure-mark {
@@ -404,21 +404,22 @@ html[data-widget="light"] .privacy-copy strong { color: #b45309; }
 #shell[data-layout="square"] .island-toolbar {
   flex-direction: column !important;
   flex-wrap: nowrap !important;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: center !important;
   height: auto !important;
-  min-height: 106px !important;
-  padding: 10px 8px !important;
-  gap: 8px !important;
+  min-height: 0 !important;
+  padding: 14px 12px 16px !important;
+  gap: 12px !important;
 }
 
 #shell[data-layout="square"] .secure-mark {
-  width: 36px;
-  height: 36px;
-  border-radius: 11px;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
 }
 
 #shell[data-layout="square"] .status-block,
+#shell[data-layout="square"] #home-btn,
 #shell[data-layout="square"] #settings-btn,
 #shell[data-layout="square"] #audit-btn,
 #shell[data-layout="square"] #exit-btn,
@@ -428,23 +429,27 @@ html[data-widget="light"] .privacy-copy strong { color: #b45309; }
 
 #shell[data-layout="square"] .scan-pill {
   min-width: 0;
-  width: 72px;
-  height: 30px;
+  width: 100%;
+  height: 34px;
   padding: 0 10px;
-  font-size: 10px;
+  font-size: 11px;
 }
 
 #shell[data-layout="square"] .tool-cluster {
-  gap: 4px;
+  gap: 8px;
+  justify-content: center;
+  width: 100%;
+  padding-top: 2px;
 }
 
 #shell[data-layout="square"] .tool.solid {
-  width: 28px;
-  height: 28px;
+  width: 32px;
+  height: 32px;
 }
 
 #shell[data-layout="square"] .drag-dots {
-  height: 28px;
+  width: 18px;
+  height: 32px;
 }
 
 /* ——— Vertical rectangle ——— */
@@ -452,9 +457,9 @@ html[data-widget="light"] .privacy-copy strong { color: #b45309; }
   flex-direction: column !important;
   align-items: stretch !important;
   height: auto !important;
-  min-height: 292px !important;
-  padding: 14px 12px !important;
-  gap: 10px !important;
+  min-height: 0 !important;
+  padding: 16px 16px 18px !important;
+  gap: 12px !important;
 }
 
 #shell[data-layout="vertical"] .secure-mark {
@@ -466,15 +471,15 @@ html[data-widget="light"] .privacy-copy strong { color: #b45309; }
 
 #shell[data-layout="vertical"] .scan-pill {
   width: 100%;
-  height: 36px;
+  height: 38px;
   order: 0;
 }
 
 #shell[data-layout="vertical"] .status-block {
   align-items: center;
   text-align: center;
-  padding: 8px 0 4px;
-  flex: 1 1 auto;
+  padding: 6px 0 2px;
+  flex: 0 0 auto;
 }
 
 #shell[data-layout="vertical"] .status-line {
@@ -494,13 +499,24 @@ html[data-widget="light"] .privacy-copy strong { color: #b45309; }
 #shell[data-layout="vertical"] .tool-cluster {
   flex-wrap: wrap;
   justify-content: center;
-  gap: 8px;
-  padding-top: 4px;
+  gap: 10px;
+  padding-top: 6px;
+  row-gap: 10px;
+}
+
+#shell[data-layout="vertical"] .tool.solid {
+  width: 36px;
+  height: 36px;
 }
 
 #shell[data-layout="vertical"] .drag-dots {
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
+}
+
+#shell[data-layout="vertical"] .tool.ghost {
+  width: 36px;
+  height: 36px;
 }
 
 /* ——— Big square ——— */
@@ -508,21 +524,21 @@ html[data-widget="light"] .privacy-copy strong { color: #b45309; }
   flex-direction: column !important;
   align-items: stretch !important;
   height: auto !important;
-  min-height: 236px !important;
-  padding: 16px 14px !important;
-  gap: 12px !important;
+  min-height: 0 !important;
+  padding: 18px 18px 20px !important;
+  gap: 14px !important;
 }
 
 #shell[data-layout="big"] .secure-mark {
-  width: 56px;
-  height: 56px;
+  width: 52px;
+  height: 52px;
   border-radius: 16px;
   align-self: flex-start;
 }
 
 #shell[data-layout="big"] .secure-mark svg {
-  width: 26px;
-  height: 26px;
+  width: 24px;
+  height: 24px;
 }
 
 #shell[data-layout="big"] .status-block {
@@ -530,13 +546,13 @@ html[data-widget="light"] .privacy-copy strong { color: #b45309; }
 }
 
 #shell[data-layout="big"] .status-line {
-  font-size: 18px;
+  font-size: 17px;
   font-weight: 750;
 }
 
 #shell[data-layout="big"] .status-line .status-icon {
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
 }
 
 #shell[data-layout="big"] .status-sub {
@@ -553,8 +569,9 @@ html[data-widget="light"] .privacy-copy strong { color: #b45309; }
 #shell[data-layout="big"] .tool-cluster {
   justify-content: flex-start;
   flex-wrap: wrap;
-  gap: 8px;
-  margin-top: auto;
+  gap: 10px;
+  margin-top: 4px;
+  padding-bottom: 2px;
 }
 
 #shell[data-layout="big"] .tool.solid {
@@ -574,9 +591,7 @@ html[data-widget="light"] .privacy-copy strong { color: #b45309; }
 
 html[data-widget="light"] #shell {
   background: #f4f5f7 !important;
-  box-shadow:
-    inset 0 0 0 1px #d8dde6,
-    0 10px 28px rgb(0 0 0 / 12%);
+  box-shadow: inset 0 0 0 1px #d8dde6;
 }
 html[data-widget="light"] {
   --pill: #f4f5f7;
