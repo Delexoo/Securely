@@ -1912,9 +1912,10 @@ internal sealed class ShellForm : Form
                 graphics.CopyFromScreen(bounds.Left, bounds.Top, 0, 0, bounds.Size, CopyPixelOperation.SourceCopy);
             }
             MaskNotificationTray(full);
-            using var fitted = FitWidth(full, 1600);
+            // Slightly sharper capture helps Windows OCR without huge payloads.
+            using var fitted = FitWidth(full, 1920);
             using var stream = new MemoryStream();
-            SaveJpeg(fitted, stream, 62);
+            SaveJpeg(fitted, stream, 74);
             return Convert.ToBase64String(stream.ToArray());
         }
         finally

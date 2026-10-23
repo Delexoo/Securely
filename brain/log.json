@@ -3,6 +3,30 @@
   "product": "Securely",
   "updates": [
     {
+      "version": "0.1.4",
+      "date": "2026-10-22",
+      "title": "Local sensitive-data gate before AI scan",
+      "sections": [
+        {
+          "heading": "Core",
+          "added": [
+            "Quick Scan runs a local detector for passwords, SSNs, payment details, and addresses before any AI upload.",
+            "If sensitive text is found, the pill prompts Stop or Continue — Continue redacts OCR and sends text only (no screenshot) to AI.",
+            "OCR+AI remains the classifier; local phishing cues and a one-retry analyze call harden reliability when OCR is strong."
+          ],
+          "fixes": [
+            "Screen capture JPEG quality and width are raised slightly so Windows OCR reads more reliably."
+          ]
+        },
+        {
+          "heading": "Security",
+          "added": [
+            "Sensitive screens are never uploaded unless the user explicitly continues after the local privacy warning."
+          ]
+        }
+      ]
+    },
+    {
       "version": "0.1.3",
       "date": "2026-10-22",
       "title": "Securely installer, license, and always-latest download",

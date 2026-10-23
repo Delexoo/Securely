@@ -106,10 +106,22 @@
             </svg>
           </button>
         </div>
+        <div id="privacy-gate" class="privacy-gate" hidden>
+          <p class="privacy-copy">
+            <strong>Sensitive details on screen.</strong>
+            <span id="privacy-kinds">Passwords or payment info may be visible.</span>
+            AI will not see this unless you continue.
+          </p>
+          <div class="privacy-actions">
+            <button type="button" id="privacy-stop" class="privacy-btn privacy-stop">Stop</button>
+            <button type="button" id="privacy-continue" class="privacy-btn privacy-continue">Continue</button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
   <p id="status" class="sr-only" aria-live="polite">Securely idle</p>
+  <script src="/sensitive.js"></script>
   <script src="/app.js"></script>
 </body>
 </html>

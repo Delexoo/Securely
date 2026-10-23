@@ -4,8 +4,10 @@ const LOOK_KEY = "securely-look";
 const SETTINGS_KEY = "securely-settings";
 const MODE_KEY = "securely-scan-mode";
 const SHELL_WIDTH = 278;
+const SHELL_WIDTH_PRIVACY = 320;
 const LICENSE_KEY = "securely-license";
 const SITE_ORIGIN = "https://trysecurely.vercel.app";
+const OCR_TEXT_ONLY_MIN = 160;
 
 const MODES = [
   { id: "quick", label: "Quick", startLabel: "Quick Scan" },
@@ -20,6 +22,10 @@ const statusLine = document.querySelector("#status-line");
 const statusText = document.querySelector("#status-text");
 const scanLabel = document.querySelector(".scan-label");
 const dragEl = document.querySelector("#drag");
+const privacyGate = document.querySelector("#privacy-gate");
+const privacyKinds = document.querySelector("#privacy-kinds");
+const privacyStop = document.querySelector("#privacy-stop");
+const privacyContinue = document.querySelector("#privacy-continue");
 
 let running = false;
 let scanMode = loadMode();
@@ -30,6 +36,8 @@ let fittedFrame = "";
 let fitFlight = false;
 let fitQueued = false;
 let timedTimer = 0;
+let privacyOpen = false;
+let privacyResolver = null;
 
 function hostPost(payload) {
   try {
@@ -239,12 +247,56 @@ function syncShellShape() {
 }
 
 function frameWidth() {
-  return SHELL_WIDTH + 8;
+  return (privacyOpen ? SHELL_WIDTH_PRIVACY : SHELL_WIDTH) + 8;
 }
 
 function measureFrame() {
-  return 58;
+  return privacyOpen ? 118 : 58;
 }
+
+function setPrivacyOpen(on) {
+  privacyOpen = !!on;
+  if (privacyGate) privacyGate.hidden = !privacyOpen;
+  shellEl.classList.toggle("is-privacy", privacyOpen);
+  if (frameEl) {
+    const w = frameWidth();
+    frameEl.style.width = `${w}px`;
+    frameEl.style.maxWidth = `${w}px`;
+  }
+  scheduleFit(true);
+}
+
+function askPrivacyContinue(summary) {
+  return new Promise((resolve) => {
+    if (privacyResolver) {
+      privacyResolver(false);
+      privacyResolver = null;
+    }
+    if (privacyKinds) {
+      privacyKinds.textContent = summary
+        ? `Detected: ${summary}. Continue only if you accept AI may see redacted screen text.`
+        : "Sensitive details may be visible. Continue only if you accept AI analysis.";
+    }
+    privacyResolver = resolve;
+    setPrivacyOpen(true);
+    playSound("alert");
+    setStatus("warning");
+  });
+}
+
+function settlePrivacy(allow) {
+  if (!privacyResolver) {
+    setPrivacyOpen(false);
+    return;
+  }
+  const done = privacyResolver;
+  privacyResolver = null;
+  setPrivacyOpen(false);
+  done(!!allow);
+}
+
+privacyStop?.addEventListener("click", () => settlePrivacy(false));
+privacyContinue?.addEventListener("click", () => settlePrivacy(true));
 
 function scheduleFit(instant = false) {
   if (instant) fitInstant = true;
@@ -344,19 +396,42 @@ async function captureScreen() {
   };
 }
 
-async function analyzeScreen(shot) {
-  const res = await fetch(`${SITE_ORIGIN}/api/analyze`, {
-    method: "POST",
-    headers: { "content-type": "application/json" },
-    body: JSON.stringify({
-      text: shot.text || "",
-      image: shot.image,
-      mimeType: shot.mimeType || "image/jpeg",
-    }),
-  });
-  const data = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(data.error || "Analysis unavailable.");
-  return parseAnalysis(data.analysis);
+async function analyzeScreen(shot, { allowImage = true } = {}) {
+  const text = String(shot.text || "");
+  const payload = { text };
+  // Prefer OCR text when rich enough — smaller, faster, less accidental PII in pixels.
+  const sendImage = allowImage && (!!shot.image) && text.trim().length < OCR_TEXT_ONLY_MIN;
+  if (sendImage) {
+    payload.image = shot.image;
+    payload.mimeType = shot.mimeType || "image/jpeg";
+  }
+  const attempt = async () => {
+    const res = await fetch(`${SITE_ORIGIN}/api/analyze`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.error || "Analysis unavailable.");
+    return parseAnalysis(data.analysis);
+  };
+  try {
+    return await attempt();
+  } catch (err) {
+    await new Promise((r) => setTimeout(r, 450));
+    return attempt();
+  }
+}
+
+function mergeLocalHint(aiResult, localHint) {
+  if (!localHint) return aiResult;
+  if (!aiResult || aiResult.kind === "SAFE" || aiResult.kind === "UNSURE") {
+    return { kind: localHint.kind, text: `${localHint.text} AI: ${aiResult?.text || "n/a"}` };
+  }
+  if (localHint.kind === "PHISHING" && aiResult.kind !== "PHISHING") {
+    return { kind: "PHISHING", text: `${localHint.text} AI: ${aiResult.text}` };
+  }
+  return aiResult;
 }
 
 async function runQuickScan() {
@@ -370,7 +445,35 @@ async function runQuickScan() {
   try {
     const shot = await captureScreen();
     if (!running) return;
-    const result = await analyzeScreen(shot);
+
+    const detector = window.SecurelySensitive;
+    const sensitive = detector?.detectSensitive?.(shot.text) || { found: false };
+    let allowImage = true;
+    let textForAi = shot.text || "";
+
+    if (sensitive.found) {
+      appendAudit("PRIVACY", `Sensitive details held back from AI: ${sensitive.summary || "detected"}.`);
+      const ok = await askPrivacyContinue(sensitive.summary);
+      if (!running) return;
+      if (!ok) {
+        appendAudit("PRIVACY", "User stopped before AI — sensitive screen was not uploaded.");
+        playSound("soft");
+        setStatus("idle");
+        setRunning(false);
+        return;
+      }
+      // Continue: redact OCR and never upload the raw screenshot.
+      textForAi = detector.redactSensitive(shot.text, sensitive.hits);
+      allowImage = false;
+      appendAudit("PRIVACY", "User continued after sensitive warning — AI received redacted text only.");
+    }
+
+    const localHint = detector?.localThreatHints?.(textForAi) || null;
+    let result = await analyzeScreen(
+      { ...shot, text: textForAi },
+      { allowImage },
+    );
+    result = mergeLocalHint(result, localHint);
     if (!running) return;
     finishQuickLike(result.kind, result.text);
   } catch (err) {
@@ -465,6 +568,7 @@ function startScan() {
 }
 
 function stopScan() {
+  if (privacyResolver) settlePrivacy(false);
   setRunning(false);
   playSound("soft");
   setStatus("idle");
