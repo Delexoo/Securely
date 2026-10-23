@@ -66,7 +66,12 @@ export default async function handler(req, res) {
       res.status(400).json({ error: String(message).slice(0, 180) });
       return;
     }
-    res.status(200).json({ url: payload.url });
+    // sessionId lets the desktop app poll checkout-status even when the Stripe tab
+    // cannot postMessage back into WebView2 (common with promo / external browser).
+    res.status(200).json({
+      url: payload.url,
+      sessionId: typeof payload.id === "string" ? payload.id : "",
+    });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Billing could not start.";
     res.status(400).json({ error: message.slice(0, 180) });

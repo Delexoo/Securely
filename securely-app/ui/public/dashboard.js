@@ -38,7 +38,14 @@ if (window.chrome?.webview) {
     if (typeof data === "string") {
       try { data = JSON.parse(data); } catch { return; }
     }
-    if (!data || typeof data !== "object" || !data.id) return;
+    if (!data || typeof data !== "object") return;
+    // Host-shared license (pill + dashboard WebViews).
+    if (data.type === "license" && data.license) {
+      saveLicenseLocal(data.license);
+      paintBilling();
+      return;
+    }
+    if (!data.id) return;
     const pending = hostPending.get(data.id);
     if (!pending) return;
     clearTimeout(pending.timer);
@@ -168,6 +175,9 @@ function educationFor(kind) {
 }
 
 const LICENSE_KEY = "securely-license";
+const PENDING_CHECKOUT_KEY = "securely-pending-checkout";
+let licenseWatchTimer = 0;
+let sessionWatchTimer = 0;
 
 function openSection(name) {
   const allowed = [
@@ -530,14 +540,27 @@ function loadLicense() {
   }
 }
 
-const PENDING_CHECKOUT_KEY = "securely-pending-checkout";
-let licenseWatchTimer = 0;
-
 function saveLicenseLocal(next) {
   localStorage.setItem(LICENSE_KEY, JSON.stringify(next));
   try {
     window.dispatchEvent(new StorageEvent("storage", { key: LICENSE_KEY, newValue: JSON.stringify(next) }));
   } catch { /* ignore */ }
+}
+
+async function persistLicenseToHost(next) {
+  saveLicenseLocal(next);
+  try {
+    await hostRequest(
+      "license-set",
+      {
+        email: next.email || "",
+        active: !!next.active,
+        status: next.status || "",
+        sessionId: next.sessionId || "",
+      },
+      8000,
+    );
+  } catch { /* preview / host busy — local still set */ }
 }
 
 function paintBilling() {
@@ -551,7 +574,7 @@ function paintBilling() {
   }
   if (copy) {
     copy.textContent = lic?.active
-      ? `Licensed to ${lic.email}. Scans are unlocked.`
+      ? `Licensed to ${lic.email || "your Stripe email"}. Scans are unlocked.`
       : "No active subscription on this computer yet.";
   }
   if (btn) {
@@ -559,15 +582,18 @@ function paintBilling() {
   }
 }
 
-function applyLicense(email, active, status, message) {
+async function applyLicense(email, active, status, message, sessionId) {
   const clean = String(email || "").trim().toLowerCase();
-  if (!clean) return;
-  saveLicenseLocal({
-    email: clean,
+  // Promo / 100% off can complete before email lands — still unlock when active.
+  if (!clean && !active) return;
+  const next = {
+    email: clean || loadLicense()?.email || "",
     active: !!active,
     status: status || (active ? "active" : "inactive"),
     checkedAt: Date.now(),
-  });
+    sessionId: sessionId || loadLicense()?.sessionId || "",
+  };
+  await persistLicenseToHost(next);
   paintBilling();
   const msg = document.querySelector("#license-message");
   if (msg && message) msg.textContent = message;
@@ -577,6 +603,13 @@ function stopLicenseWatch() {
   if (licenseWatchTimer) {
     clearInterval(licenseWatchTimer);
     licenseWatchTimer = 0;
+  }
+}
+
+function stopSessionWatch() {
+  if (sessionWatchTimer) {
+    clearInterval(sessionWatchTimer);
+    sessionWatchTimer = 0;
   }
 }
 
@@ -593,10 +626,38 @@ async function checkLicenseEmail(email) {
   return { email: clean, active: !!data.active, status: data.status || "" };
 }
 
+async function checkCheckoutSession(sessionId) {
+  const id = String(sessionId || "").trim();
+  if (!id || !/^cs_[A-Za-z0-9_]+$/.test(id)) return null;
+  const res = await fetch(`${SITE_ORIGIN}/api/checkout-status`, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ sessionId: id }),
+  });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.error || "Could not confirm checkout.");
+  return {
+    email: String(data.email || "").trim().toLowerCase(),
+    active: !!data.active,
+    status: data.status || "",
+    sessionId: id,
+  };
+}
+
 function startLicenseWatch(email) {
   const clean = String(email || "").trim().toLowerCase();
   if (!clean) return;
-  localStorage.setItem(PENDING_CHECKOUT_KEY, JSON.stringify({ email: clean, startedAt: Date.now() }));
+  const prev = (() => {
+    try {
+      return JSON.parse(localStorage.getItem(PENDING_CHECKOUT_KEY) || "null") || {};
+    } catch {
+      return {};
+    }
+  })();
+  localStorage.setItem(
+    PENDING_CHECKOUT_KEY,
+    JSON.stringify({ ...prev, email: clean, startedAt: prev.startedAt || Date.now() }),
+  );
   stopLicenseWatch();
   let tries = 0;
   const tick = async () => {
@@ -611,8 +672,9 @@ function startLicenseWatch(email) {
       const result = await checkLicenseEmail(clean);
       if (result?.active) {
         stopLicenseWatch();
+        stopSessionWatch();
         localStorage.removeItem(PENDING_CHECKOUT_KEY);
-        applyLicense(
+        await applyLicense(
           result.email,
           true,
           result.status,
@@ -623,6 +685,50 @@ function startLicenseWatch(email) {
   };
   void tick();
   licenseWatchTimer = setInterval(tick, 2500);
+}
+
+function startSessionWatch(sessionId) {
+  const id = String(sessionId || "").trim();
+  if (!id || !/^cs_[A-Za-z0-9_]+$/.test(id)) return;
+  localStorage.setItem(
+    PENDING_CHECKOUT_KEY,
+    JSON.stringify({ sessionId: id, startedAt: Date.now() }),
+  );
+  stopSessionWatch();
+  let tries = 0;
+  const tick = async () => {
+    tries += 1;
+    if (tries > 72) {
+      stopSessionWatch();
+      const msg = document.querySelector("#license-message");
+      if (msg) {
+        msg.textContent =
+          "Still confirming Stripe. Finish checkout (promo codes work on Stripe’s page), then return here.";
+      }
+      return;
+    }
+    try {
+      const result = await checkCheckoutSession(id);
+      if (result?.active) {
+        stopSessionWatch();
+        stopLicenseWatch();
+        localStorage.removeItem(PENDING_CHECKOUT_KEY);
+        await applyLicense(
+          result.email,
+          true,
+          result.status || "active",
+          "Subscription active — promo or payment connected. You can run scans now.",
+          result.sessionId,
+        );
+        return;
+      }
+      if (result?.email && !loadLicense()?.active) {
+        startLicenseWatch(result.email);
+      }
+    } catch { /* keep polling */ }
+  };
+  void tick();
+  sessionWatchTimer = setInterval(tick, 2000);
 }
 
 async function openStripeCheckout() {
@@ -636,11 +742,19 @@ async function openStripeCheckout() {
     });
     const data = await res.json().catch(() => ({}));
     if (!res.ok || !data.url) throw new Error(data.error || "Checkout unavailable.");
-    // Keep opener so billing-success can postMessage back (do not use noopener).
-    window.open(data.url, "securely-checkout");
-    localStorage.setItem(PENDING_CHECKOUT_KEY, JSON.stringify({ startedAt: Date.now() }));
+    // Prefer system browser via host — WebView2 window.open often drops opener/postMessage.
+    hostPost({ cmd: "open-url", url: data.url });
+    try {
+      window.open(data.url, "securely-checkout");
+    } catch { /* host open is enough */ }
+    if (data.sessionId) {
+      startSessionWatch(data.sessionId);
+    } else {
+      localStorage.setItem(PENDING_CHECKOUT_KEY, JSON.stringify({ startedAt: Date.now() }));
+    }
     if (msg) {
-      msg.textContent = "Checkout opened in Stripe. Status flips to Active when payment clears.";
+      msg.textContent =
+        "Checkout opened in Stripe. Enter a promo code if you have one — status flips to Active when it clears.";
     }
   } catch (err) {
     if (msg) msg.textContent = err.message || "Could not start checkout.";
@@ -663,7 +777,7 @@ async function openStripePortal() {
     });
     const data = await res.json().catch(() => ({}));
     if (!res.ok || !data.url) throw new Error(data.error || "Portal unavailable.");
-    window.open(data.url, "_blank", "noopener");
+    hostPost({ cmd: "open-url", url: data.url });
     if (msg) msg.textContent = "Stripe portal opened in your browser.";
   } catch (err) {
     if (msg) msg.textContent = err.message || "Could not open the portal.";
@@ -681,14 +795,16 @@ document.querySelector("#license-stripe")?.addEventListener("click", () => {
 window.addEventListener("message", (event) => {
   const data = event.data;
   if (!data || data.type !== "securely-checkout-done") return;
-  if (data.active && data.email) {
+  if (data.sessionId) startSessionWatch(data.sessionId);
+  if (data.active) {
     stopLicenseWatch();
     localStorage.removeItem(PENDING_CHECKOUT_KEY);
-    applyLicense(
+    void applyLicense(
       data.email,
       true,
       data.status || "active",
       "Subscription active — payment connected. You can run scans now.",
+      data.sessionId || "",
     );
     return;
   }
@@ -698,9 +814,27 @@ window.addEventListener("message", (event) => {
 window.addEventListener("focus", () => {
   try {
     const pending = JSON.parse(localStorage.getItem(PENDING_CHECKOUT_KEY) || "null");
-    if (pending?.email && !loadLicense()?.active) startLicenseWatch(pending.email);
+    if (loadLicense()?.active) return;
+    if (pending?.sessionId) startSessionWatch(pending.sessionId);
+    else if (pending?.email) startLicenseWatch(pending.email);
   } catch { /* ignore */ }
 });
+
+async function hydrateLicenseFromHost() {
+  try {
+    const res = await hostRequest("license-get", {}, 5000);
+    if (res?.license && typeof res.license === "object") {
+      saveLicenseLocal({
+        email: res.license.email || "",
+        active: !!res.license.active,
+        status: res.license.status || "",
+        checkedAt: res.license.checkedAt || Date.now(),
+        sessionId: res.license.sessionId || "",
+      });
+      paintBilling();
+    }
+  } catch { /* preview */ }
+}
 
 document.querySelector("#audit-refresh")?.addEventListener("click", syncAlerts);
 document.querySelector("#audit-clear")?.addEventListener("click", () => {
@@ -1322,11 +1456,18 @@ if (timedSelect && settings.timedMins) timedSelect.value = String(settings.timed
 syncDashStatus();
 syncAlerts();
 paintBilling();
-try {
-  const pending = JSON.parse(localStorage.getItem(PENDING_CHECKOUT_KEY) || "null");
-  if (pending?.email && !loadLicense()?.active) {
-    startLicenseWatch(pending.email);
-    const msg = document.querySelector("#license-message");
-    if (msg) msg.textContent = "Watching Stripe for your payment — status updates automatically.";
-  }
-} catch { /* ignore */ }
+void hydrateLicenseFromHost().then(() => {
+  try {
+    const pending = JSON.parse(localStorage.getItem(PENDING_CHECKOUT_KEY) || "null");
+    if (loadLicense()?.active) return;
+    if (pending?.sessionId) {
+      startSessionWatch(pending.sessionId);
+      const msg = document.querySelector("#license-message");
+      if (msg) msg.textContent = "Watching Stripe checkout — promo codes unlock as soon as Stripe confirms.";
+    } else if (pending?.email) {
+      startLicenseWatch(pending.email);
+      const msg = document.querySelector("#license-message");
+      if (msg) msg.textContent = "Watching Stripe for your payment — status updates automatically.";
+    }
+  } catch { /* ignore */ }
+});

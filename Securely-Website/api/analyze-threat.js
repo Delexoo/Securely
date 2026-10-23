@@ -1,17 +1,26 @@
 /**
  * File / URL / hash threat analysis (VirusTotal-like).
+ * Patterns aligned with VirusTotal API v3 / vt-py / vt-cli:
+ *   lookup → submit when unknown → poll analysis → engine stats.
  * POST { type: "url"|"hash"|"file", url?, hash?, fileName?, fileSize?, mimeType? }
  * Keys stay server-side: VIRUSTOTAL_API_KEY (optional), OPENROUTER_API_KEY (optional).
  */
 const OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions";
 const DEFAULT_MODEL = "meta-llama/llama-3.3-8b-instruct";
+const VT_API = "https://www.virustotal.com/api/v3";
 const MAX_URL = 2048;
 const MAX_NAME = 260;
+const VT_POLL_MS = 1800;
+const VT_POLL_TRIES = 8;
 
 function cors(res) {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+}
+
+function sleep(ms) {
+  return new Promise((r) => setTimeout(r, ms));
 }
 
 function isPrivateHost(hostname) {
@@ -57,30 +66,131 @@ function scoreToVerdict(score) {
   return "unknown";
 }
 
-async function vtLookup(kind, id) {
-  const key = process.env.VIRUSTOTAL_API_KEY || "";
-  if (!key) return null;
-  const path =
-    kind === "url"
-      ? `https://www.virustotal.com/api/v3/urls/${Buffer.from(id).toString("base64url")}`
-      : `https://www.virustotal.com/api/v3/files/${id}`;
-  const res = await fetch(path, { headers: { "x-apikey": key } });
-  if (res.status === 404) return { found: false, engines: [], malicious: 0, suspicious: 0, harmless: 0 };
-  if (!res.ok) return null;
-  const data = await res.json();
-  const stats = data?.data?.attributes?.last_analysis_stats || {};
-  const results = data?.data?.attributes?.last_analysis_results || {};
+function urlId(url) {
+  return Buffer.from(url).toString("base64url");
+}
+
+function vtHeaders(key) {
+  return { "x-apikey": key, accept: "application/json" };
+}
+
+function parseVtObject(data) {
+  const attrs = data?.data?.attributes || {};
+  const stats = attrs.last_analysis_stats || attrs.stats || {};
+  const results = attrs.last_analysis_results || {};
   const engines = Object.entries(results)
-    .slice(0, 24)
-    .map(([name, v]) => ({ name, result: v?.category || v?.result || "unknown" }));
+    .map(([name, v]) => ({
+      name,
+      category: v?.category || "undetected",
+      result: v?.result || v?.category || "undetected",
+    }))
+    .sort((a, b) => {
+      const rank = { malicious: 0, suspicious: 1, phishing: 0, malware: 0, spam: 2, malwareware: 2 };
+      return (rank[a.category] ?? 9) - (rank[b.category] ?? 9) || a.name.localeCompare(b.name);
+    })
+    .slice(0, 32);
+  const malicious = Number(stats.malicious) || 0;
+  const suspicious = Number(stats.suspicious) || 0;
+  const harmless = Number(stats.harmless) || 0;
+  const undetected = Number(stats.undetected) || 0;
+  const timeout = Number(stats.timeout) || 0;
+  const typeUnsupported = Number(stats["type-unsupported"]) || 0;
+  const total = malicious + suspicious + harmless + undetected + timeout + typeUnsupported;
   return {
     found: true,
+    status: attrs.status || "completed",
     engines,
-    malicious: Number(stats.malicious) || 0,
-    suspicious: Number(stats.suspicious) || 0,
-    harmless: Number(stats.harmless) || 0,
-    undetected: Number(stats.undetected) || 0,
+    malicious,
+    suspicious,
+    harmless,
+    undetected,
+    timeout,
+    typeUnsupported,
+    total,
+    reputation: typeof attrs.reputation === "number" ? attrs.reputation : null,
+    tags: Array.isArray(attrs.tags) ? attrs.tags.slice(0, 12) : [],
+    analysisId: data?.data?.id || "",
   };
+}
+
+async function vtFetch(path, key, init = {}) {
+  const res = await fetch(`${VT_API}${path}`, {
+    ...init,
+    headers: { ...vtHeaders(key), ...(init.headers || {}) },
+  });
+  if (res.status === 429) {
+    await sleep(2500);
+    return vtFetch(path, key, init);
+  }
+  return res;
+}
+
+async function vtGetReport(kind, id, key) {
+  const path =
+    kind === "url" ? `/urls/${urlId(id)}` : `/files/${encodeURIComponent(id)}`;
+  const res = await vtFetch(path, key);
+  if (res.status === 404) return { found: false };
+  if (!res.ok) return null;
+  return parseVtObject(await res.json());
+}
+
+async function vtPollAnalysis(analysisId, key) {
+  if (!analysisId) return null;
+  for (let i = 0; i < VT_POLL_TRIES; i++) {
+    const res = await vtFetch(`/analyses/${encodeURIComponent(analysisId)}`, key);
+    if (!res.ok) return null;
+    const data = await res.json();
+    const status = data?.data?.attributes?.status || "";
+    if (status === "completed") return parseVtObject(data);
+    await sleep(VT_POLL_MS);
+  }
+  return null;
+}
+
+/** Submit URL for fresh analysis (vt scan url / POST /urls). */
+async function vtSubmitUrl(url, key) {
+  const body = new URLSearchParams({ url });
+  const res = await vtFetch("/urls", key, {
+    method: "POST",
+    headers: { "content-type": "application/x-www-form-urlencoded" },
+    body,
+  });
+  if (!res.ok) return null;
+  const data = await res.json();
+  const analysisId = data?.data?.id || "";
+  const polled = await vtPollAnalysis(analysisId, key);
+  if (polled) return polled;
+  // Fall back to report after submit (analysis may still be queued).
+  await sleep(1200);
+  return vtGetReport("url", url, key);
+}
+
+/** Request re-analysis of a known hash (vt rescan). */
+async function vtRescanFile(hash, key) {
+  const res = await vtFetch(`/files/${encodeURIComponent(hash)}/analyse`, key, {
+    method: "POST",
+  });
+  if (!res.ok) return null;
+  const data = await res.json();
+  return vtPollAnalysis(data?.data?.id || "", key);
+}
+
+async function vtLookup(kind, id, { submitIfMissing = true } = {}) {
+  const key = process.env.VIRUSTOTAL_API_KEY || "";
+  if (!key) return null;
+  try {
+    let report = await vtGetReport(kind, id, key);
+    if (report?.found) return report;
+    if (report && report.found === false && submitIfMissing && kind === "url") {
+      const submitted = await vtSubmitUrl(id, key);
+      if (submitted?.found) return { ...submitted, submitted: true };
+      return { found: false, submitted: !!submitted };
+    }
+    if (report && report.found === false) return report;
+    return report;
+  } catch {
+    return null;
+  }
 }
 
 async function urlhausLookup(url) {
@@ -229,6 +339,55 @@ function tipsFor(verdict) {
   ];
 }
 
+function applyVtEvidence(vt, evidence, engines) {
+  if (!vt) return 0;
+  let score = 0;
+  if (vt.found) {
+    score += Math.min(85, vt.malicious * 12 + vt.suspicious * 6);
+    const parts = [
+      `${vt.malicious} malicious`,
+      `${vt.suspicious} suspicious`,
+      `${vt.harmless} harmless`,
+      `${vt.undetected} undetected`,
+    ];
+    if (vt.timeout) parts.push(`${vt.timeout} timeout`);
+    if (vt.typeUnsupported) parts.push(`${vt.typeUnsupported} unsupported`);
+    if (vt.submitted) parts.push("fresh submit");
+    evidence.push({
+      source: "VirusTotal",
+      detail: parts.join(" · ") + (vt.total ? ` (${vt.total} engines)` : ""),
+    });
+    if (vt.reputation != null) {
+      evidence.push({ source: "VirusTotal", detail: `Community reputation score: ${vt.reputation}.` });
+    }
+    if (vt.tags?.length) {
+      evidence.push({ source: "VirusTotal", detail: `Tags: ${vt.tags.join(", ")}.` });
+    }
+    engines.push(
+      ...vt.engines
+        .filter((e) => e.category === "malicious" || e.category === "suspicious")
+        .slice(0, 16)
+        .map((e) => ({ name: e.name, result: e.result || e.category })),
+    );
+    if (engines.length < 8) {
+      engines.push(
+        ...vt.engines
+          .filter((e) => e.category === "harmless" || e.category === "undetected")
+          .slice(0, 8 - engines.length)
+          .map((e) => ({ name: e.name, result: e.category })),
+      );
+    }
+  } else if (vt.found === false) {
+    evidence.push({
+      source: "VirusTotal",
+      detail: vt.submitted
+        ? "Submitted for analysis — no completed report yet."
+        : "No prior report for this indicator.",
+    });
+  }
+  return score;
+}
+
 export default async function handler(req, res) {
   cors(res);
   if (req.method === "OPTIONS") {
@@ -247,6 +406,7 @@ export default async function handler(req, res) {
     const engines = [];
     let score = 0;
     let subject = "";
+    let vtMeta = null;
 
     if (type === "url") {
       const url = normalizeUrl(body.url);
@@ -272,17 +432,9 @@ export default async function handler(req, res) {
         engines.push({ name: "URLhaus", result: "clean" });
       }
 
-      const vt = await vtLookup("url", url);
-      if (vt?.found) {
-        score += Math.min(80, vt.malicious * 12 + vt.suspicious * 6);
-        evidence.push({
-          source: "VirusTotal",
-          detail: `${vt.malicious} malicious · ${vt.suspicious} suspicious · ${vt.harmless} harmless`,
-        });
-        engines.push(...vt.engines.slice(0, 12));
-      } else if (vt && vt.found === false) {
-        evidence.push({ source: "VirusTotal", detail: "No prior report for this URL." });
-      }
+      const vt = await vtLookup("url", url, { submitIfMissing: true });
+      vtMeta = vt;
+      score += applyVtEvidence(vt, evidence, engines);
     } else if (type === "hash" || type === "file") {
       const hash = normalizeHash(body.hash);
       if (!hash) {
@@ -302,18 +454,16 @@ export default async function handler(req, res) {
         }
       }
 
-      const vt = await vtLookup("hash", hash);
-      if (vt?.found) {
-        score += Math.min(85, vt.malicious * 14 + vt.suspicious * 7);
-        evidence.push({
-          source: "VirusTotal",
-          detail: `${vt.malicious} malicious · ${vt.suspicious} suspicious · ${vt.harmless} harmless`,
-        });
-        engines.push(...vt.engines.slice(0, 12));
-      } else if (vt && vt.found === false) {
-        evidence.push({ source: "VirusTotal", detail: "Hash not seen before in VirusTotal." });
-        if (score < 10) score = 8;
-      } else if (!process.env.VIRUSTOTAL_API_KEY) {
+      let vt = await vtLookup("hash", hash, { submitIfMissing: false });
+      // Optional fresher verdict when client asks and hash is already known.
+      if (vt?.found && body.rescan && process.env.VIRUSTOTAL_API_KEY) {
+        const rescanned = await vtRescanFile(hash, process.env.VIRUSTOTAL_API_KEY);
+        if (rescanned?.found) vt = { ...rescanned, submitted: true };
+      }
+      vtMeta = vt;
+      score += applyVtEvidence(vt, evidence, engines);
+      if (vt && vt.found === false && score < 10) score = 8;
+      if (!vt && !process.env.VIRUSTOTAL_API_KEY) {
         evidence.push({
           source: "Securely",
           detail: "Cloud multi-engine key not configured — using local heuristics + AI summary only.",
@@ -347,11 +497,28 @@ export default async function handler(req, res) {
       subject,
       summary,
       evidence,
-      engines: engines.slice(0, 20),
+      engines: engines.slice(0, 24),
       tips: tipsFor(verdict),
+      stats: vtMeta?.found
+        ? {
+            malicious: vtMeta.malicious,
+            suspicious: vtMeta.suspicious,
+            harmless: vtMeta.harmless,
+            undetected: vtMeta.undetected,
+            timeout: vtMeta.timeout,
+            typeUnsupported: vtMeta.typeUnsupported,
+            total: vtMeta.total,
+          }
+        : null,
       providers: {
         virustotal: Boolean(process.env.VIRUSTOTAL_API_KEY),
         openrouter: Boolean(process.env.OPENROUTER_API_KEY),
+        urlhaus: true,
+      },
+      links: {
+        virustotalOrg: "https://github.com/VirusTotal",
+        vtPy: "https://github.com/VirusTotal/vt-py",
+        vtCli: "https://virustotal.github.io/vt-cli/",
       },
     });
   } catch (err) {

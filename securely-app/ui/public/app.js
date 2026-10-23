@@ -105,6 +105,17 @@ if (window.chrome?.webview) {
       settings = loadSettings();
       return;
     }
+    if (data.type === "license" && data.license) {
+      saveLicense({
+        email: data.license.email || "",
+        active: !!data.license.active,
+        status: data.license.status || "",
+        checkedAt: data.license.checkedAt || Date.now(),
+        sessionId: data.license.sessionId || "",
+      });
+      syncLicenseChrome();
+      return;
+    }
     if (!data.id || !hostPending.has(data.id)) return;
     const entry = hostPending.get(data.id);
     hostPending.delete(data.id);
@@ -738,11 +749,28 @@ function saveLicense(data) {
 
 function isLicensed() {
   const lic = loadLicense();
-  return !!(lic && lic.active && lic.email);
+  // Active alone unlocks (promo checkouts may briefly lack email).
+  return !!(lic && lic.active);
 }
 
 function openBilling() {
   hostPost({ cmd: "dashboard", tab: "billing" });
+}
+
+async function hydrateLicenseFromHost() {
+  try {
+    const res = await hostRequest("license-get", {}, 5000);
+    if (res?.license && typeof res.license === "object") {
+      saveLicense({
+        email: res.license.email || "",
+        active: !!res.license.active,
+        status: res.license.status || "",
+        checkedAt: res.license.checkedAt || Date.now(),
+        sessionId: res.license.sessionId || "",
+      });
+    }
+  } catch { /* preview */ }
+  syncLicenseChrome();
 }
 
 async function refreshLicense(email) {
@@ -764,6 +792,14 @@ async function refreshLicense(email) {
     checkedAt: Date.now(),
   };
   saveLicense(next);
+  try {
+    await hostRequest(
+      "license-set",
+      { email: next.email, active: next.active, status: next.status },
+      8000,
+    );
+  } catch { /* ignore */ }
+  syncLicenseChrome();
   return next;
 }
 
@@ -882,7 +918,7 @@ applyLayout(widgetLayout, { fit: false });
 setScanMode(scanMode);
 setStatus("idle");
 setRunning(false);
-syncLicenseChrome();
+void hydrateLicenseFromHost();
 window.refreshSecurelyLicense = refreshLicense;
 window.isSecurelyLicensed = isLicensed;
 window.playSecurelySound = playSound;

@@ -58,11 +58,42 @@
     <p class="lede">The same list as the <a href="https://github.com/Delexoo/Securely/releases">GitHub releases</a>.</p>
     <div class="release-log">
       <!-- brain:notes -->
+      <article class="release" id="v0.1.14">
+        <div class="release-body">
+          <header class="release-meta">
+            <a class="release-tag" href="https://github.com/Delexoo/Securely/releases/tag/v0.1.14">v0.1.14</a>
+            <span class="release-latest">Latest</span>
+            <time datetime="2026-10-22">22 Oct 2026</time>
+          </header>
+          <div class="release-card">
+            <h2>Stripe promo unlock, VirusTotal harden, Credits repos</h2>
+            <h3>Added</h3>
+            <h4>Dashboard</h4>
+            <ul>
+              <li>Billing unlocks from Stripe session polling and a shared host license file so promo checkouts activate the pill without relying on WebView postMessage.</li>
+              <li>Credits lists the GitHub repos Securely uses or patterns after, including VirusTotal, WireGuard, Tesseract, and WebView2.</li>
+            </ul>
+            <h4>API</h4>
+            <ul>
+              <li>Checkout returns sessionId for desktop unlock polling.</li>
+              <li>Analyze follows VirusTotal vt-py/vt-cli patterns: lookup, submit unknown URLs, poll analyses, richer engine stats.</li>
+            </ul>
+            <h4>Host</h4>
+            <ul>
+              <li>LicenseStore shares entitlement across dashboard and island WebViews via license-get and license-set.</li>
+            </ul>
+            <h3>Bug fixes</h3>
+            <h4>Dashboard</h4>
+            <ul>
+              <li>Subscribe with a promo code now flips Billing to Active and unlocks scans on the island.</li>
+            </ul>
+          </div>
+        </div>
+      </article>
       <article class="release" id="v0.1.13">
         <div class="release-body">
           <header class="release-meta">
             <a class="release-tag" href="https://github.com/Delexoo/Securely/releases/tag/v0.1.13">v0.1.13</a>
-            <span class="release-latest">Latest</span>
             <time datetime="2026-10-23">23 Oct 2026</time>
           </header>
           <div class="release-card">

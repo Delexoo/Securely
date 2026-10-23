@@ -11,7 +11,7 @@
     <Authors>Securely</Authors>
     <Product>Securely</Product>
     <Copyright>Copyright (C) 2026</Copyright>
-    <Version>0.1.13</Version>
+    <Version>0.1.14</Version>
     <!-- Keep in sync with package.json version; bump both on every commit/deploy. -->
     <AssemblyTitle>Securely</AssemblyTitle>
     <Description>Securely desktop threat-monitoring overlay</Description>

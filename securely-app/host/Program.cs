@@ -887,6 +887,35 @@ internal sealed class ShellForm : Form
                     });
                     break;
                 }
+                case "license-get":
+                {
+                    var licId = root.TryGetProperty("id", out var licIdEl) ? licIdEl.GetString() ?? "" : "";
+                    BeginInvoke(() => ReplyToUi(new { id = licId, ok = true, license = LicenseStore.Read() }));
+                    break;
+                }
+                case "license-set":
+                {
+                    var licSetId = root.TryGetProperty("id", out var licSetIdEl) ? licSetIdEl.GetString() ?? "" : "";
+                    var licEmail = root.TryGetProperty("email", out var licEmailEl) ? licEmailEl.GetString() ?? "" : "";
+                    var licActive = root.TryGetProperty("active", out var licActiveEl) && licActiveEl.ValueKind == JsonValueKind.True;
+                    var licStatus = root.TryGetProperty("status", out var licStatusEl) ? licStatusEl.GetString() ?? "" : "";
+                    var licSession = root.TryGetProperty("sessionId", out var licSessionEl) ? licSessionEl.GetString() ?? "" : "";
+                    try
+                    {
+                        LicenseStore.Write(licEmail, licActive, licStatus, licSession);
+                        // Notify both WebViews so the island unlocks when Billing activates.
+                        BeginInvoke(() =>
+                        {
+                            ReplyToUi(new { id = licSetId, ok = true, license = LicenseStore.Read() });
+                            ReplyToUi(new { type = "license", license = LicenseStore.Read() });
+                        });
+                    }
+                    catch (Exception ex)
+                    {
+                        BeginInvoke(() => ReplyToUi(new { id = licSetId, ok = false, error = ex.Message }));
+                    }
+                    break;
+                }
                 case "av-scan":
                 {
                     var avId = root.TryGetProperty("id", out var avIdEl) ? avIdEl.GetString() ?? "" : "";

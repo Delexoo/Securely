@@ -3,6 +3,38 @@
   "repo": "Delexoo/Securely",
   "updates": [
     {
+      "version": "0.1.14",
+      "date": "2026-10-22",
+      "title": "Stripe promo unlock, VirusTotal harden, Credits repos",
+      "tag": "v0.1.14",
+      "url": "https://github.com/Delexoo/Securely/releases/tag/v0.1.14",
+      "sections": [
+        {
+          "heading": "Dashboard",
+          "added": [
+            "Billing unlocks from Stripe session polling and a shared host license file so promo checkouts activate the pill without relying on WebView postMessage.",
+            "Credits lists the GitHub repos Securely uses or patterns after, including VirusTotal, WireGuard, Tesseract, and WebView2."
+          ],
+          "fixes": [
+            "Subscribe with a promo code now flips Billing to Active and unlocks scans on the island."
+          ]
+        },
+        {
+          "heading": "API",
+          "added": [
+            "Checkout returns sessionId for desktop unlock polling.",
+            "Analyze follows VirusTotal vt-py/vt-cli patterns: lookup, submit unknown URLs, poll analyses, richer engine stats."
+          ]
+        },
+        {
+          "heading": "Host",
+          "added": [
+            "LicenseStore shares entitlement across dashboard and island WebViews via license-get and license-set."
+          ]
+        }
+      ]
+    },
+    {
       "version": "0.1.13",
       "date": "2026-10-23",
       "title": "Nord-style VPN with live IP, WireGuard tunnel, sharper island",

@@ -70,8 +70,9 @@ export default async function handler(req, res) {
       }
     }
 
-    // Fresh checkout often marks session complete + paid before subscription expand settles.
-    if (!active && statusComplete && paymentOk && email) {
+    // Fresh checkout / 100% promo: session complete + paid|no_payment_required
+    // before subscription expand settles — unlock immediately.
+    if (!active && statusComplete && paymentOk) {
       active = true;
       subStatus = subStatus || "active";
     }
@@ -82,6 +83,7 @@ export default async function handler(req, res) {
       status: subStatus || s.status || (active ? "active" : "inactive"),
       paymentStatus: s.payment_status || "",
       sessionStatus: s.status || "",
+      sessionId,
     });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Checkout status failed.";
