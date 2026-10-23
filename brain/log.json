@@ -3,6 +3,20 @@
   "product": "Securely",
   "updates": [
     {
+      "version": "0.1.6",
+      "date": "2026-10-22",
+      "title": "Bold Music Widget look and reshape layouts",
+      "sections": [
+        {
+          "heading": "Widget",
+          "added": [
+            "The island uses a solid Music Widget charcoal palette with a shield mark tile and white circular tool buttons — no translucent glass.",
+            "A reshape control cycles the pill through small square, vertical rectangle, big square, and back to the normal horizontal widget — each layout has its own arrangement."
+          ]
+        }
+      ]
+    },
+    {
       "version": "0.1.5",
       "date": "2026-10-22",
       "title": "Instant billing unlock, broader privacy gate, power-suite research",

@@ -1,22 +1,38 @@
 :root {
   color-scheme: dark;
-  --glass: rgba(0, 0, 0, 0.5);
-  --accent: #ffffff;
-  --text: var(--accent);
-  --muted: color-mix(in srgb, var(--accent) 78%, transparent);
-  --fill: color-mix(in srgb, var(--accent) 14%, transparent);
-  --fill-hover: color-mix(in srgb, var(--accent) 24%, transparent);
-  --line: color-mix(in srgb, var(--accent) 18%, transparent);
-  --ink: #2a2a2a;
+  /* Bold Music Widget palette — solid, not glass */
+  --pill: #161a22;
+  --pill-border: #2a3140;
+  --pill-art: #1a1d21;
+  --pill-text: #f1f5f9;
+  --pill-artist: #94a3b8;
+  --pill-btn: #ffffff;
+  --pill-icon: #0a0a0a;
+  --pill-blue: #3b82f6;
+  --glass: #161a22;
+  --accent: #f1f5f9;
+  --text: var(--pill-text);
+  --muted: var(--pill-artist);
+  --fill: rgb(255 255 255 / 10%);
+  --fill-hover: rgb(255 255 255 / 16%);
+  --line: var(--pill-border);
+  --ink: #0a0a0a;
   --button: #ffffff;
-  --button-ink: #2a2a2a;
+  --button-ink: #0a0a0a;
   font: 15px/1.35 "Segoe UI Variable Text", "Segoe UI", sans-serif;
 }
 html[data-widget="light"] {
   color-scheme: light;
-  --glass: rgba(255, 255, 255, 0.92);
-  --accent: #111111;
-  --ink: #111111;
+  --pill: #f4f5f7;
+  --pill-border: #d8dde6;
+  --pill-art: #e8ebf0;
+  --pill-text: #111827;
+  --pill-artist: #6b7280;
+  --pill-btn: #111827;
+  --pill-icon: #f8fafc;
+  --glass: #f4f5f7;
+  --accent: #111827;
+  --ink: #111827;
 }
 html[data-widget="light"] .circle,
 html[data-widget="light"] #send,
@@ -149,12 +165,12 @@ textarea::-webkit-scrollbar-thumb:hover {
   width: 100%;
   min-height: 0;
   max-height: 100%;
-  background: var(--glass);
+  background: var(--pill);
   border-radius: 22px;
   overflow: hidden;
   transition: background-color 0.28s ease;
 }
-html[data-widget="light"] #shell { background: var(--glass); }
+html[data-widget="light"] #shell { background: var(--pill); }
 #shell.is-pill {
   border-radius: 999px;
 }

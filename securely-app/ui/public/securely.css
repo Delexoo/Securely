@@ -1,4 +1,4 @@
-/* Securely island — compact modern strip */
+/* Securely island — bold Music Widget palette + reshape layouts */
 
 .skip {
   position: absolute;
@@ -14,19 +14,54 @@
 .skip:focus { top: 0.5rem; }
 
 #frame {
-  width: 286px !important;
-  max-width: 286px !important;
+  width: 312px !important;
+  max-width: 312px !important;
   padding: 6px;
+  transition: width 180ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+#frame[data-layout="normal"] {
+  width: 312px !important;
+  max-width: 312px !important;
+}
+#frame[data-layout="square"] {
+  width: 118px !important;
+  max-width: 118px !important;
+}
+#frame[data-layout="vertical"] {
+  width: 132px !important;
+  max-width: 132px !important;
+}
+#frame[data-layout="big"] {
+  width: 248px !important;
+  max-width: 248px !important;
+}
+#frame.is-privacy {
+  width: 320px !important;
+  max-width: 320px !important;
 }
 
 #shell {
   border-radius: 999px !important;
   overflow: hidden;
-  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 8%);
+  background: var(--pill) !important;
+  box-shadow:
+    inset 0 0 0 1px var(--pill-border),
+    0 10px 28px rgb(0 0 0 / 38%);
+  transition: border-radius 180ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 180ms ease;
 }
 
-#shell.is-pill {
+#shell.is-pill[data-layout="normal"] {
   border-radius: 999px !important;
+}
+#shell[data-layout="square"] {
+  border-radius: 28px !important;
+}
+#shell[data-layout="vertical"] {
+  border-radius: 32px !important;
+}
+#shell[data-layout="big"] {
+  border-radius: 36px !important;
 }
 
 #pill {
@@ -41,26 +76,56 @@
   flex-direction: row !important;
   flex-wrap: nowrap !important;
   align-items: center !important;
-  gap: 2px !important;
-  padding: 6px 8px 6px 8px !important;
-  height: 46px !important;
-  min-height: 46px !important;
+  gap: 6px !important;
+  padding: 8px 10px !important;
+  height: 56px !important;
+  min-height: 56px !important;
   box-sizing: border-box;
   overflow: visible;
 }
 
-.status-line {
+.secure-mark {
+  flex: 0 0 auto;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: var(--pill-art);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 6%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--pill-text);
+}
+
+.secure-mark svg {
+  width: 20px;
+  height: 20px;
+  display: block;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.85;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.status-block {
   flex: 1 1 auto;
-  min-width: 3.5rem;
-  max-width: 5.75rem;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1px;
+  padding: 0 2px;
+}
+
+.status-line {
   margin: 0;
-  padding: 0 4px 0 6px;
-  font-size: 11.5px;
-  font-weight: 650;
+  padding: 0;
+  font-size: 12.5px;
+  font-weight: 700;
   letter-spacing: 0.01em;
   line-height: 1.15;
-  color: var(--text);
-  opacity: 0.92;
+  color: var(--pill-text);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -68,6 +133,17 @@
   display: inline-flex;
   align-items: center;
   gap: 5px;
+}
+
+.status-sub {
+  margin: 0;
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--pill-artist);
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .status-line .status-icon {
@@ -103,6 +179,13 @@ html[data-widget="light"] .status-line[data-state="phishing"] { color: #be123c; 
   text-overflow: ellipsis;
 }
 
+.tool-cluster {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  flex: 0 0 auto;
+}
+
 .tool {
   flex: 0 0 auto;
   width: 32px;
@@ -112,7 +195,7 @@ html[data-widget="light"] .status-line[data-state="phishing"] { color: #be123c; 
   border: 0;
   border-radius: 999px;
   background: transparent;
-  color: var(--text);
+  color: var(--pill-text);
   cursor: pointer;
   display: inline-flex;
   align-items: center;
@@ -120,9 +203,26 @@ html[data-widget="light"] .status-line[data-state="phishing"] { color: #be123c; 
   transition: transform 160ms cubic-bezier(0.2, 0.8, 0.2, 1), background 160ms ease, opacity 160ms ease;
 }
 
+.tool.solid {
+  width: 34px;
+  height: 34px;
+  background: var(--pill-btn);
+  color: var(--pill-icon);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 25%);
+}
+
+.tool.solid:hover {
+  filter: brightness(0.94);
+  transform: scale(1.05);
+}
+
 .tool:hover {
-  background: var(--fill-hover);
+  background: rgb(255 255 255 / 10%);
   transform: scale(1.06);
+}
+
+.tool.solid:hover {
+  background: var(--pill-btn);
 }
 
 .tool:active {
@@ -130,14 +230,15 @@ html[data-widget="light"] .status-line[data-state="phishing"] { color: #be123c; 
 }
 
 .tool:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 1px;
+  outline: 2px solid var(--pill-blue);
+  outline-offset: 2px;
 }
 
 .tool.ghost {
   width: 30px;
   height: 30px;
-  opacity: 0.82;
+  opacity: 0.72;
+  color: var(--pill-artist);
 }
 
 .tool .icon {
@@ -152,13 +253,17 @@ html[data-widget="light"] .status-line[data-state="phishing"] { color: #be123c; 
   stroke-linejoin: round;
 }
 
+.tool.solid .icon {
+  stroke-width: 2;
+}
+
 .scan-pill {
-  order: -1;
+  order: 0;
   flex: 0 0 auto;
-  height: 32px;
-  min-width: 4.75rem;
-  margin: 0 2px 0 0;
-  padding: 0 16px;
+  height: 34px;
+  min-width: 4.6rem;
+  margin: 0;
+  padding: 0 14px;
   border: 0;
   border-radius: 999px;
   display: inline-flex;
@@ -170,7 +275,7 @@ html[data-widget="light"] .status-line[data-state="phishing"] { color: #be123c; 
   text-transform: none;
   color: #fff;
   cursor: pointer;
-  box-shadow: 0 1px 2px rgb(0 0 0 / 18%);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 22%);
   transition: transform 160ms cubic-bezier(0.2, 0.8, 0.2, 1), filter 160ms ease, background-color 180ms ease;
 }
 
@@ -203,13 +308,13 @@ html[data-widget="light"] .status-line[data-state="phishing"] { color: #be123c; 
   flex: 0 0 auto;
   width: 14px;
   height: 32px;
-  margin: 0 0 0 1px;
+  margin: 0;
   padding: 0;
   border: 0;
   border-radius: 8px;
   background: transparent;
-  color: var(--text);
-  opacity: 0.55;
+  color: var(--pill-artist);
+  opacity: 0.85;
   cursor: grab;
   display: inline-flex;
   align-items: center;
@@ -218,15 +323,14 @@ html[data-widget="light"] .status-line[data-state="phishing"] { color: #be123c; 
 
 .drag-dots:hover {
   opacity: 1;
-  background: var(--fill);
+  background: rgb(255 255 255 / 8%);
+  color: var(--pill-text);
 }
 
-.drag-dots:active {
-  cursor: grabbing;
-}
+.drag-dots:active { cursor: grabbing; }
 
 .drag-dots:focus-visible {
-  outline: 2px solid var(--accent);
+  outline: 2px solid var(--pill-blue);
   outline-offset: 1px;
 }
 
@@ -252,8 +356,8 @@ html[data-widget="light"] .status-line[data-state="phishing"] { color: #be123c; 
 .privacy-gate {
   display: grid;
   gap: 8px;
-  padding: 0 10px 10px;
-  border-top: 1px solid rgb(255 255 255 / 10%);
+  padding: 0 12px 12px;
+  border-top: 1px solid var(--pill-border);
 }
 .privacy-gate[hidden] { display: none !important; }
 .privacy-copy {
@@ -261,8 +365,7 @@ html[data-widget="light"] .status-line[data-state="phishing"] { color: #be123c; 
   font-size: 10.5px;
   font-weight: 500;
   line-height: 1.35;
-  color: var(--text);
-  opacity: 0.92;
+  color: var(--pill-text);
 }
 .privacy-copy strong {
   display: block;
@@ -272,7 +375,7 @@ html[data-widget="light"] .status-line[data-state="phishing"] { color: #be123c; 
   color: #fbbf24;
 }
 html[data-widget="light"] .privacy-copy strong { color: #b45309; }
-.privacy-copy span { color: var(--muted); }
+.privacy-copy span { color: var(--pill-artist); }
 .privacy-actions {
   display: flex;
   gap: 6px;
@@ -289,14 +392,202 @@ html[data-widget="light"] .privacy-copy strong { color: #b45309; }
 }
 .privacy-stop {
   background: transparent;
-  color: var(--text);
-  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 18%);
+  color: var(--pill-text);
+  box-shadow: inset 0 0 0 1px var(--pill-border);
 }
 .privacy-continue {
   background: #e11d48;
   color: #fff;
 }
 
+/* ——— Small square ——— */
+#shell[data-layout="square"] .island-toolbar {
+  flex-direction: column !important;
+  flex-wrap: nowrap !important;
+  justify-content: space-between;
+  align-items: center !important;
+  height: auto !important;
+  min-height: 106px !important;
+  padding: 10px 8px !important;
+  gap: 8px !important;
+}
+
+#shell[data-layout="square"] .secure-mark {
+  width: 36px;
+  height: 36px;
+  border-radius: 11px;
+}
+
+#shell[data-layout="square"] .status-block,
+#shell[data-layout="square"] #settings-btn,
+#shell[data-layout="square"] #audit-btn,
+#shell[data-layout="square"] #exit-btn,
+#shell[data-layout="square"] .status-sub {
+  display: none !important;
+}
+
+#shell[data-layout="square"] .scan-pill {
+  min-width: 0;
+  width: 72px;
+  height: 30px;
+  padding: 0 10px;
+  font-size: 10px;
+}
+
+#shell[data-layout="square"] .tool-cluster {
+  gap: 4px;
+}
+
+#shell[data-layout="square"] .tool.solid {
+  width: 28px;
+  height: 28px;
+}
+
+#shell[data-layout="square"] .drag-dots {
+  height: 28px;
+}
+
+/* ——— Vertical rectangle ——— */
+#shell[data-layout="vertical"] .island-toolbar {
+  flex-direction: column !important;
+  align-items: stretch !important;
+  height: auto !important;
+  min-height: 292px !important;
+  padding: 14px 12px !important;
+  gap: 10px !important;
+}
+
+#shell[data-layout="vertical"] .secure-mark {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  align-self: center;
+}
+
+#shell[data-layout="vertical"] .scan-pill {
+  width: 100%;
+  height: 36px;
+  order: 0;
+}
+
+#shell[data-layout="vertical"] .status-block {
+  align-items: center;
+  text-align: center;
+  padding: 8px 0 4px;
+  flex: 1 1 auto;
+}
+
+#shell[data-layout="vertical"] .status-line {
+  justify-content: center;
+  font-size: 14px;
+}
+
+#shell[data-layout="vertical"] .status-line .status-icon {
+  width: 18px;
+  height: 18px;
+}
+
+#shell[data-layout="vertical"] .status-sub {
+  text-align: center;
+}
+
+#shell[data-layout="vertical"] .tool-cluster {
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  padding-top: 4px;
+}
+
+#shell[data-layout="vertical"] .drag-dots {
+  width: 32px;
+  height: 32px;
+}
+
+/* ——— Big square ——— */
+#shell[data-layout="big"] .island-toolbar {
+  flex-direction: column !important;
+  align-items: stretch !important;
+  height: auto !important;
+  min-height: 236px !important;
+  padding: 16px 14px !important;
+  gap: 12px !important;
+}
+
+#shell[data-layout="big"] .secure-mark {
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  align-self: flex-start;
+}
+
+#shell[data-layout="big"] .secure-mark svg {
+  width: 26px;
+  height: 26px;
+}
+
+#shell[data-layout="big"] .status-block {
+  padding: 0;
+}
+
+#shell[data-layout="big"] .status-line {
+  font-size: 18px;
+  font-weight: 750;
+}
+
+#shell[data-layout="big"] .status-line .status-icon {
+  width: 20px;
+  height: 20px;
+}
+
+#shell[data-layout="big"] .status-sub {
+  font-size: 11px;
+}
+
+#shell[data-layout="big"] .scan-pill {
+  width: 100%;
+  height: 40px;
+  font-size: 12px;
+  order: 0;
+}
+
+#shell[data-layout="big"] .tool-cluster {
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: auto;
+}
+
+#shell[data-layout="big"] .tool.solid {
+  width: 38px;
+  height: 38px;
+}
+
+#shell[data-layout="big"] .tool.solid .icon {
+  width: 16px;
+  height: 16px;
+}
+
+#shell[data-layout="big"] .drag-dots {
+  width: 20px;
+  height: 38px;
+}
+
+html[data-widget="light"] #shell {
+  background: #f4f5f7 !important;
+  box-shadow:
+    inset 0 0 0 1px #d8dde6,
+    0 10px 28px rgb(0 0 0 / 12%);
+}
+html[data-widget="light"] {
+  --pill: #f4f5f7;
+  --pill-border: #d8dde6;
+  --pill-art: #e8ebf0;
+  --pill-text: #111827;
+  --pill-artist: #6b7280;
+  --pill-btn: #111827;
+  --pill-icon: #f8fafc;
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .tool, .scan-pill { transition: none !important; }
+  .tool, .scan-pill, #frame, #shell { transition: none !important; }
 }

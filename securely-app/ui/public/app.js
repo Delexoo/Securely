@@ -3,8 +3,7 @@
 const LOOK_KEY = "securely-look";
 const SETTINGS_KEY = "securely-settings";
 const MODE_KEY = "securely-scan-mode";
-const SHELL_WIDTH = 278;
-const SHELL_WIDTH_PRIVACY = 320;
+const LAYOUT_KEY = "securely-widget-layout";
 const LICENSE_KEY = "securely-license";
 const SITE_ORIGIN = "https://trysecurely.vercel.app";
 const OCR_TEXT_ONLY_MIN = 160;
@@ -15,13 +14,30 @@ const MODES = [
   { id: "continuous", label: "24/7", startLabel: "24/7 Monitor" },
 ];
 
+/** Widget reshape cycle — each form has its own chrome in securely.css */
+const LAYOUTS = [
+  { id: "normal", label: "Normal pill", width: 312, height: 68, privacyH: 128, radius: "pill" },
+  { id: "square", label: "Small square", width: 118, height: 118, privacyH: 168, radius: 28 },
+  { id: "vertical", label: "Vertical", width: 132, height: 304, privacyH: 360, radius: 32 },
+  { id: "big", label: "Big square", width: 248, height: 248, privacyH: 300, radius: 36 },
+];
+
+const LAYOUT_ICONS = {
+  normal: '<rect x="3.5" y="7" width="17" height="10" rx="5"/>',
+  square: '<rect x="6" y="6" width="12" height="12" rx="3"/>',
+  vertical: '<rect x="8" y="3.5" width="8" height="17" rx="3.5"/>',
+  big: '<rect x="4" y="4" width="16" height="16" rx="4"/>',
+};
+
 const frameEl = document.querySelector("#frame");
 const shellEl = document.querySelector("#shell");
 const sendEl = document.querySelector("#send");
 const statusLine = document.querySelector("#status-line");
 const statusText = document.querySelector("#status-text");
+const statusSub = document.querySelector("#status-sub");
 const scanLabel = document.querySelector(".scan-label");
 const dragEl = document.querySelector("#drag");
+const layoutBtn = document.querySelector("#layout-btn");
 const privacyGate = document.querySelector("#privacy-gate");
 const privacyKinds = document.querySelector("#privacy-kinds");
 const privacyStop = document.querySelector("#privacy-stop");
@@ -30,6 +46,7 @@ const privacyContinue = document.querySelector("#privacy-continue");
 let running = false;
 let scanMode = loadMode();
 let settings = loadSettings();
+let widgetLayout = loadLayout();
 let fitTimer = 0;
 let fitInstant = false;
 let fittedFrame = "";
@@ -89,7 +106,7 @@ function loadSettings() {
   try {
     return {
       testMode: false,
-      opacity: 50,
+      opacity: 100,
       light: false,
       timedMins: 5,
       sound: true,
@@ -97,8 +114,17 @@ function loadSettings() {
       ...JSON.parse(localStorage.getItem(SETTINGS_KEY) || "{}"),
     };
   } catch {
-    return { testMode: false, opacity: 50, light: false, timedMins: 5, sound: true, notifications: true };
+    return { testMode: false, opacity: 100, light: false, timedMins: 5, sound: true, notifications: true };
   }
+}
+
+function loadLayout() {
+  const raw = localStorage.getItem(LAYOUT_KEY) || settings.layout || "normal";
+  return LAYOUTS.some((l) => l.id === raw) ? raw : "normal";
+}
+
+function layoutMeta(id = widgetLayout) {
+  return LAYOUTS.find((l) => l.id === id) || LAYOUTS[0];
 }
 
 /* Securely sound pack (/sounds) */
@@ -168,13 +194,60 @@ function modeMeta(id = scanMode) {
 }
 
 function applyLook() {
-  const opacity = Math.min(100, Math.max(10, Number(settings.opacity) || 50));
+  // Bold solid shell — opacity only nudges charcoal brightness, never goes translucent.
+  const opacity = Math.min(100, Math.max(40, Number(settings.opacity) || 100));
   settings.opacity = opacity;
   const light = !!settings.light;
   document.documentElement.dataset.widget = light ? "light" : "dark";
-  const wash = opacity / 100;
-  document.documentElement.style.setProperty("--glass", light ? `rgba(255,255,255,${wash})` : `rgba(0,0,0,${wash})`);
+  if (light) {
+    document.documentElement.style.setProperty("--pill", "#f4f5f7");
+    document.documentElement.style.setProperty("--glass", "#f4f5f7");
+  } else {
+    const t = opacity / 100;
+    const r = Math.round(22 * t);
+    const g = Math.round(26 * t);
+    const b = Math.round(34 * t);
+    const pill = `rgb(${r}, ${g}, ${b})`;
+    document.documentElement.style.setProperty("--pill", pill);
+    document.documentElement.style.setProperty("--glass", pill);
+  }
   localStorage.setItem(LOOK_KEY, JSON.stringify({ opacity, light }));
+}
+
+function applyLayout(id = widgetLayout, { fit = true } = {}) {
+  const meta = layoutMeta(id);
+  widgetLayout = meta.id;
+  settings.layout = meta.id;
+  localStorage.setItem(LAYOUT_KEY, meta.id);
+  try {
+    localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+  } catch { /* ignore */ }
+
+  if (frameEl) frameEl.dataset.layout = meta.id;
+  if (shellEl) {
+    shellEl.dataset.layout = meta.id;
+    shellEl.classList.toggle("is-pill", meta.id === "normal");
+    shellEl.classList.toggle("is-open", meta.id !== "normal");
+  }
+  if (layoutBtn) {
+    layoutBtn.title = `Reshape · now ${meta.label}. Click for next shape.`;
+    layoutBtn.setAttribute("aria-label", `Reshape widget (current: ${meta.label})`);
+    const icon = layoutBtn.querySelector(".layout-icon");
+    if (icon) icon.innerHTML = LAYOUT_ICONS[meta.id] || LAYOUT_ICONS.normal;
+  }
+  if (statusSub) {
+    statusSub.textContent = meta.id === "normal" ? "Securely" : meta.label;
+  }
+  applyFrameSize();
+  if (fit) scheduleFit(true);
+  fitTrace();
+}
+
+function cycleLayout() {
+  const idx = LAYOUTS.findIndex((l) => l.id === widgetLayout);
+  const next = LAYOUTS[(idx + 1) % LAYOUTS.length];
+  applyLayout(next.id);
+  playSound("soft");
 }
 
 const STATUS = {
@@ -242,27 +315,34 @@ function setRunning(on) {
 }
 
 function syncShellShape() {
-  shellEl.classList.add("is-pill");
-  shellEl.classList.remove("is-open");
+  applyLayout(widgetLayout, { fit: false });
+}
+
+function applyFrameSize() {
+  const meta = layoutMeta();
+  const w = privacyOpen ? Math.max(meta.width, 320) : meta.width;
+  if (frameEl) {
+    frameEl.style.width = `${w}px`;
+    frameEl.style.maxWidth = `${w}px`;
+    frameEl.classList.toggle("is-privacy", privacyOpen);
+  }
 }
 
 function frameWidth() {
-  return (privacyOpen ? SHELL_WIDTH_PRIVACY : SHELL_WIDTH) + 8;
+  const meta = layoutMeta();
+  return privacyOpen ? Math.max(meta.width, 320) : meta.width;
 }
 
 function measureFrame() {
-  return privacyOpen ? 118 : 58;
+  const meta = layoutMeta();
+  return privacyOpen ? meta.privacyH : meta.height;
 }
 
 function setPrivacyOpen(on) {
   privacyOpen = !!on;
   if (privacyGate) privacyGate.hidden = !privacyOpen;
   shellEl.classList.toggle("is-privacy", privacyOpen);
-  if (frameEl) {
-    const w = frameWidth();
-    frameEl.style.width = `${w}px`;
-    frameEl.style.maxWidth = `${w}px`;
-  }
+  applyFrameSize();
   scheduleFit(true);
 }
 
@@ -343,7 +423,8 @@ function fitTrace() {
   const inset = 2.5;
   const w = Math.max(4, width - inset * 2);
   const h = Math.max(4, height - inset * 2);
-  const radius = h / 2;
+  const meta = layoutMeta();
+  const radius = meta.radius === "pill" ? h / 2 : Math.min(Number(meta.radius) || 22, Math.min(w, h) / 2);
   for (const rect of rects) {
     rect.setAttribute("x", String(inset));
     rect.setAttribute("y", String(inset));
@@ -594,6 +675,7 @@ document.querySelector("#settings-btn")?.addEventListener("click", () => {
 document.querySelector("#audit-btn")?.addEventListener("click", () => {
   hostPost({ cmd: "dashboard", tab: "audit" });
 });
+layoutBtn?.addEventListener("click", () => cycleLayout());
 /* Exit = hide the pill (same as minimize). Full quit lives in the dashboard. */
 document.querySelector("#exit-btn")?.addEventListener("click", () => {
   playSound("soft");
@@ -616,8 +698,14 @@ dragEl.addEventListener("lostpointercapture", endDragFollow);
 
 window.addEventListener("storage", (e) => {
   if (e.key === MODE_KEY && e.newValue) setScanMode(e.newValue);
-  if (e.key === SETTINGS_KEY) settings = loadSettings();
+  if (e.key === SETTINGS_KEY) {
+    settings = loadSettings();
+    applyLook();
+    if (settings.layout && settings.layout !== widgetLayout) applyLayout(settings.layout);
+  }
+  if (e.key === LAYOUT_KEY && e.newValue && e.newValue !== widgetLayout) applyLayout(e.newValue);
   if (e.key === LICENSE_KEY) syncLicenseChrome();
+  if (e.key === LOOK_KEY) applyLook();
 });
 
 try {
@@ -630,7 +718,7 @@ try {
 
 localStorage.setItem("securely-setup-done", "1");
 applyLook();
-syncShellShape();
+applyLayout(widgetLayout, { fit: false });
 setScanMode(scanMode);
 setStatus("idle");
 setRunning(false);
@@ -639,6 +727,7 @@ window.refreshSecurelyLicense = refreshLicense;
 window.isSecurelyLicensed = isLicensed;
 window.playSecurelySound = playSound;
 window.setSecurelyStatus = setStatus;
+window.cycleSecurelyLayout = cycleLayout;
 preloadSounds();
 if (typeof ResizeObserver === "function") new ResizeObserver(() => fitTrace()).observe(frameEl);
 fitTrace();

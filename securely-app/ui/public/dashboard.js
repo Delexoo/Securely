@@ -19,13 +19,13 @@ function loadSettings() {
       testMode: false,
       notifications: true,
       sound: true,
-      opacity: 50,
+      opacity: 100,
       light: false,
       timedMins: 5,
       ...JSON.parse(localStorage.getItem(SETTINGS_KEY) || "{}"),
     };
   } catch {
-    return { hitboxes: false, strict: false, testMode: false, notifications: true, sound: true, opacity: 50, light: false, timedMins: 5 };
+    return { hitboxes: false, strict: false, testMode: false, notifications: true, sound: true, opacity: 100, light: false, timedMins: 5, layout: "normal" };
   }
 }
 

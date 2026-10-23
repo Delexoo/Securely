@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Securely</title>
-  <meta name="theme-color" content="#111111">
+  <meta name="theme-color" content="#161a22">
   <meta name="description" content="Securely desktop threat monitor — OCR and AI on your primary screen.">
   <link rel="icon" href="/favicon.ico" sizes="any">
   <link rel="icon" href="/favicon.png" type="image/png">
@@ -29,82 +29,100 @@
       <rect class="lag-10" pathLength="100" fill="none"/>
       <rect class="lag-16" pathLength="100" fill="none"/>
     </svg>
-    <div id="shell" class="is-pill">
+    <div id="shell" class="is-pill" data-layout="normal">
       <div id="pill">
         <div id="toolbar" class="island-toolbar">
+          <div class="secure-mark" aria-hidden="true" title="Securely">
+            <svg viewBox="0 0 24 24">
+              <path d="M12 3.2 19.2 6v5.4c0 4.9-3.2 8.4-7.2 9.8-4-1.4-7.2-4.9-7.2-9.8V6L12 3.2z"/>
+              <path d="m9.1 12 2 2 3.9-4"/>
+            </svg>
+          </div>
+
           <button id="send" class="scan-pill is-send" data-mode="quick" type="button" aria-pressed="false" aria-label="Quick Scan" title="Quick Scan · right-click to change mode">
             <span class="scan-label">Quick</span>
           </button>
 
-          <p id="status-line" class="status-line" data-state="idle" title="Status">
-            <svg class="status-icon status-idle" viewBox="0 0 24 24" aria-hidden="true">
-              <circle cx="12" cy="12" r="7.2"/>
-            </svg>
-            <svg class="status-icon status-scanning" viewBox="0 0 24 24" aria-hidden="true">
-              <circle cx="11" cy="11" r="6.2"/>
-              <path d="m16.2 16.2 3.3 3.3"/>
-            </svg>
-            <svg class="status-icon status-safe" viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M12 3.5 19 6.2v5.1c0 4.6-3 7.9-7 9.2-4-1.3-7-4.6-7-9.2V6.2L12 3.5z"/>
-              <path d="m9.2 12.1 1.9 1.9 3.7-3.8"/>
-            </svg>
-            <svg class="status-icon status-warning" viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M12 4.2 20.2 18.5H3.8L12 4.2z"/>
-              <path d="M12 10v4.2"/>
-              <path d="M12 16.8h.01"/>
-            </svg>
-            <svg class="status-icon status-phishing" viewBox="0 0 24 24" aria-hidden="true">
-              <circle cx="12" cy="12" r="7.5"/>
-              <path d="M12 8v5"/>
-              <path d="M12 15.8h.01"/>
-            </svg>
-            <span id="status-text">Idle</span>
-          </p>
+          <div class="status-block">
+            <p id="status-line" class="status-line" data-state="idle" title="Status">
+              <svg class="status-icon status-idle" viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="12" cy="12" r="7.2"/>
+              </svg>
+              <svg class="status-icon status-scanning" viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="11" cy="11" r="6.2"/>
+                <path d="m16.2 16.2 3.3 3.3"/>
+              </svg>
+              <svg class="status-icon status-safe" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 3.5 19 6.2v5.1c0 4.6-3 7.9-7 9.2-4-1.3-7-4.6-7-9.2V6.2L12 3.5z"/>
+                <path d="m9.2 12.1 1.9 1.9 3.7-3.8"/>
+              </svg>
+              <svg class="status-icon status-warning" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 4.2 20.2 18.5H3.8L12 4.2z"/>
+                <path d="M12 10v4.2"/>
+                <path d="M12 16.8h.01"/>
+              </svg>
+              <svg class="status-icon status-phishing" viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="12" cy="12" r="7.5"/>
+                <path d="M12 8v5"/>
+                <path d="M12 15.8h.01"/>
+              </svg>
+              <span id="status-text">Idle</span>
+            </p>
+            <p class="status-sub" id="status-sub">Securely</p>
+          </div>
 
-          <button id="home-btn" class="tool" type="button" aria-label="Dashboard" title="Dashboard">
-            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
-              <rect x="4" y="4" width="7" height="7" rx="1.5"/>
-              <rect x="13" y="4" width="7" height="7" rx="1.5"/>
-              <rect x="4" y="13" width="7" height="7" rx="1.5"/>
-              <rect x="13" y="13" width="7" height="7" rx="1.5"/>
-            </svg>
-          </button>
+          <div class="tool-cluster">
+            <button id="home-btn" class="tool solid" type="button" aria-label="Dashboard" title="Dashboard">
+              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                <rect x="4" y="4" width="7" height="7" rx="1.5"/>
+                <rect x="13" y="4" width="7" height="7" rx="1.5"/>
+                <rect x="4" y="13" width="7" height="7" rx="1.5"/>
+                <rect x="13" y="13" width="7" height="7" rx="1.5"/>
+              </svg>
+            </button>
 
-          <button id="settings-btn" class="tool" type="button" aria-label="Settings" title="Settings">
-            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M4 8h16"/>
-              <path d="M4 16h16"/>
-              <circle cx="9" cy="8" r="2.1"/>
-              <circle cx="15" cy="16" r="2.1"/>
-            </svg>
-          </button>
+            <button id="settings-btn" class="tool solid" type="button" aria-label="Settings" title="Settings">
+              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M4 8h16"/>
+                <path d="M4 16h16"/>
+                <circle cx="9" cy="8" r="2.1"/>
+                <circle cx="15" cy="16" r="2.1"/>
+              </svg>
+            </button>
 
-          <button id="audit-btn" class="tool" type="button" aria-label="Audit Log" title="Audit Log">
-            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M7 4.5h6.8L18 8.7V19a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 6 19V6A1.5 1.5 0 0 1 7.5 4.5z"/>
-              <path d="M13.5 4.8V9H17.6"/>
-              <path d="M9 13h6"/>
-              <path d="M9 16.5h4"/>
-            </svg>
-          </button>
+            <button id="audit-btn" class="tool solid" type="button" aria-label="Audit Log" title="Audit Log">
+              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M7 4.5h6.8L18 8.7V19a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 6 19V6A1.5 1.5 0 0 1 7.5 4.5z"/>
+                <path d="M13.5 4.8V9H17.6"/>
+                <path d="M9 13h6"/>
+                <path d="M9 16.5h4"/>
+              </svg>
+            </button>
 
-          <button id="drag" class="drag-dots" type="button" aria-label="Move Securely" title="Drag">
-            <svg viewBox="0 0 10 16" aria-hidden="true">
-              <circle cx="2.2" cy="2.2" r="1.55"/>
-              <circle cx="7.8" cy="2.2" r="1.55"/>
-              <circle cx="2.2" cy="8" r="1.55"/>
-              <circle cx="7.8" cy="8" r="1.55"/>
-              <circle cx="2.2" cy="13.8" r="1.55"/>
-              <circle cx="7.8" cy="13.8" r="1.55"/>
-            </svg>
-          </button>
+            <button id="layout-btn" class="tool solid layout-cycle" type="button" aria-label="Reshape widget" title="Reshape · small square, vertical, big square, or normal pill">
+              <svg class="icon layout-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <rect x="3.5" y="7" width="17" height="10" rx="5"/>
+              </svg>
+            </button>
 
-          <button id="exit-btn" class="tool ghost" type="button" aria-label="Hide Securely" title="Hide (Ctrl+\). Quit from the dashboard.">
-            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M7 7l10 10"/>
-              <path d="M17 7 7 17"/>
-            </svg>
-          </button>
+            <button id="drag" class="drag-dots" type="button" aria-label="Move Securely" title="Drag">
+              <svg viewBox="0 0 10 16" aria-hidden="true">
+                <circle cx="2.2" cy="2.2" r="1.55"/>
+                <circle cx="7.8" cy="2.2" r="1.55"/>
+                <circle cx="2.2" cy="8" r="1.55"/>
+                <circle cx="7.8" cy="8" r="1.55"/>
+                <circle cx="2.2" cy="13.8" r="1.55"/>
+                <circle cx="7.8" cy="13.8" r="1.55"/>
+              </svg>
+            </button>
+
+            <button id="exit-btn" class="tool ghost" type="button" aria-label="Hide Securely" title="Hide (Ctrl+\). Quit from the dashboard.">
+              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M7 7l10 10"/>
+                <path d="M17 7 7 17"/>
+              </svg>
+            </button>
+          </div>
         </div>
         <div id="privacy-gate" class="privacy-gate" hidden>
           <p class="privacy-copy">
