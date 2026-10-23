@@ -391,12 +391,22 @@ html[data-widget="light"] .privacy-copy strong { color: #b45309; }
 }
 
 #shell[data-layout="square"] .status-block,
-#shell[data-layout="square"] #home-btn,
 #shell[data-layout="square"] #settings-btn,
 #shell[data-layout="square"] #audit-btn,
 #shell[data-layout="square"] #exit-btn,
 #shell[data-layout="square"] .status-sub {
   display: none !important;
+}
+
+/* Keep Dashboard reachable on the small island (Billing unlock lives there). */
+#shell[data-layout="square"] #home-btn {
+  display: inline-flex !important;
+}
+
+/* Trace stroke was painting a white crescent when the host region mismatched. */
+#frame[data-layout="square"] #trace {
+  display: none !important;
+  opacity: 0 !important;
 }
 
 #shell[data-layout="square"] .scan-pill {

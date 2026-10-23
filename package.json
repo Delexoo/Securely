@@ -1,6 +1,6 @@
 {
   "name": "securely",
-  "version": "0.1.14",
+  "version": "0.1.15",
   "private": true,
   "type": "module",
   "description": "Securely \u00e2\u20ac\u201d AI-assisted Windows screen threat monitoring",

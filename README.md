@@ -10,16 +10,16 @@
 </p>
 
 <p align="center">
-  <a href="https://trysecurely.vercel.app"><img src="https://img.shields.io/badge/Website-trysecurely-1d4ed8?style=for-the-badge" alt="Website"></a>
+  <a href="https://trysecurely.com"><img src="https://img.shields.io/badge/Website-trysecurely-1d4ed8?style=for-the-badge" alt="Website"></a>
   <a href="https://github.com/Delexoo/Securely/releases/latest"><img src="https://img.shields.io/github/v/release/Delexoo/Securely?style=for-the-badge&label=Latest%20release" alt="Latest release"></a>
-  <a href="https://trysecurely.vercel.app/download/Securely-Setup.exe"><img src="https://img.shields.io/badge/Download-Windows-111827?style=for-the-badge&logo=windows&logoColor=white" alt="Download"></a>
+  <a href="https://trysecurely.com/download/Securely-Setup.exe"><img src="https://img.shields.io/badge/Download-Windows-111827?style=for-the-badge&logo=windows&logoColor=white" alt="Download"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-Securely-0f172a?style=for-the-badge" alt="License"></a>
 </p>
 
 <p align="center">
-  <a href="https://trysecurely.vercel.app/#download">Download</a> ·
-  <a href="https://trysecurely.vercel.app/pricing.html">Pricing</a> ·
-  <a href="https://trysecurely.vercel.app/releases.html">Release notes</a> ·
+  <a href="https://trysecurely.com/#download">Download</a> ·
+  <a href="https://trysecurely.com/pricing.html">Pricing</a> ·
+  <a href="https://trysecurely.com/releases.html">Release notes</a> ·
   <a href="https://github.com/Delexoo/Securely/releases">GitHub Releases</a>
 </p>
 

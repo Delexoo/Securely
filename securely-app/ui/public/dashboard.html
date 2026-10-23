@@ -345,13 +345,37 @@
           <div class="row">
             <span class="mark" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="7.5"/><circle cx="12" cy="12" r="2.2"/></svg></span>
             <div class="row-copy"><strong>Status</strong><span id="license-status-copy">Checking…</span></div>
-            <span id="license-status" class="tag">Unknown</span>
+            <span id="license-status" class="tag is-inactive">Inactive</span>
           </div>
         </div>
         <div class="actions billing-actions">
           <button type="button" id="license-stripe" class="btn">Subscribe with Stripe — $3/mo</button>
         </div>
         <p id="license-message" class="note" role="status"></p>
+        <style>
+          #license-status.tag {
+            font-weight: 750;
+            letter-spacing: 0.02em;
+            min-width: 4.5rem;
+            text-align: center;
+          }
+          #license-status.is-active {
+            background: #dcfce7;
+            color: #166534;
+          }
+          #license-status.is-inactive {
+            background: #fee2e2;
+            color: #991b1b;
+          }
+          html[data-appearance="dark"] #license-status.is-active {
+            background: #14532d;
+            color: #bbf7d0;
+          }
+          html[data-appearance="dark"] #license-status.is-inactive {
+            background: #7f1d1d;
+            color: #fecaca;
+          }
+        </style>
       </section>
 
       <section data-section="audit" data-title="Audit log" hidden>

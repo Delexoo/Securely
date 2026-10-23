@@ -1,14 +1,20 @@
 /** Vercel serverless: Stripe Checkout for Securely ($3/month). Stripe collects email and promo codes. */
+import { setCors, rateLimit } from "./_limits.js";
+
 export default async function handler(req, res) {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  setCors(req, res);
   if (req.method === "OPTIONS") {
     res.status(204).end();
     return;
   }
   if (req.method !== "POST") {
     res.status(405).json({ error: "Method not allowed." });
+    return;
+  }
+  const limited = rateLimit(req, "checkout", { limit: 20, windowMs: 60 * 60 * 1000 });
+  if (limited) {
+    res.setHeader("Retry-After", String(limited.retryAfterSec));
+    res.status(429).json({ error: "Too many checkout attempts. Try again in a few minutes." });
     return;
   }
   try {

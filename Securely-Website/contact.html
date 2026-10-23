@@ -6,6 +6,13 @@
   <title>Contact — Securely</title>
   <meta name="description" content="Contact Securely support for privacy, billing, or product questions.">
   <link rel="canonical" href="https://trysecurely.com/contact.html">
+  <meta property="og:title" content="Contact — Securely">
+  <meta property="og:description" content="Contact Securely support for privacy, billing, or product questions.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://trysecurely.com/contact.html">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Contact — Securely">
+  <meta name="twitter:description" content="Contact Securely support for privacy, billing, or product questions.">
   <meta name="theme-color" content="#1c1b19">
   <link rel="icon" href="/favicon.ico" sizes="any">
   <link rel="stylesheet" href="/site.css">
@@ -15,7 +22,7 @@
   <main id="content" class="wrap" style="padding-top:6.5rem">
     <p class="eyebrow">Contact</p>
     <h1>Reach the Securely team</h1>
-    <p class="lede">For privacy, billing, or vulnerability reports. Replace the placeholder address with the operator’s real inbox before launch.</p>
+    <p class="lede">For privacy, billing, or vulnerability reports. Operated by Securely (product of Delexoo).</p>
     <p><a class="btn" href="mailto:support@trysecurely.com">support@trysecurely.com</a></p>
     <form class="form" id="contact-form">
       <label for="name">Name
@@ -28,34 +35,47 @@
         <textarea id="message" name="message" rows="5" required maxlength="4000"></textarea>
       </label>
       <p class="error" id="form-error" hidden></p>
-      <p class="ok" id="form-ok" hidden>Thanks — your message was noted. (Server mail delivery may still need configuration.)</p>
+      <p class="ok" id="form-ok" hidden></p>
       <button class="btn" id="form-btn" type="submit">Send message</button>
     </form>
   </main>
-  <footer class="site-footer"><a href="/privacy.html">Privacy</a><a href="/">Home</a></footer>
+  <footer class="site-footer">
+    <span>© Securely · Delexoo</span>
+    <a href="/privacy.html">Privacy</a>
+    <a href="/">Home</a>
+  </footer>
   <script src="/site.js"></script>
   <script>
-    document.querySelector("#contact-form")?.addEventListener("submit", (e) => {
+    document.querySelector("#contact-form")?.addEventListener("submit", async (e) => {
       e.preventDefault();
       const err = document.querySelector("#form-error");
       const ok = document.querySelector("#form-ok");
       const btn = document.querySelector("#form-btn");
       err.hidden = true;
+      ok.hidden = true;
+      const name = document.querySelector("#name").value.trim();
       const email = document.querySelector("#email").value.trim();
       const message = document.querySelector("#message").value.trim();
-      if (!email.includes("@") || message.length < 5) {
-        err.textContent = "Enter a valid email and a short message.";
-        err.hidden = false;
-        return;
-      }
       btn.disabled = true;
       btn.textContent = "Sending…";
-      setTimeout(() => {
+      try {
+        const res = await fetch("/api/contact", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ name, email, message }),
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) throw new Error(data.error || "Could not send.");
+        ok.textContent = data.message || "Thanks — message received.";
         ok.hidden = false;
+        e.target.reset();
+      } catch (ex) {
+        err.textContent = ex.message || "Could not send message.";
+        err.hidden = false;
+      } finally {
         btn.disabled = false;
         btn.textContent = "Send message";
-        e.target.reset();
-      }, 400);
+      }
     });
   </script>
 </body>

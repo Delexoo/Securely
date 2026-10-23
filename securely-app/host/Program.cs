@@ -80,6 +80,7 @@ internal sealed class ShellForm : Form
     private const int RevealMs = 280;
     private int lastCssWidth = 368;
     private int lastCssHeight = 52;
+    private int lastCssRadius = 22;
 
     public ShellForm(string url)
     {
@@ -698,8 +699,9 @@ internal sealed class ShellForm : Form
                 {
                     var width = ReadInt(root, "cssWidth");
                     var height = ReadInt(root, "cssHeight");
+                    var radius = ReadInt(root, "cssRadius");
                     var instant = root.TryGetProperty("instant", out var instantEl) && instantEl.ValueKind == JsonValueKind.True;
-                    BeginInvoke(() => Fit(width, height, instant));
+                    BeginInvoke(() => Fit(width, height, instant, radius));
                     break;
                 }
                 case "move":
@@ -1295,8 +1297,9 @@ internal sealed class ShellForm : Form
                     case "fit":
                         var width = ReadInt(root, "cssWidth");
                         var height = ReadInt(root, "cssHeight");
+                        var radius = ReadInt(root, "cssRadius");
                         var instant = root.TryGetProperty("instant", out var instantEl) && instantEl.ValueKind == JsonValueKind.True;
-                        BeginInvoke(() => Fit(width, height, instant));
+                        BeginInvoke(() => Fit(width, height, instant, radius));
                         break;
                     case "move":
                         var dx = ReadInt(root, "dx");
@@ -1449,8 +1452,11 @@ internal sealed class ShellForm : Form
         }
     }
 
-    private void Fit(int width, int height, bool instant = false)
+    private void Fit(int width, int height, bool instant = false, int cssRadius = 0)
     {
+        if (cssRadius > 0) lastCssRadius = Math.Clamp(cssRadius, 8, 80);
+        else if (height <= 72) lastCssRadius = Math.Max(8, height / 2);
+        else if (lastCssRadius <= 0) lastCssRadius = 28;
         var target = TargetBounds(width, height);
         if (revealAnimating)
         {
@@ -1467,6 +1473,9 @@ internal sealed class ShellForm : Form
                 anim.Stop();
                 animating = false;
             }
+            // Radius can change without a size change (layout cycle) — refresh the region.
+            shapeDiameter = 0;
+            ApplyWindowShape();
             Emit(new { ok = true });
             return;
         }
@@ -1654,9 +1663,13 @@ internal sealed class ShellForm : Form
     {
         var dpi = (DeviceDpi > 0 ? DeviceDpi : 96) / 96f;
         var shortSide = Math.Min(width, height);
+        // Prefer CSS radius from the island layout so WinForms region matches the shell.
+        if (lastCssRadius > 0)
+        {
+            var fromCss = (int)Math.Round(lastCssRadius * dpi);
+            return Math.Max(8, Math.Min(fromCss, shortSide / 2));
+        }
         var shortPill = height <= (int)Math.Round(64 * dpi);
-        // Compact pill: fully rounded ends. Taller layouts keep a fixed corner so
-        // a resize never stretches the radius into a giant capsule.
         var wanted = shortPill ? shortSide / 2 : (int)Math.Round(22 * dpi);
         var maxCorner = shortPill ? shortSide / 2 : (int)Math.Round(26 * dpi);
         return Math.Max(8, Math.Min(wanted, Math.Min(shortSide / 2, maxCorner)));

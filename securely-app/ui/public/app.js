@@ -381,9 +381,10 @@ function frameWidth() {
 function measureFrame() {
   const meta = layoutMeta();
   const floor = privacyOpen ? meta.privacyH : meta.height;
-  // Prefer live shell height so tools are never clipped by a too-short fit.
+  // Tight fit to the painted shell — extra host height shows as a white/halo band.
   const live = shellEl ? Math.ceil(shellEl.getBoundingClientRect().height) : 0;
-  const pad = 2; // tiny safety so WinForms region does not bite anti-aliased edges
+  const pad = 1;
+  if (live > 40) return live + pad;
   return Math.max(floor, live + pad);
 }
 
@@ -451,7 +452,16 @@ async function fitWindow(instant = false) {
     const height = measureFrame();
     const next = `${width}x${height}`;
     if (next === fittedFrame && !instant) return;
-    hostPost({ cmd: "fit", cssWidth: width, cssHeight: height, instant: !!instant });
+    const meta = layoutMeta();
+    const radius =
+      meta.radius === "pill" ? Math.round(height / 2) : Number(meta.radius) || 28;
+    hostPost({
+      cmd: "fit",
+      cssWidth: width,
+      cssHeight: height,
+      cssRadius: radius,
+      instant: !!instant,
+    });
     fittedFrame = next;
   } finally {
     fitFlight = false;

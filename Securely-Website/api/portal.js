@@ -1,4 +1,6 @@
 /** Stripe Customer Portal — cancel / update payment without a Securely account. */
+import { setCors, rateLimit } from "./_limits.js";
+
 async function stripeForm(secret, path, params) {
   const response = await fetch(`https://api.stripe.com/v1${path}`, {
     method: "POST",
@@ -13,8 +15,19 @@ async function stripeForm(secret, path, params) {
 }
 
 export default async function handler(req, res) {
+  setCors(req, res);
+  if (req.method === "OPTIONS") {
+    res.status(204).end();
+    return;
+  }
   if (req.method !== "POST") {
     res.status(405).json({ error: "Method not allowed." });
+    return;
+  }
+  const limited = rateLimit(req, "portal", { limit: 30, windowMs: 60 * 60 * 1000 });
+  if (limited) {
+    res.setHeader("Retry-After", String(limited.retryAfterSec));
+    res.status(429).json({ error: "Too many portal requests. Try again shortly." });
     return;
   }
   try {

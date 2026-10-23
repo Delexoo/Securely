@@ -45,7 +45,8 @@ html[data-widget="light"] .setup-ide-thumb {
 html, body {
   margin: 0;
   height: 100%;
-  background: transparent;
+  /* Match the island — if WebView transparency fails, never flash a white slab. */
+  background: var(--pill);
   color: var(--text);
   overflow: hidden;
 }

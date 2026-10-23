@@ -3,6 +3,45 @@
   "repo": "Delexoo/Securely",
   "updates": [
     {
+      "version": "0.1.15",
+      "date": "2026-10-22",
+      "title": "Island fit fix, billing Active unlock, vibe-audit clear",
+      "tag": "v0.1.15",
+      "url": "https://github.com/Delexoo/Securely/releases/tag/v0.1.15",
+      "sections": [
+        {
+          "heading": "Widget",
+          "fixes": [
+            "Small island host region matches CSS corner radius and height so the white top crescent is gone; Dashboard stays reachable on the compact layout."
+          ]
+        },
+        {
+          "heading": "Dashboard",
+          "added": [
+            "Billing status shows Active with green styling after Stripe confirms, and Analyze, Protect, and VPN require that Active license."
+          ],
+          "fixes": [
+            "Opening Billing re-hydrates the shared host license so a finished checkout flips Status to Active without a restart."
+          ]
+        },
+        {
+          "heading": "Site",
+          "added": [
+            "Contact form posts to a validating contact API; llms.txt, sitemap, OG/Twitter tags, Delexoo attribution, and NuGet lockfiles match the live $3/month product."
+          ],
+          "fixes": [
+            "Paid APIs use origin allow-lists plus per-IP rate limits; analyze routes accept an optional SECURELY_ANALYZE_KEY."
+          ]
+        },
+        {
+          "heading": "Security",
+          "added": [
+            "Vibe-audit Missing and Warning items are resolved in source (contact validation, CORS, rate limits, lockfiles, consistent pricing facts)."
+          ]
+        }
+      ]
+    },
+    {
       "version": "0.1.14",
       "date": "2026-10-22",
       "title": "Stripe promo unlock, VirusTotal harden, Credits repos",

@@ -1,13 +1,15 @@
 # Securely
-> AI-assisted Windows screen threat monitor (OCR + OpenRouter).
+> AI-assisted Windows screen threat monitor (OCR + OpenRouter). $3/month via Stripe.
 
 ## Pages
 - [Home](https://trysecurely.com/): product overview and download
-- [Pricing](https://trysecurely.com/pricing.html): Starter free, Pro $20/month
+- [Pricing](https://trysecurely.com/pricing.html): Securely — $3 USD per month (cancel anytime)
 - [Privacy](https://trysecurely.com/privacy.html)
 - [Terms](https://trysecurely.com/terms.html)
 - [Billing](https://trysecurely.com/billing.html)
 - [Contact](https://trysecurely.com/contact.html)
+- [Releases](https://trysecurely.com/releases.html)
 
 ## Notes
 Securely is assistive security software, not a guarantee against all phishing.
+There is no free Starter tier — the live plan is $3/month. Canonical host: https://trysecurely.com (Vercel alias: https://trysecurely.vercel.app).

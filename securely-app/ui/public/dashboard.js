@@ -214,7 +214,16 @@ function openSection(name) {
   history.replaceState(null, "", `${location.pathname}?tab=${id === "monitor" ? "dashboard" : id}`);
   if (id === "audit" || id === "monitor") syncAlerts();
   if (id === "releases") paintReleaseNotes();
-  if (id === "billing") paintBilling();
+  if (id === "billing") {
+    paintBilling();
+    void hydrateLicenseFromHost().then(() => {
+      paintBilling();
+      try {
+        const pending = JSON.parse(localStorage.getItem(PENDING_CHECKOUT_KEY) || "null");
+        if (!loadLicense()?.active && pending?.sessionId) startSessionWatch(pending.sessionId);
+      } catch { /* ignore */ }
+    });
+  }
   if (id === "antivirus") paintAv();
   if (id === "vpn") paintVpn();
 }
@@ -563,23 +572,44 @@ async function persistLicenseToHost(next) {
   } catch { /* preview / host busy — local still set */ }
 }
 
+function isSuiteLicensed() {
+  return !!(loadLicense()?.active);
+}
+
 function paintBilling() {
   const lic = loadLicense();
+  const active = !!lic?.active;
   const tag = document.querySelector("#license-status");
   const copy = document.querySelector("#license-status-copy");
   const btn = document.querySelector("#license-stripe");
   if (tag) {
-    tag.textContent = lic?.active ? "Active" : "Inactive";
-    tag.dataset.state = lic?.active ? "active" : "inactive";
+    tag.textContent = active ? "Active" : "Inactive";
+    tag.dataset.state = active ? "active" : "inactive";
+    tag.classList.toggle("is-active", active);
+    tag.classList.toggle("is-inactive", !active);
   }
   if (copy) {
-    copy.textContent = lic?.active
-      ? `Licensed to ${lic.email || "your Stripe email"}. Scans are unlocked.`
+    copy.textContent = active
+      ? `Licensed to ${lic.email || "your Stripe email"}. Analyze, Protect, VPN, and scans are unlocked.`
       : "No active subscription on this computer yet.";
   }
   if (btn) {
-    btn.textContent = lic?.active ? "Manage on Stripe" : "Subscribe with Stripe — $3/mo";
+    btn.textContent = active ? "Manage on Stripe" : "Subscribe with Stripe — $3/mo";
   }
+  document.documentElement.dataset.licensed = active ? "1" : "0";
+  document.querySelectorAll("[data-needs-license]").forEach((el) => {
+    el.toggleAttribute("disabled", !active);
+  });
+}
+
+function requireSuiteLicense(feature) {
+  if (isSuiteLicensed()) return true;
+  openSection("billing");
+  const msg = document.querySelector("#license-message");
+  if (msg) {
+    msg.textContent = `Subscribe to unlock ${feature || "Securely"}. Status becomes Active right after Stripe confirms.`;
+  }
+  return false;
 }
 
 async function applyLicense(email, active, status, message, sessionId) {
@@ -1013,6 +1043,7 @@ function bindAnalyze() {
   });
 
   document.querySelector("#analyze-url-btn")?.addEventListener("click", async () => {
+    if (!requireSuiteLicense("Analyze")) return;
     const url = document.querySelector("#analyze-url")?.value?.trim() || "";
     if (!url) {
       paintAnalyzeResult({ verdict: "unknown", summary: "Paste a link first.", evidence: [], tips: [] });
@@ -1032,6 +1063,7 @@ function bindAnalyze() {
   });
 
   fileBtn?.addEventListener("click", async () => {
+    if (!requireSuiteLicense("Analyze")) return;
     if (!analyzeFile) return;
     setAnalyzeBusy(true);
     paintAnalyzeResult({ verdict: "unknown", summary: "Hashing on this PC…", evidence: [], tips: [] });
@@ -1114,6 +1146,7 @@ function bindAv() {
   });
   document.querySelector("#av-open-analyze")?.addEventListener("click", () => openSection("analyze"));
   document.querySelector("#av-scan-files")?.addEventListener("click", async () => {
+    if (!requireSuiteLicense("Protect")) return;
     const status = document.querySelector("#av-status");
     try {
       // Prefer host dialog + Defender MpCmdRun (ClamAV/Jackal-style local first, then cloud hash).
@@ -1362,6 +1395,7 @@ function bindVpn() {
   });
 
   document.querySelector("#vpn-connect")?.addEventListener("click", async () => {
+    if (!requireSuiteLicense("VPN")) return;
     const vpn = loadVpn();
     vpn.region = document.querySelector("#vpn-region")?.value || vpn.region || "us-la";
     vpn.killSwitch = !!document.querySelector("#vpn-kill")?.checked;

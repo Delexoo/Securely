@@ -10,6 +10,9 @@
   <meta property="og:description" content="What changed in each version of Securely.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://trysecurely.com/releases.html">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Release notes · Securely">
+  <meta name="twitter:description" content="What changed in each version of Securely.">
   <meta name="theme-color" content="#1c1b19">
   <link rel="icon" href="/favicon.ico" sizes="any">
   <link rel="icon" href="/favicon.png" type="image/png">
@@ -58,11 +61,48 @@
     <p class="lede">The same list as the <a href="https://github.com/Delexoo/Securely/releases">GitHub releases</a>.</p>
     <div class="release-log">
       <!-- brain:notes -->
+      <article class="release" id="v0.1.15">
+        <div class="release-body">
+          <header class="release-meta">
+            <a class="release-tag" href="https://github.com/Delexoo/Securely/releases/tag/v0.1.15">v0.1.15</a>
+            <span class="release-latest">Latest</span>
+            <time datetime="2026-10-22">22 Oct 2026</time>
+          </header>
+          <div class="release-card">
+            <h2>Island fit fix, billing Active unlock, vibe-audit clear</h2>
+            <h3>Added</h3>
+            <h4>Dashboard</h4>
+            <ul>
+              <li>Billing status shows Active with green styling after Stripe confirms, and Analyze, Protect, and VPN require that Active license.</li>
+            </ul>
+            <h4>Site</h4>
+            <ul>
+              <li>Contact form posts to a validating contact API; llms.txt, sitemap, OG/Twitter tags, Delexoo attribution, and NuGet lockfiles match the live $3/month product.</li>
+            </ul>
+            <h4>Security</h4>
+            <ul>
+              <li>Vibe-audit Missing and Warning items are resolved in source (contact validation, CORS, rate limits, lockfiles, consistent pricing facts).</li>
+            </ul>
+            <h3>Bug fixes</h3>
+            <h4>Widget</h4>
+            <ul>
+              <li>Small island host region matches CSS corner radius and height so the white top crescent is gone; Dashboard stays reachable on the compact layout.</li>
+            </ul>
+            <h4>Dashboard</h4>
+            <ul>
+              <li>Opening Billing re-hydrates the shared host license so a finished checkout flips Status to Active without a restart.</li>
+            </ul>
+            <h4>Site</h4>
+            <ul>
+              <li>Paid APIs use origin allow-lists plus per-IP rate limits; analyze routes accept an optional SECURELY_ANALYZE_KEY.</li>
+            </ul>
+          </div>
+        </div>
+      </article>
       <article class="release" id="v0.1.14">
         <div class="release-body">
           <header class="release-meta">
             <a class="release-tag" href="https://github.com/Delexoo/Securely/releases/tag/v0.1.14">v0.1.14</a>
-            <span class="release-latest">Latest</span>
             <time datetime="2026-10-22">22 Oct 2026</time>
           </header>
           <div class="release-card">

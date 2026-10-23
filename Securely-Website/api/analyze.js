@@ -1,4 +1,6 @@
 /** Screen threat analysis via OpenRouter. POST { text?, image?, mimeType? } → { analysis }. */
+import { setCors, rateLimit, requireAnalyzeKey, originAllowed } from "./_limits.js";
+
 const OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions";
 const DEFAULT_MODEL = "meta-llama/llama-3.3-8b-instruct";
 const VISION_MODEL = "openai/gpt-4o-mini";
@@ -19,20 +21,28 @@ When evidence conflicts or is incomplete, prefer SUSPICIOUS or UNSURE over SAFE.
 Ignore Windows tray notifications and the Securely app chrome itself.
 Do not invent URLs.`;
 
-function cors(res) {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
-}
-
 export default async function handler(req, res) {
-  cors(res);
+  setCors(req, res);
   if (req.method === "OPTIONS") {
     res.status(204).end();
     return;
   }
   if (req.method !== "POST") {
     res.status(405).json({ error: "Method not allowed." });
+    return;
+  }
+  if (!originAllowed(req)) {
+    res.status(403).json({ error: "Origin not allowed." });
+    return;
+  }
+  if (!requireAnalyzeKey(req)) {
+    res.status(401).json({ error: "Missing or invalid Securely API key." });
+    return;
+  }
+  const limited = rateLimit(req, "analyze", { limit: 40, windowMs: 60 * 60 * 1000 });
+  if (limited) {
+    res.setHeader("Retry-After", String(limited.retryAfterSec));
+    res.status(429).json({ error: "Analyze rate limit reached. Try again later." });
     return;
   }
 

@@ -7,20 +7,22 @@ async function stripeGet(secret, path) {
   return { ok: response.ok, status: response.status, payload };
 }
 
-function cors(res) {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-}
+import { setCors, rateLimit } from "./_limits.js";
 
 export default async function handler(req, res) {
-  cors(res);
+  setCors(req, res);
   if (req.method === "OPTIONS") {
     res.status(204).end();
     return;
   }
   if (req.method !== "POST") {
     res.status(405).json({ error: "Method not allowed." });
+    return;
+  }
+  const limited = rateLimit(req, "license", { limit: 60, windowMs: 60 * 60 * 1000 });
+  if (limited) {
+    res.setHeader("Retry-After", String(limited.retryAfterSec));
+    res.status(429).json({ error: "Too many license checks. Try again shortly." });
     return;
   }
   try {

@@ -5,6 +5,8 @@
  * POST { type: "url"|"hash"|"file", url?, hash?, fileName?, fileSize?, mimeType? }
  * Keys stay server-side: VIRUSTOTAL_API_KEY (optional), OPENROUTER_API_KEY (optional).
  */
+import { setCors, rateLimit, requireAnalyzeKey, originAllowed } from "./_limits.js";
+
 const OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions";
 const DEFAULT_MODEL = "meta-llama/llama-3.3-8b-instruct";
 const VT_API = "https://www.virustotal.com/api/v3";
@@ -13,11 +15,6 @@ const MAX_NAME = 260;
 const VT_POLL_MS = 1800;
 const VT_POLL_TRIES = 8;
 
-function cors(res) {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
-}
 
 function sleep(ms) {
   return new Promise((r) => setTimeout(r, ms));
@@ -389,13 +386,27 @@ function applyVtEvidence(vt, evidence, engines) {
 }
 
 export default async function handler(req, res) {
-  cors(res);
+  setCors(req, res);
   if (req.method === "OPTIONS") {
     res.status(204).end();
     return;
   }
   if (req.method !== "POST") {
     res.status(405).json({ error: "Method not allowed." });
+    return;
+  }
+  if (!originAllowed(req)) {
+    res.status(403).json({ error: "Origin not allowed." });
+    return;
+  }
+  if (!requireAnalyzeKey(req)) {
+    res.status(401).json({ error: "Missing or invalid Securely API key." });
+    return;
+  }
+  const limited = rateLimit(req, "analyze-threat", { limit: 60, windowMs: 60 * 60 * 1000 });
+  if (limited) {
+    res.setHeader("Retry-After", String(limited.retryAfterSec));
+    res.status(429).json({ error: "Analyze rate limit reached. Try again later." });
     return;
   }
 

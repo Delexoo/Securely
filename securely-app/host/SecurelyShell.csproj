@@ -1,5 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
+    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net10.0-windows10.0.19041.0</TargetFramework>
     <Nullable>enable</Nullable>
@@ -11,7 +12,7 @@
     <Authors>Securely</Authors>
     <Product>Securely</Product>
     <Copyright>Copyright (C) 2026</Copyright>
-    <Version>0.1.14</Version>
+    <Version>0.1.15</Version>
     <!-- Keep in sync with package.json version; bump both on every commit/deploy. -->
     <AssemblyTitle>Securely</AssemblyTitle>
     <Description>Securely desktop threat-monitoring overlay</Description>
