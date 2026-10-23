@@ -180,7 +180,7 @@
 
       <section data-section="billing" data-title="Billing" hidden>
         <h1>Billing</h1>
-        <p class="note">Securely is <strong>$3 USD per month</strong>. No Securely account — pay with Stripe using an email. After checkout, status flips to <strong>Active</strong> automatically (or press Activate). Cancel anytime in the Stripe customer portal.</p>
+        <p class="note">Securely is <strong>$3 USD per month</strong>. Stripe handles payment, email, and cancellation — no Securely account.</p>
         <h2 class="dash-group">Subscription</h2>
         <div class="rows">
           <div class="row">
@@ -189,26 +189,10 @@
             <span id="license-status" class="tag">Unknown</span>
           </div>
         </div>
-        <div class="billing-form">
-          <label class="billing-label" for="license-email">
-            <strong>Stripe email</strong>
-            <span>The email from checkout / your receipt.</span>
-          </label>
-          <input id="license-email" class="field-control" type="email" autocomplete="email" placeholder="you@example.com" aria-label="Stripe email">
-          <label class="billing-label" for="license-promo">
-            <strong>Promo code</strong>
-            <span>Optional. Use <code>SECURELY-DEV</code> for 100% off while testing.</span>
-          </label>
-          <input id="license-promo" class="field-control" type="text" autocomplete="off" placeholder="SECURELY-DEV" spellcheck="false" aria-label="Promo code">
-        </div>
         <div class="actions billing-actions">
-          <button type="button" id="license-activate" class="btn">Activate</button>
-          <button type="button" id="license-subscribe" class="ghost">Subscribe — $3/mo</button>
-          <button type="button" id="license-portal" class="ghost">Manage / cancel</button>
+          <button type="button" id="license-stripe" class="btn">Subscribe with Stripe — $3/mo</button>
         </div>
         <p id="license-message" class="note" role="status"></p>
-        <h2 class="dash-group">How it works</h2>
-        <p class="note">1) Subscribe with Stripe (enter <code>SECURELY-DEV</code> for free testing). 2) Activate with that email. 3) Scans unlock while the subscription is active. Cancel in Manage / cancel — no Securely password required.</p>
       </section>
 
       <section data-section="audit" data-title="Audit log" hidden>

@@ -26,7 +26,7 @@
       const sessionId = new URLSearchParams(location.search).get("session_id") || "";
       if (!sessionId) {
         title.textContent = "Payment received";
-        lede.textContent = "Open the Securely app → Billing and press Activate with your Stripe email.";
+        lede.textContent = "Return to the Securely app — Billing should show Active once Stripe finishes.";
         return;
       }
       try {
@@ -60,12 +60,12 @@
           status.textContent = "Subscription connected.";
         } else {
           title.textContent = "Payment received";
-          lede.textContent = "Stripe accepted the payment. If the app still shows Inactive, open Billing and press Activate with the same email.";
+          lede.textContent = "Stripe accepted the payment. Return to the Securely app — status updates when confirmation finishes.";
           status.textContent = data.status ? `Stripe status: ${data.status}` : "";
         }
       } catch (err) {
         title.textContent = "Payment received";
-        lede.textContent = "Thanks for subscribing. Open Securely → Billing and press Activate with your Stripe email.";
+        lede.textContent = "Thanks for subscribing. Return to the Securely app — Billing updates when Stripe confirms.";
         status.textContent = err.message || "Could not auto-confirm.";
       }
     })();

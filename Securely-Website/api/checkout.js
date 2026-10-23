@@ -1,4 +1,4 @@
-/** Vercel serverless: Stripe Checkout for Securely ($3/month). Supports SECURELY-DEV 100% off. */
+/** Vercel serverless: Stripe Checkout for Securely ($3/month). Stripe collects email and promo codes. */
 export default async function handler(req, res) {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
@@ -19,16 +19,14 @@ export default async function handler(req, res) {
     }
     const body = typeof req.body === "object" && req.body ? req.body : {};
     const email = typeof body.email === "string" ? body.email.trim() : "";
-    if (!email || email.length > 200 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      res.status(400).json({ error: "Enter a valid email for your receipt and app activation." });
+    if (email && (email.length > 200 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))) {
+      res.status(400).json({ error: "Enter a valid email, or leave it blank for Stripe Checkout." });
       return;
     }
     const host = req.headers["x-forwarded-host"] || req.headers.host;
     const proto = req.headers["x-forwarded-proto"] || "https";
     const origin = `${proto}://${host}`;
     const priceId = process.env.STRIPE_PRICE_ID || "";
-    const promoCode = process.env.SECURELY_PROMO_CODE || "SECURELY-DEV";
-    const promoId = process.env.STRIPE_PROMO_ID || "";
 
     const params = new URLSearchParams();
     params.set("mode", "subscription");
@@ -47,20 +45,11 @@ export default async function handler(req, res) {
     }
     params.set("success_url", `${origin}/billing-success.html?session_id={CHECKOUT_SESSION_ID}`);
     params.set("cancel_url", `${origin}/pricing.html?billing=cancel`);
-    params.set("customer_email", email);
     params.set("billing_address_collection", "auto");
-    params.set("client_reference_id", email.slice(0, 200));
-
-    const typed = typeof body.promo === "string" ? body.promo.trim() : "";
-    if (typed && (typed.length > 40 || !/^[A-Za-z0-9-]+$/.test(typed))) {
-      res.status(400).json({ error: "Use letters, numbers, and hyphens in the promotional code." });
-      return;
-    }
-    // Auto-apply known 100% off code when it matches; otherwise let Stripe collect codes.
-    if (typed && promoId && typed.toUpperCase() === promoCode.toUpperCase()) {
-      params.set("discounts[0][promotion_code]", promoId);
-    } else {
-      params.set("allow_promotion_codes", "true");
+    params.set("allow_promotion_codes", "true");
+    if (email) {
+      params.set("customer_email", email);
+      params.set("client_reference_id", email.slice(0, 200));
     }
 
     const response = await fetch("https://api.stripe.com/v1/checkout/sessions", {

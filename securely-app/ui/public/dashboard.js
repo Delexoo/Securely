@@ -295,8 +295,7 @@ function paintBilling() {
   const lic = loadLicense();
   const tag = document.querySelector("#license-status");
   const copy = document.querySelector("#license-status-copy");
-  const emailEl = document.querySelector("#license-email");
-  if (emailEl && lic?.email && !emailEl.value) emailEl.value = lic.email;
+  const btn = document.querySelector("#license-stripe");
   if (tag) {
     tag.textContent = lic?.active ? "Active" : "Inactive";
     tag.dataset.state = lic?.active ? "active" : "inactive";
@@ -305,6 +304,9 @@ function paintBilling() {
     copy.textContent = lic?.active
       ? `Licensed to ${lic.email}. Scans are unlocked.`
       : "No active subscription on this computer yet.";
+  }
+  if (btn) {
+    btn.textContent = lic?.active ? "Manage on Stripe" : "Subscribe with Stripe — $3/mo";
   }
 }
 
@@ -317,8 +319,6 @@ function applyLicense(email, active, status, message) {
     status: status || (active ? "active" : "inactive"),
     checkedAt: Date.now(),
   });
-  const emailEl = document.querySelector("#license-email");
-  if (emailEl && !emailEl.value) emailEl.value = clean;
   paintBilling();
   const msg = document.querySelector("#license-message");
   if (msg && message) msg.textContent = message;
@@ -355,7 +355,7 @@ function startLicenseWatch(email) {
     if (tries > 60) {
       stopLicenseWatch();
       const msg = document.querySelector("#license-message");
-      if (msg) msg.textContent = "Still waiting on Stripe. Press Activate when your receipt arrives.";
+      if (msg) msg.textContent = "Still waiting on Stripe. Finish checkout in the browser tab, then return here.";
       return;
     }
     try {
@@ -376,85 +376,35 @@ function startLicenseWatch(email) {
   licenseWatchTimer = setInterval(tick, 2500);
 }
 
-async function activateLicense() {
+async function openStripeCheckout() {
   const msg = document.querySelector("#license-message");
-  const email = document.querySelector("#license-email")?.value?.trim() || "";
-  if (msg) msg.textContent = "Checking Stripe…";
-  try {
-    const result = await checkLicenseEmail(email);
-    applyLicense(
-      result.email,
-      result.active,
-      result.status,
-      result.active
-        ? "Subscription active. You can run scans from the pill."
-        : "No active $3/month subscription for that email. Subscribe first, then Activate again.",
-    );
-    if (result.active) localStorage.removeItem(PENDING_CHECKOUT_KEY);
-  } catch (err) {
-    if (msg) msg.textContent = err.message || "Activation failed.";
-  }
-}
-
-document.querySelector("#license-activate")?.addEventListener("click", () => activateLicense());
-document.querySelector("#license-subscribe")?.addEventListener("click", async () => {
-  const msg = document.querySelector("#license-message");
-  const email = document.querySelector("#license-email")?.value?.trim() || "";
-  const promo = document.querySelector("#license-promo")?.value?.trim() || "";
-  if (!email) {
-    if (msg) msg.textContent = "Enter your Stripe email before Subscribe.";
-    return;
-  }
   if (msg) msg.textContent = "Starting Stripe checkout…";
   try {
     const res = await fetch(`${SITE_ORIGIN}/api/checkout`, {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ email, promo }),
+      body: JSON.stringify({}),
     });
     const data = await res.json().catch(() => ({}));
     if (!res.ok || !data.url) throw new Error(data.error || "Checkout unavailable.");
     // Keep opener so billing-success can postMessage back (do not use noopener).
     window.open(data.url, "securely-checkout");
-    startLicenseWatch(email);
+    localStorage.setItem(PENDING_CHECKOUT_KEY, JSON.stringify({ startedAt: Date.now() }));
     if (msg) {
-      msg.textContent = "Checkout opened. Waiting for Stripe — status will flip to Active as soon as payment clears.";
+      msg.textContent = "Checkout opened in Stripe. Status flips to Active when payment clears.";
     }
   } catch (err) {
     if (msg) msg.textContent = err.message || "Could not start checkout.";
   }
-});
+}
 
-window.addEventListener("message", (event) => {
-  const data = event.data;
-  if (!data || data.type !== "securely-checkout-done") return;
-  if (data.active && data.email) {
-    stopLicenseWatch();
-    localStorage.removeItem(PENDING_CHECKOUT_KEY);
-    applyLicense(
-      data.email,
-      true,
-      data.status || "active",
-      "Subscription active — payment connected immediately. You can run scans now.",
-    );
+async function openStripePortal() {
+  const msg = document.querySelector("#license-message");
+  const email = loadLicense()?.email || "";
+  if (!email) {
+    if (msg) msg.textContent = "No saved subscription email yet — subscribe with Stripe first.";
     return;
   }
-  if (data.email) {
-    const emailEl = document.querySelector("#license-email");
-    if (emailEl) emailEl.value = data.email;
-    startLicenseWatch(data.email);
-  }
-});
-
-window.addEventListener("focus", () => {
-  try {
-    const pending = JSON.parse(localStorage.getItem(PENDING_CHECKOUT_KEY) || "null");
-    if (pending?.email && !loadLicense()?.active) startLicenseWatch(pending.email);
-  } catch { /* ignore */ }
-});
-document.querySelector("#license-portal")?.addEventListener("click", async () => {
-  const msg = document.querySelector("#license-message");
-  const email = document.querySelector("#license-email")?.value?.trim() || loadLicense()?.email || "";
   if (msg) msg.textContent = "Opening Stripe portal…";
   try {
     const res = await fetch(`${SITE_ORIGIN}/api/portal`, {
@@ -469,6 +419,38 @@ document.querySelector("#license-portal")?.addEventListener("click", async () =>
   } catch (err) {
     if (msg) msg.textContent = err.message || "Could not open the portal.";
   }
+}
+
+document.querySelector("#license-stripe")?.addEventListener("click", () => {
+  if (loadLicense()?.active) {
+    void openStripePortal();
+  } else {
+    void openStripeCheckout();
+  }
+});
+
+window.addEventListener("message", (event) => {
+  const data = event.data;
+  if (!data || data.type !== "securely-checkout-done") return;
+  if (data.active && data.email) {
+    stopLicenseWatch();
+    localStorage.removeItem(PENDING_CHECKOUT_KEY);
+    applyLicense(
+      data.email,
+      true,
+      data.status || "active",
+      "Subscription active — payment connected. You can run scans now.",
+    );
+    return;
+  }
+  if (data.email) startLicenseWatch(data.email);
+});
+
+window.addEventListener("focus", () => {
+  try {
+    const pending = JSON.parse(localStorage.getItem(PENDING_CHECKOUT_KEY) || "null");
+    if (pending?.email && !loadLicense()?.active) startLicenseWatch(pending.email);
+  } catch { /* ignore */ }
 });
 
 document.querySelector("#dash-start")?.addEventListener("click", () => {
@@ -476,7 +458,7 @@ document.querySelector("#dash-start")?.addEventListener("click", () => {
   if (!lic?.active) {
     openSection("billing");
     const msg = document.querySelector("#license-message");
-    if (msg) msg.textContent = "Subscribe or Activate with your Stripe email before scanning.";
+    if (msg) msg.textContent = "Subscribe with Stripe before scanning.";
     return;
   }
   if (mode === "continuous") {

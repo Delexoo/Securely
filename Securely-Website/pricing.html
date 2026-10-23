@@ -30,28 +30,20 @@
   <main id="content" class="wrap-wide" style="padding-top:6.5rem">
     <p class="eyebrow">Pricing</p>
     <h1>One plan. $3 a month.</h1>
-    <p class="lede">Securely only runs with an active subscription. No Securely account — pay with Stripe using your email, then Activate that email in the app. Cancel anytime in the Stripe portal. See <a href="/billing.html">Billing</a>.</p>
+    <p class="lede">Securely only runs with an active subscription. No Securely account — Stripe handles checkout, email, and cancellation. See <a href="/billing.html">Billing</a>.</p>
     <div class="price-grid" style="grid-template-columns:minmax(0,28rem)">
       <article class="price-card featured">
         <h2>Securely</h2>
         <p class="subhead">Full Windows threat monitor for one PC.</p>
         <p class="price">$3 <small>/ month, renews until canceled</small></p>
-        <form id="checkout-form" class="form" action="/api/checkout" method="post">
-          <label for="email">Email for receipt &amp; activation
-            <input id="email" name="email" type="email" autocomplete="email" required maxlength="200" placeholder="you@example.com">
-          </label>
-          <label for="promo">Promo code <span class="muted">(optional)</span>
-            <input id="promo" name="promo" type="text" autocomplete="off" maxlength="40" placeholder="SECURELY-DEV" spellcheck="false">
-          </label>
-          <p class="error" id="checkout-error" hidden></p>
-          <p class="ok" id="checkout-ok" hidden></p>
-          <button class="btn" id="checkout-btn" type="submit">Subscribe — $3/month</button>
-        </form>
+        <p class="error" id="checkout-error" hidden></p>
+        <p class="ok" id="checkout-ok" hidden></p>
+        <button class="btn" id="checkout-btn" type="button">Subscribe with Stripe — $3/month</button>
         <ul>
           <li>Quick, Timed, and 24/7 monitoring</li>
           <li>OCR + server-side AI analysis</li>
           <li>Dashboard, audit log, hitboxes</li>
-          <li>Cancel anytime — no Securely password</li>
+          <li>Cancel anytime in Stripe</li>
         </ul>
       </article>
     </div>
@@ -64,21 +56,17 @@
   </footer>
   <script src="/site.js"></script>
   <script>
-    const form = document.querySelector("#checkout-form");
     const btn = document.querySelector("#checkout-btn");
     const err = document.querySelector("#checkout-error");
     const ok = document.querySelector("#checkout-ok");
-    form?.addEventListener("submit", async (e) => {
-      e.preventDefault();
+    btn?.addEventListener("click", async () => {
       err.hidden = true; ok.hidden = true;
       btn.disabled = true; btn.textContent = "Starting checkout…";
       try {
-        const email = document.querySelector("#email").value.trim();
-        const promo = document.querySelector("#promo")?.value.trim() || "";
         const res = await fetch("/api/checkout", {
           method: "POST",
           headers: { "content-type": "application/json" },
-          body: JSON.stringify({ plan: "securely", email, promo }),
+          body: JSON.stringify({ plan: "securely" }),
         });
         const data = await res.json().catch(() => ({}));
         if (!res.ok || !data.url) throw new Error(data.error || "Checkout is not available yet.");
@@ -90,7 +78,7 @@
         err.hidden = false;
       } finally {
         btn.disabled = false;
-        btn.textContent = "Subscribe — $3/month";
+        btn.textContent = "Subscribe with Stripe — $3/month";
       }
     });
   </script>
