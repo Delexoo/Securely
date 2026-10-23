@@ -5,7 +5,7 @@ const SETTINGS_KEY = "securely-settings";
 const MODE_KEY = "securely-scan-mode";
 const SHELL_WIDTH = 278;
 const LICENSE_KEY = "securely-license";
-const SITE_ORIGIN = "https://trysecurely.com";
+const SITE_ORIGIN = "https://trysecurely.vercel.app";
 
 const MODES = [
   { id: "quick", label: "Quick", startLabel: "Quick Scan" },

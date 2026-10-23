@@ -53,7 +53,7 @@ function syncWidgetModes() {
   });
 }
 
-const SITE_ORIGIN = "https://trysecurely.com";
+const SITE_ORIGIN = "https://trysecurely.vercel.app";
 const LICENSE_KEY = "securely-license";
 
 function openSection(name) {

@@ -3,6 +3,25 @@
   "product": "Securely",
   "updates": [
     {
+      "version": "0.1.2",
+      "date": "2026-10-22",
+      "title": "Production API host for scans and billing",
+      "sections": [
+        {
+          "heading": "API",
+          "added": [
+            "The desktop app talks to the live trysecurely.vercel.app APIs for analyze, license, checkout, and portal until trysecurely.com DNS is attached."
+          ]
+        },
+        {
+          "heading": "Site",
+          "fixes": [
+            "Vercel deploys ignore large leftover folders under Securely-Website so production stays under the size limit."
+          ]
+        }
+      ]
+    },
+    {
       "version": "0.1.1",
       "date": "2026-10-22",
       "title": "Real Quick Scan, billing promo, tighter dashboard",
