@@ -3,6 +3,19 @@
   "product": "Securely",
   "updates": [
     {
+      "version": "0.1.7",
+      "date": "2026-10-22",
+      "title": "Securely logo on the Windows installer",
+      "sections": [
+        {
+          "heading": "Host",
+          "added": [
+            "The Inno Setup wizard uses the Securely shield logo in the title-bar setup icon and the top-right / welcome wizard images instead of the default package art."
+          ]
+        }
+      ]
+    },
+    {
       "version": "0.1.6",
       "date": "2026-10-22",
       "title": "Bold Music Widget look and reshape layouts",
