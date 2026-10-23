@@ -1,6 +1,6 @@
 #define MyAppName "Securely"
 #ifndef MyAppVersion
-#define MyAppVersion "0.1.12"
+#define MyAppVersion "0.1.13"
 #endif
 #define MyAppPublisher "Delexoo"
 #define MyAppURL "https://trysecurely.vercel.app"
@@ -25,9 +25,10 @@ UninstallDisplayIcon={app}\SecurelyShell.exe
 ; Securely shield logo (replaces default package/CD wizard art)
 WizardSmallImageFile=wizard\wizard-small-58.png,wizard\wizard-small-147.png,wizard\wizard-small-256.png
 WizardImageFile=wizard\wizard-202x386.png,wizard\wizard-240x459.png
-WizardImageBackColor=clWhite
-WizardSmallImageBackColor=clWhite
-WizardImageAlphaFormat=defined
+; Charcoal wizard chrome (BGR) so rounded logo edges stay crisp â€” no white fringe
+WizardImageBackColor=$0016110F
+WizardSmallImageBackColor=$001A1A1A
+WizardImageAlphaFormat=none
 WizardImageStretch=yes
 PrivilegesRequired=lowest
 PrivilegesRequiredOverridesAllowed=dialog
@@ -71,3 +72,4 @@ Root: HKCU; Subkey: "Software\Microsoft\Windows\CurrentVersion\Run"; ValueType: 
 
 [Run]
 Filename: "{app}\{#MyAppExeName}"; Description: "Launch Securely"; Flags: nowait postinstall skipifsilent
+

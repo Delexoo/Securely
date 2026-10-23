@@ -3,6 +3,41 @@
   "repo": "Delexoo/Securely",
   "updates": [
     {
+      "version": "0.1.13",
+      "date": "2026-10-23",
+      "title": "Nord-style VPN with live IP, WireGuard tunnel, sharper island",
+      "tag": "v0.1.13",
+      "url": "https://github.com/Delexoo/Securely/releases/tag/v0.1.13",
+      "sections": [
+        {
+          "heading": "VPN",
+          "added": [
+            "VPN channel uses a Nord-style map with live public IP, city, Secured state, region pins, and Recents.",
+            "Connect drives a real WireGuard tunnel from a BYO .conf (Algo, PiVPN, Amnezia, Firezone) via the host.",
+            "ip-geo API returns public IP and coarse geolocation so the map updates after connect."
+          ]
+        },
+        {
+          "heading": "Antivirus",
+          "added": [
+            "Protect scans pick files in the host and run Windows Defender MpCmdRun plus SHA-256 reputation through Analyze."
+          ]
+        },
+        {
+          "heading": "Widget",
+          "added": [
+            "Default layout is the small Dynamic Island with scan and tool buttons only — logo mark removed."
+          ]
+        },
+        {
+          "heading": "Host",
+          "fixes": [
+            "Installer wizard logos are regenerated from the high-res mark on charcoal so rounded edges stay crisp."
+          ]
+        }
+      ]
+    },
+    {
       "version": "0.1.12",
       "date": "2026-10-22",
       "title": "Analyze, Antivirus, and VPN dashboard channels",

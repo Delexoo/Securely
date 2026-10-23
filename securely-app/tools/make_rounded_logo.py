@@ -4,17 +4,24 @@ from pathlib import Path
 
 from PIL import Image, ImageDraw
 
-SRC = Path(r"C:\Users\Massi\OneDrive\Desktop\SecurelyLogo.png")
+SRC = Path(r"E:\MasterVault\Securely\securely-app\assets\SecurelyLogo-source.png")
+if not SRC.is_file():
+    SRC = Path(r"C:\Users\Massi\OneDrive\Desktop\SecurelyLogo.png")
 OUT_UI = Path(r"E:\MasterVault\Securely\securely-app\ui\public")
 OUT_HOST = Path(r"E:\MasterVault\Securely\securely-app\host")
 OUT_ASSETS = Path(r"E:\MasterVault\Securely\securely-app\assets")
+CHARCOAL = (26, 26, 26, 255)
 
 
-def round_corners(im: Image.Image, radius_ratio: float = 0.22) -> Image.Image:
+def round_corners(im: Image.Image, radius_ratio: float = 0.22, scale: int = 4) -> Image.Image:
+    """Supersampled rounded mask so squircle edges stay crisp when downscaled."""
     size = im.size[0]
-    radius = max(1, int(size * radius_ratio))
-    mask = Image.new("L", (size, size), 0)
-    ImageDraw.Draw(mask).rounded_rectangle((0, 0, size - 1, size - 1), radius=radius, fill=255)
+    big = size * scale
+    mask_big = Image.new("L", (big, big), 0)
+    ImageDraw.Draw(mask_big).rounded_rectangle(
+        (0, 0, big - 1, big - 1), radius=max(1, int(big * radius_ratio)), fill=255
+    )
+    mask = mask_big.resize((size, size), Image.Resampling.LANCZOS)
     out = im.copy()
     out.putalpha(mask)
     return out
@@ -41,9 +48,10 @@ def main() -> None:
     img = Image.open(SRC).convert("RGBA")
     w, h = img.size
     side = max(w, h)
-    canvas = Image.new("RGBA", (side, side), (26, 26, 26, 255))
+    canvas = Image.new("RGBA", (side, side), CHARCOAL)
     canvas.paste(img, ((side - w) // 2, (side - h) // 2), img)
-    rounded = round_corners(canvas.resize((1024, 1024), Image.Resampling.LANCZOS), 0.22)
+    master = canvas.resize((2048, 2048), Image.Resampling.LANCZOS)
+    rounded = round_corners(master, 0.22).resize((1024, 1024), Image.Resampling.LANCZOS)
 
     rounded.save(OUT_UI / "logo.png", "PNG")
     rounded.save(OUT_ASSETS / "SecurelyLogo-rounded.png", "PNG")

@@ -186,47 +186,82 @@
 
       <section data-section="vpn" data-title="VPN" hidden>
         <h1>VPN</h1>
-        <p class="note">One-tap WireGuard-class prefs: region, kill switch, and optional BYO config. Easy controls first — tunnel engine follows your saved profile.</p>
-        <div class="vpn-hero suite-card">
-          <div>
-            <p class="vpn-state-label" id="vpn-state-label">Disconnected</p>
-            <p class="muted" id="vpn-state-copy">Choose a region and press Connect.</p>
+        <p class="note">Real WireGuard tunnel (Algo / PiVPN / Amnezia / Firezone BYO). Live public IP and city update when you connect.</p>
+
+        <div class="vpn-map-shell" id="vpn-map-shell">
+          <div class="vpn-map-ip" id="vpn-map-ip">IP — · locating…</div>
+          <button type="button" class="vpn-map-expand" id="vpn-map-refresh" title="Refresh IP" aria-label="Refresh IP location">↻</button>
+          <div class="vpn-map-canvas" id="vpn-map-canvas" aria-hidden="true">
+            <svg class="vpn-world" viewBox="0 0 800 420" preserveAspectRatio="xMidYMid slice">
+              <defs>
+                <linearGradient id="vpnSea" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#1a222e"/>
+                  <stop offset="100%" stop-color="#12161e"/>
+                </linearGradient>
+              </defs>
+              <rect width="800" height="420" fill="url(#vpnSea)"/>
+              <!-- Simplified land silhouettes -->
+              <path fill="#2a3342" d="M40 80c40-30 90-40 140-28 50 12 70 40 110 48 55 10 90-20 140-10 60 12 80 55 120 70 45 18 95 10 130 35 30 22 40 55 25 85-20 40-70 50-115 45-55-6-85-35-130-40-50-6-95 20-145 15-55-6-85-40-130-55-40-14-85-10-120 5-25 12-40 40-35 65 8 40 55 55 95 48"/>
+              <path fill="#2a3342" d="M520 60c35-8 75 5 95 35 18 28 15 60-5 85-22 28-60 35-95 28-38-8-60-35-70-65-10-32 10-70 75-83z"/>
+              <path fill="#2a3342" d="M620 200c40-5 85 10 105 45 22 38 10 85-25 110-40 28-95 20-125-15-32-38-25-95 45-140z"/>
+            </svg>
+            <div class="vpn-pins" id="vpn-pins"></div>
           </div>
-          <button type="button" id="vpn-connect" class="btn vpn-connect">Connect</button>
+          <div class="vpn-map-status">
+            <div class="vpn-flag" id="vpn-flag" aria-hidden="true">🌐</div>
+            <div>
+              <p class="vpn-loc-title" id="vpn-loc-title">Checking location…</p>
+              <p class="vpn-loc-state" id="vpn-loc-state">Unsecured</p>
+            </div>
+            <button type="button" id="vpn-connect" class="btn vpn-connect">Connect</button>
+          </div>
+          <div class="vpn-zoom">
+            <button type="button" id="vpn-zoom-in" aria-label="Zoom in">+</button>
+            <button type="button" id="vpn-zoom-out" aria-label="Zoom out">−</button>
+          </div>
         </div>
-        <h2 class="dash-group">Easy setup</h2>
+
+        <div class="vpn-recents-head">
+          <span>Recents</span>
+          <button type="button" class="linkish" id="vpn-all-locations">All locations ›</button>
+        </div>
+        <div class="vpn-recents" id="vpn-recents" role="list"></div>
+
+        <h2 class="dash-group">Protection</h2>
         <div class="rows">
           <div class="row">
-            <span class="mark" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="7.5"/><path d="M12 8v8M8 12h8"/></svg></span>
-            <div class="row-copy"><strong>Region</strong><span>Where your tunnel should exit.</span></div>
-            <select id="vpn-region" class="field" aria-label="VPN region">
-              <option value="auto">Auto (fastest)</option>
-              <option value="us">United States</option>
-              <option value="eu">Europe</option>
-              <option value="uk">United Kingdom</option>
-              <option value="asia">Asia Pacific</option>
-              <option value="byo">Bring your own</option>
-            </select>
-          </div>
-          <div class="row">
             <span class="mark" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 7h10v10H7z"/><path d="M4 12h3M17 12h3"/></svg></span>
-            <div class="row-copy"><strong>Kill switch</strong><span>Block internet if the tunnel drops.</span></div>
+            <div class="row-copy"><strong>Kill switch</strong><span>Full-tunnel AllowedIPs so traffic stays on-VPN.</span></div>
             <label class="switch"><input id="vpn-kill" type="checkbox" checked><i></i></label>
           </div>
           <div class="row">
             <span class="mark" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 8h7v8H4z"/><path d="M13 8h7v8h-7z"/></svg></span>
-            <div class="row-copy"><strong>Split tunnel</strong><span>Keep local LAN / selected apps off-VPN.</span></div>
+            <div class="row-copy"><strong>Split tunnel</strong><span>0.0.0.0/1 + 128.0.0.0/1 style routing (LAN friendlier).</span></div>
             <label class="switch"><input id="vpn-split" type="checkbox"><i></i></label>
           </div>
         </div>
-        <h2 class="dash-group">Bring your own WireGuard</h2>
+
+        <h2 class="dash-group">WireGuard profile</h2>
         <div class="suite-card">
-          <label class="suite-label" for="vpn-config">Paste a .conf (optional)</label>
-          <textarea id="vpn-config" class="suite-textarea" rows="5" placeholder="[Interface]&#10;PrivateKey = …&#10;Address = …&#10;[Peer]&#10;PublicKey = …&#10;Endpoint = …&#10;AllowedIPs = 0.0.0.0/0" spellcheck="false"></textarea>
+          <p class="muted" style="margin:0 0 10px">Paste a .conf from <strong>Algo</strong>, <strong>PiVPN</strong>, <strong>Amnezia</strong>, <strong>Firezone</strong>, or any WireGuard server. Requires <a href="https://www.wireguard.com/install/" id="vpn-wg-link">WireGuard for Windows</a>.</p>
+          <label class="suite-label" for="vpn-config">Configuration</label>
+          <textarea id="vpn-config" class="suite-textarea" rows="5" placeholder="[Interface]&#10;PrivateKey = …&#10;Address = …&#10;DNS = 1.1.1.1&#10;[Peer]&#10;PublicKey = …&#10;Endpoint = vpn.example.com:51820&#10;AllowedIPs = 0.0.0.0/0" spellcheck="false"></textarea>
           <div class="actions" style="margin-top:12px">
             <button type="button" id="vpn-save-config" class="ghost">Save profile</button>
+            <span id="vpn-engine-hint" class="muted"></span>
           </div>
         </div>
+        <select id="vpn-region" class="field" hidden aria-hidden="true">
+          <option value="auto">Auto</option>
+          <option value="us-la">Los Angeles</option>
+          <option value="us-ny">New York</option>
+          <option value="ca">Canada</option>
+          <option value="nl">Netherlands</option>
+          <option value="de">Germany</option>
+          <option value="uk">United Kingdom</option>
+          <option value="jp">Japan</option>
+          <option value="byo">Bring your own</option>
+        </select>
       </section>
 
       <section data-section="settings" data-title="Settings" hidden>
@@ -517,17 +552,71 @@
     html[data-appearance="dark"] .verdict-card[data-verdict="clean"] .verdict-label { color: #86efac; }
     html[data-appearance="dark"] .verdict-card[data-verdict="suspicious"] .verdict-label { color: #fbbf24; }
     html[data-appearance="dark"] .verdict-card[data-verdict="malicious"] .verdict-label { color: #fb7185; }
-    .vpn-hero {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-      flex-wrap: wrap;
-    }
-    .vpn-state-label { margin: 0; font-size: 22px; font-weight: 750; }
     .vpn-connect { min-width: 8.5rem; min-height: 44px; font-size: 15px; }
-    .vpn-hero.is-on .vpn-state-label { color: #15803d; }
-    html[data-appearance="dark"] .vpn-hero.is-on .vpn-state-label { color: #86efac; }
+    .vpn-map-shell {
+      position: relative; border-radius: 18px; overflow: hidden;
+      background: #12161e; border: 1px solid rgb(255 255 255 / 8%);
+      min-height: 320px; margin-bottom: 18px;
+    }
+    .vpn-map-shell.is-on { box-shadow: inset 0 0 0 1px rgb(34 197 94 / 35%); }
+    .vpn-map-canvas { height: 240px; position: relative; overflow: hidden; transform-origin: 50% 50%; transition: transform 180ms ease; }
+    .vpn-world { width: 100%; height: 100%; display: block; }
+    .vpn-pins { position: absolute; inset: 0; pointer-events: none; }
+    .vpn-pin {
+      position: absolute; width: 10px; height: 10px; margin: -5px 0 0 -5px;
+      border-radius: 999px; background: #3b82f6;
+      box-shadow: 0 0 0 4px rgb(59 130 246 / 25%);
+      pointer-events: auto; cursor: pointer; border: 0; padding: 0;
+    }
+    .vpn-pin.is-active {
+      background: #22c55e; width: 12px; height: 12px; margin: -6px 0 0 -6px;
+      box-shadow: 0 0 0 5px rgb(34 197 94 / 35%), 0 0 18px rgb(34 197 94 / 45%);
+    }
+    .vpn-map-ip {
+      position: absolute; top: 12px; left: 14px; z-index: 2;
+      font-size: 12px; font-weight: 600; color: #e5e7eb;
+      text-shadow: 0 1px 2px rgb(0 0 0 / 55%);
+    }
+    .vpn-map-expand {
+      position: absolute; top: 10px; right: 12px; z-index: 2;
+      width: 34px; height: 34px; border-radius: 10px; border: 0;
+      background: rgb(255 255 255 / 8%); color: #f8fafc; cursor: pointer; font-size: 16px;
+    }
+    .vpn-map-status {
+      display: flex; align-items: center; gap: 12px; padding: 14px 16px;
+      background: rgb(0 0 0 / 35%); border-top: 1px solid rgb(255 255 255 / 6%);
+    }
+    .vpn-flag {
+      width: 40px; height: 40px; border-radius: 999px; display: grid; place-items: center;
+      background: #1f2937; font-size: 20px; box-shadow: inset 0 0 0 2px #374151;
+    }
+    .vpn-map-shell.is-on .vpn-flag { box-shadow: inset 0 0 0 2px #22c55e; }
+    .vpn-loc-title { margin: 0; color: #f8fafc; font-weight: 700; font-size: 15px; }
+    .vpn-loc-state { margin: 2px 0 0; font-size: 13px; font-weight: 650; color: #f87171; }
+    .vpn-map-shell.is-on .vpn-loc-state { color: #4ade80; }
+    .vpn-map-status .vpn-connect { margin-left: auto; }
+    .vpn-zoom { position: absolute; right: 12px; bottom: 72px; z-index: 2; display: flex; flex-direction: column; gap: 6px; }
+    .vpn-zoom button {
+      width: 34px; height: 34px; border-radius: 999px; border: 0;
+      background: rgb(255 255 255 / 10%); color: #fff; font-size: 18px; cursor: pointer;
+    }
+    .vpn-recents-head {
+      display: flex; justify-content: space-between; align-items: center;
+      margin: 4px 0 10px; color: var(--muted); font-size: 13px; font-weight: 650;
+    }
+    .vpn-recents-head .linkish {
+      border: 0; background: none; color: #3b82f6; cursor: pointer; font: inherit; font-weight: 650;
+    }
+    .vpn-recents { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 8px; }
+    .vpn-recent {
+      flex: 0 0 auto; width: 132px; padding: 12px 12px 14px; border-radius: 14px;
+      border: 1px solid var(--line); background: var(--panel, #fff); text-align: left; cursor: pointer;
+    }
+    .vpn-recent strong { display: block; font-size: 13px; margin-top: 6px; }
+    .vpn-recent span { display: block; font-size: 12px; color: var(--muted); margin-top: 2px; }
+    .vpn-recent .vpn-recent-flag { font-size: 22px; line-height: 1; }
+    .vpn-recent.is-active { border-color: #22c55e; box-shadow: inset 0 0 0 1px #22c55e; }
+    html[data-appearance="dark"] .vpn-recent { background: #171a21; }
   </style>
   <script src="/dashboard.js"></script>
 </body>

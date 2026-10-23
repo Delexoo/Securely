@@ -3,12 +3,48 @@ const AUDIT_KEY = "securely-audit";
 const LOOK_KEY = "securely-look";
 const APPEAR_KEY = "securely-dash-appearance";
 
+const SITE_ORIGIN = "https://trysecurely.vercel.app";
+
 function hostPost(payload) {
   try {
     if (window.chrome?.webview?.postMessage) {
       window.chrome.webview.postMessage(JSON.stringify(payload));
     }
   } catch { /* preview */ }
+}
+
+const hostPending = new Map();
+let hostReqSeq = 0;
+
+function hostRequest(cmd, extra = {}, timeoutMs = 60000) {
+  return new Promise((resolve, reject) => {
+    if (!window.chrome?.webview) {
+      reject(new Error("Securely host is not available."));
+      return;
+    }
+    const id = `d${++hostReqSeq}`;
+    const timer = setTimeout(() => {
+      hostPending.delete(id);
+      reject(new Error("Host request timed out."));
+    }, timeoutMs);
+    hostPending.set(id, { resolve, reject, timer });
+    hostPost({ cmd, id, ...extra });
+  });
+}
+
+if (window.chrome?.webview) {
+  window.chrome.webview.addEventListener("message", (event) => {
+    let data = event.data;
+    if (typeof data === "string") {
+      try { data = JSON.parse(data); } catch { return; }
+    }
+    if (!data || typeof data !== "object" || !data.id) return;
+    const pending = hostPending.get(data.id);
+    if (!pending) return;
+    clearTimeout(pending.timer);
+    hostPending.delete(data.id);
+    pending.resolve(data);
+  });
 }
 
 function loadSettings() {
@@ -131,7 +167,6 @@ function educationFor(kind) {
   return EDUCATION.DEFAULT;
 }
 
-const SITE_ORIGIN = "https://trysecurely.vercel.app";
 const LICENSE_KEY = "securely-license";
 
 function openSection(name) {
@@ -726,14 +761,16 @@ function loadVpn() {
   try {
     return {
       connected: false,
-      region: "auto",
+      region: "us-la",
       killSwitch: true,
       splitTunnel: false,
       config: "",
+      connectedAt: 0,
+      wireguard: false,
       ...JSON.parse(localStorage.getItem(VPN_KEY) || "{}"),
     };
   } catch {
-    return { connected: false, region: "auto", killSwitch: true, splitTunnel: false, config: "" };
+    return { connected: false, region: "us-la", killSwitch: true, splitTunnel: false, config: "", connectedAt: 0, wireguard: false };
   }
 }
 
@@ -943,100 +980,323 @@ function bindAv() {
   });
   document.querySelector("#av-open-analyze")?.addEventListener("click", () => openSection("analyze"));
   document.querySelector("#av-scan-files")?.addEventListener("click", async () => {
-    const input = document.createElement("input");
-    input.type = "file";
-    input.multiple = true;
-    input.addEventListener("change", async () => {
-      const files = [...(input.files || [])].slice(0, 8);
-      if (!files.length) return;
-      const status = document.querySelector("#av-status");
-      if (status) status.textContent = `Scanning ${files.length} file(s)…`;
-      for (const file of files) {
+    const status = document.querySelector("#av-status");
+    try {
+      // Prefer host dialog + Defender MpCmdRun (ClamAV/Jackal-style local first, then cloud hash).
+      const picked = await hostRequest("av-scan", { action: "pick" }, 120000);
+      const paths = JSON.parse(picked.pathsJson || "[]").slice(0, 12);
+      if (!paths.length) return;
+      if (status) status.textContent = `Defender + hash scanning ${paths.length} file(s)…`;
+      const hostScan = await hostRequest("av-scan", { action: "scan", paths }, 180000);
+      const rows = hostScan.result?.results || [];
+      for (const row of rows) {
+        if (row.threat) {
+          pushAvEvent(`Defender threat: ${row.name}`, "PHISHING");
+          continue;
+        }
         try {
-          const hash = await sha256File(file);
           const data = await runThreatAnalyze({
             type: "file",
-            hash,
-            fileName: file.name,
-            fileSize: file.size,
-            mimeType: file.type || "",
+            hash: row.sha256,
+            fileName: row.name,
+            fileSize: 0,
+            mimeType: "",
           });
-          pushAvEvent(`Scan ${data.verdict}: ${file.name}`, data.verdict === "malicious" ? "PHISHING" : "PROTECT");
+          pushAvEvent(
+            `Scan ${data.verdict}: ${row.name} (Defender ${row.defender})`,
+            data.verdict === "malicious" ? "PHISHING" : "PROTECT",
+          );
         } catch (err) {
-          pushAvEvent(`Scan failed: ${file.name} — ${err.message || "error"}`, "UNSURE");
+          pushAvEvent(`Hash OK · cloud lookup failed: ${row.name}`, "UNSURE");
         }
       }
       paintAv();
-      if (status) status.textContent = "Scan finished — see recent protect events.";
+      if (status) status.textContent = "Scan finished — Defender + reputation.";
       playDashSound("notification-pluck-off.mp3");
-    });
-    input.click();
+    } catch {
+      // Browser preview fallback
+      const input = document.createElement("input");
+      input.type = "file";
+      input.multiple = true;
+      input.addEventListener("change", async () => {
+        const files = [...(input.files || [])].slice(0, 8);
+        if (!files.length) return;
+        if (status) status.textContent = `Scanning ${files.length} file(s)…`;
+        for (const file of files) {
+          try {
+            const hash = await sha256File(file);
+            const data = await runThreatAnalyze({
+              type: "file",
+              hash,
+              fileName: file.name,
+              fileSize: file.size,
+              mimeType: file.type || "",
+            });
+            pushAvEvent(`Scan ${data.verdict}: ${file.name}`, data.verdict === "malicious" ? "PHISHING" : "PROTECT");
+          } catch (err) {
+            pushAvEvent(`Scan failed: ${file.name} — ${err.message || "error"}`, "UNSURE");
+          }
+        }
+        paintAv();
+        if (status) status.textContent = "Scan finished — see recent protect events.";
+      });
+      input.click();
+    }
   });
+
+  hostRequest("av-scan", { action: "status" })
+    .then((res) => {
+      const copy = document.querySelector("#av-defender-copy");
+      if (copy && res.defender?.hint) copy.textContent = res.defender.hint;
+    })
+    .catch(() => {});
+}
+
+const VPN_LOCATIONS = [
+  { id: "us-la", name: "United States", city: "Los Angeles", tag: "Fastest", flag: "🇺🇸", x: 18, y: 48, lat: 34.05, lon: -118.24 },
+  { id: "us-ny", name: "United States", city: "New York", tag: "Double VPN", flag: "🇺🇸", x: 28, y: 42, lat: 40.71, lon: -74.0 },
+  { id: "ca", name: "Canada", city: "Toronto", tag: "Fastest", flag: "🇨🇦", x: 24, y: 36, lat: 43.65, lon: -79.38 },
+  { id: "nl", name: "Netherlands", city: "Amsterdam", tag: "Onion over VPN", flag: "🇳🇱", x: 50, y: 38, lat: 52.37, lon: 4.9 },
+  { id: "de", name: "Germany", city: "Frankfurt", tag: "Fastest", flag: "🇩🇪", x: 52, y: 40, lat: 50.11, lon: 8.68 },
+  { id: "uk", name: "United Kingdom", city: "London", tag: "Fastest", flag: "🇬🇧", x: 47, y: 36, lat: 51.5, lon: -0.12 },
+  { id: "jp", name: "Japan", city: "Tokyo", tag: "Fastest", flag: "🇯🇵", x: 82, y: 44, lat: 35.68, lon: 139.69 },
+];
+
+let vpnGeo = null;
+let vpnMapZoom = 1;
+let vpnBusy = false;
+
+function projectLatLon(lat, lon) {
+  const x = ((lon + 180) / 360) * 100;
+  const y = ((90 - lat) / 180) * 100;
+  return { x: Math.min(96, Math.max(4, x)), y: Math.min(90, Math.max(10, y)) };
+}
+
+async function fetchVpnGeo() {
+  try {
+    const res = await fetch(`${SITE_ORIGIN}/api/ip-geo`);
+    const data = await res.json();
+    if (!res.ok || !data.ok) throw new Error(data.error || "lookup failed");
+    vpnGeo = data;
+    return data;
+  } catch (err) {
+    vpnGeo = { ok: false, ip: "—", label: "Location unavailable", error: err.message };
+    return vpnGeo;
+  }
 }
 
 function paintVpn() {
   const vpn = loadVpn();
-  const hero = document.querySelector(".vpn-hero");
-  const label = document.querySelector("#vpn-state-label");
-  const copy = document.querySelector("#vpn-state-copy");
+  const shell = document.querySelector("#vpn-map-shell");
   const btn = document.querySelector("#vpn-connect");
-  const region = document.querySelector("#vpn-region");
   const kill = document.querySelector("#vpn-kill");
   const split = document.querySelector("#vpn-split");
   const config = document.querySelector("#vpn-config");
+  const region = document.querySelector("#vpn-region");
+  const ipEl = document.querySelector("#vpn-map-ip");
+  const title = document.querySelector("#vpn-loc-title");
+  const state = document.querySelector("#vpn-loc-state");
+  const flag = document.querySelector("#vpn-flag");
+  const hint = document.querySelector("#vpn-engine-hint");
+
   if (region) region.value = vpn.region || "auto";
   if (kill) kill.checked = vpn.killSwitch !== false;
   if (split) split.checked = !!vpn.splitTunnel;
-  if (config && config.value !== (vpn.config || "")) config.value = vpn.config || "";
-  hero?.classList.toggle("is-on", !!vpn.connected);
-  if (label) label.textContent = vpn.connected ? "Connected" : "Disconnected";
-  if (copy) {
-    const regionLabel = region?.selectedOptions?.[0]?.text || vpn.region || "Auto";
-    copy.textContent = vpn.connected
-      ? `${regionLabel} · kill switch ${vpn.killSwitch === false ? "off" : "on"}${vpn.config ? " · BYO profile" : ""}`
-      : "Choose a region and press Connect.";
+  if (config && document.activeElement !== config) config.value = vpn.config || "";
+
+  shell?.classList.toggle("is-on", !!vpn.connected);
+  if (btn) {
+    btn.textContent = vpnBusy ? "Working…" : vpn.connected ? "Disconnect" : "Quick Connect";
+    btn.disabled = !!vpnBusy;
   }
-  if (btn) btn.textContent = vpn.connected ? "Disconnect" : "Connect";
+
+  const loc = VPN_LOCATIONS.find((l) => l.id === vpn.region) || VPN_LOCATIONS[0];
+  const geoLabel = vpnGeo?.label || (vpn.connected ? `${loc.city}, ${loc.name}` : "Detecting…");
+  const ip = vpnGeo?.ip || "—";
+  const elapsed = vpn.connected && vpn.connectedAt
+    ? Math.max(0, Math.floor((Date.now() - vpn.connectedAt) / 1000))
+    : 0;
+  if (ipEl) {
+    ipEl.textContent = vpn.connected
+      ? `IP ${ip} · ${vpnGeo?.country || loc.name} · ${elapsed}s`
+      : `IP ${ip} · ${vpnGeo?.country || "—"}`;
+  }
+  if (title) title.textContent = vpn.connected ? `${loc.city}, ${loc.name}` : geoLabel;
+  if (state) state.textContent = vpn.connected ? "Secured" : "Unsecured";
+  if (flag) flag.textContent = vpn.connected ? loc.flag : vpnGeo?.countryCode ? flagFor(vpnGeo.countryCode) : "🌐";
+  if (hint) {
+    hint.textContent = String(vpn.config || "").trim()
+      ? "BYO WireGuard profile saved."
+      : "Paste a .conf to enable a real location change.";
+  }
+
+  const pins = document.querySelector("#vpn-pins");
+  if (pins) {
+    pins.replaceChildren();
+    for (const spot of VPN_LOCATIONS) {
+      const pin = document.createElement("button");
+      pin.type = "button";
+      pin.className = "vpn-pin" + (vpn.region === spot.id || (vpn.connected && vpn.region === spot.id) ? " is-active" : "");
+      if (vpn.connected && vpn.region === spot.id) pin.classList.add("is-active");
+      pin.style.left = `${spot.x}%`;
+      pin.style.top = `${spot.y}%`;
+      pin.title = `${spot.city}, ${spot.name}`;
+      pin.addEventListener("click", () => {
+        const next = loadVpn();
+        next.region = spot.id;
+        saveVpn(next);
+        paintVpn();
+      });
+      pins.append(pin);
+    }
+    if (vpnGeo?.lat != null && vpnGeo?.lon != null) {
+      const p = projectLatLon(vpnGeo.lat, vpnGeo.lon);
+      const here = document.createElement("button");
+      here.type = "button";
+      here.className = "vpn-pin is-active";
+      here.style.left = `${p.x}%`;
+      here.style.top = `${p.y}%`;
+      here.title = `Current exit · ${vpnGeo.label}`;
+      pins.append(here);
+    }
+  }
+
+  const recents = document.querySelector("#vpn-recents");
+  if (recents) {
+    recents.replaceChildren();
+    for (const spot of VPN_LOCATIONS.slice(0, 5)) {
+      const card = document.createElement("button");
+      card.type = "button";
+      card.className = "vpn-recent" + (vpn.region === spot.id ? " is-active" : "");
+      card.innerHTML = `<div class="vpn-recent-flag">${spot.flag}</div><strong>${spot.name}</strong><span>${spot.tag}</span>`;
+      card.addEventListener("click", () => {
+        const next = loadVpn();
+        next.region = spot.id;
+        saveVpn(next);
+        paintVpn();
+      });
+      recents.append(card);
+    }
+  }
+}
+
+function flagFor(code) {
+  const c = String(code || "").toUpperCase();
+  if (c.length !== 2) return "🌐";
+  return String.fromCodePoint(...[...c].map((ch) => 127397 + ch.charCodeAt(0)));
 }
 
 function bindVpn() {
   const persist = () => {
     const vpn = loadVpn();
-    vpn.region = document.querySelector("#vpn-region")?.value || "auto";
+    vpn.region = document.querySelector("#vpn-region")?.value || vpn.region || "us-la";
     vpn.killSwitch = !!document.querySelector("#vpn-kill")?.checked;
     vpn.splitTunnel = !!document.querySelector("#vpn-split")?.checked;
     vpn.config = document.querySelector("#vpn-config")?.value || "";
     saveVpn(vpn);
     paintVpn();
   };
-  document.querySelector("#vpn-region")?.addEventListener("change", persist);
+
   document.querySelector("#vpn-kill")?.addEventListener("change", persist);
   document.querySelector("#vpn-split")?.addEventListener("change", persist);
   document.querySelector("#vpn-save-config")?.addEventListener("click", () => {
     persist();
     playDashSound("new-notification.mp3");
-    const copy = document.querySelector("#vpn-state-copy");
-    if (copy) copy.textContent = "WireGuard profile saved on this PC.";
   });
-  document.querySelector("#vpn-connect")?.addEventListener("click", () => {
+  document.querySelector("#vpn-map-refresh")?.addEventListener("click", async () => {
+    await fetchVpnGeo();
+    paintVpn();
+  });
+  document.querySelector("#vpn-wg-link")?.addEventListener("click", (e) => {
+    e.preventDefault();
+    hostPost({ cmd: "open-url", url: "https://www.wireguard.com/install/" });
+  });
+  document.querySelector("#vpn-all-locations")?.addEventListener("click", () => {
+    document.querySelector("#vpn-config")?.scrollIntoView({ behavior: "smooth", block: "center" });
+  });
+
+  let zoom = 1;
+  document.querySelector("#vpn-zoom-in")?.addEventListener("click", () => {
+    zoom = Math.min(1.6, zoom + 0.15);
+    const canvas = document.querySelector("#vpn-map-canvas");
+    if (canvas) canvas.style.transform = `scale(${zoom})`;
+  });
+  document.querySelector("#vpn-zoom-out")?.addEventListener("click", () => {
+    zoom = Math.max(1, zoom - 0.15);
+    const canvas = document.querySelector("#vpn-map-canvas");
+    if (canvas) canvas.style.transform = `scale(${zoom})`;
+  });
+
+  document.querySelector("#vpn-connect")?.addEventListener("click", async () => {
     const vpn = loadVpn();
-    vpn.connected = !vpn.connected;
-    vpn.region = document.querySelector("#vpn-region")?.value || vpn.region;
+    vpn.region = document.querySelector("#vpn-region")?.value || vpn.region || "us-la";
     vpn.killSwitch = !!document.querySelector("#vpn-kill")?.checked;
     vpn.splitTunnel = !!document.querySelector("#vpn-split")?.checked;
-    vpn.config = document.querySelector("#vpn-config")?.value || vpn.config;
-    saveVpn(vpn);
+    vpn.config = document.querySelector("#vpn-config")?.value || vpn.config || "";
+    const connecting = !vpn.connected;
+    if (connecting && !String(vpn.config || "").trim()) {
+      const state = document.querySelector("#vpn-loc-state");
+      if (state) {
+        state.textContent = "Need WireGuard .conf";
+        state.style.color = "#fbbf24";
+      }
+      document.querySelector("#vpn-config")?.focus();
+      return;
+    }
+
+    vpnBusy = true;
     paintVpn();
-    hostPost({
-      cmd: "vpn",
-      action: vpn.connected ? "connect" : "disconnect",
-      region: vpn.region,
-      killSwitch: vpn.killSwitch,
-      splitTunnel: vpn.splitTunnel,
-      hasConfig: !!String(vpn.config || "").trim(),
-    });
-    playDashSound(vpn.connected ? "notification-pluck-off.mp3" : "menu-open.mp3");
+    try {
+      const res = await hostRequest("vpn", {
+        action: connecting ? "connect" : "disconnect",
+        config: vpn.config,
+        killSwitch: vpn.killSwitch,
+        splitTunnel: vpn.splitTunnel,
+        region: vpn.region,
+      });
+      if (!res.ok && connecting) {
+        vpn.connected = false;
+        saveVpn(vpn);
+        const state = document.querySelector("#vpn-loc-state");
+        if (state) {
+          state.textContent = res.message || "Connect failed";
+          state.style.color = "#f87171";
+        }
+        playDashSound("notification-alert.mp3");
+        return;
+      }
+      vpn.connected = connecting ? !!res.connected || !!res.ok : false;
+      vpn.connectedAt = vpn.connected ? Date.now() : 0;
+      vpn.wireguard = !!res.wireguard;
+      saveVpn(vpn);
+      await new Promise((r) => setTimeout(r, connecting ? 1800 : 400));
+      await fetchVpnGeo();
+      paintVpn();
+      playDashSound(vpn.connected ? "notification-pluck-off.mp3" : "menu-open.mp3");
+    } catch (err) {
+      vpn.connected = false;
+      saveVpn(vpn);
+      const state = document.querySelector("#vpn-loc-state");
+      if (state) state.textContent = err.message || "Host VPN error";
+    } finally {
+      vpnBusy = false;
+      paintVpn();
+    }
   });
+
+  fetchVpnGeo().then(() => paintVpn());
+  hostRequest("vpn", { action: "status" })
+    .then((res) => {
+      const vpn = loadVpn();
+      if (res.connected) {
+        vpn.connected = true;
+        vpn.connectedAt = vpn.connectedAt || Date.now();
+      }
+      vpn.wireguard = !!res.wireguard;
+      saveVpn(vpn);
+      paintVpn();
+    })
+    .catch(() => {});
 }
 
 function bindSuiteChannels() {

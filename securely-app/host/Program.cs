@@ -829,9 +829,106 @@ internal sealed class ShellForm : Form
                 }
                 case "vpn":
                 {
-                    // Prefs are stored in the dashboard WebView; WireGuard tunnel engine hooks here later.
+                    var vpnId = root.TryGetProperty("id", out var vpnIdEl) ? vpnIdEl.GetString() ?? "" : "";
                     var vpnAction = root.TryGetProperty("action", out var vpnActEl) ? vpnActEl.GetString() ?? "" : "";
-                    System.Diagnostics.Debug.WriteLine("vpn: " + vpnAction);
+                    var vpnConf = root.TryGetProperty("config", out var vpnConfEl) ? vpnConfEl.GetString() ?? "" : "";
+                    var vpnKill = !root.TryGetProperty("killSwitch", out var vpnKillEl) || vpnKillEl.ValueKind != JsonValueKind.False;
+                    var vpnSplit = root.TryGetProperty("splitTunnel", out var vpnSplitEl) && vpnSplitEl.ValueKind == JsonValueKind.True;
+                    _ = Task.Run(() =>
+                    {
+                        object payload;
+                        try
+                        {
+                            if (vpnAction == "status")
+                            {
+                                payload = new
+                                {
+                                    id = vpnId,
+                                    ok = true,
+                                    connected = VpnTunnel.IsTunnelServiceRunning(),
+                                    wireguard = VpnTunnel.FindWireGuardExe() != null,
+                                    tunnel = VpnTunnel.TunnelName,
+                                };
+                            }
+                            else if (vpnAction == "connect")
+                            {
+                                var result = VpnTunnel.Connect(vpnConf, vpnKill, vpnSplit);
+                                payload = new
+                                {
+                                    id = vpnId,
+                                    ok = result.ok,
+                                    connected = result.ok || VpnTunnel.IsTunnelServiceRunning(),
+                                    message = result.message,
+                                    wireguard = VpnTunnel.FindWireGuardExe() != null,
+                                };
+                            }
+                            else if (vpnAction == "disconnect")
+                            {
+                                var result = VpnTunnel.Disconnect();
+                                payload = new
+                                {
+                                    id = vpnId,
+                                    ok = result.ok,
+                                    connected = false,
+                                    message = result.message,
+                                    wireguard = VpnTunnel.FindWireGuardExe() != null,
+                                };
+                            }
+                            else
+                            {
+                                payload = new { id = vpnId, ok = false, message = "Unknown VPN action." };
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            payload = new { id = vpnId, ok = false, message = ex.Message, connected = false };
+                        }
+                        BeginInvoke(() => ReplyToUi(payload));
+                    });
+                    break;
+                }
+                case "av-scan":
+                {
+                    var avId = root.TryGetProperty("id", out var avIdEl) ? avIdEl.GetString() ?? "" : "";
+                    var avAction = root.TryGetProperty("action", out var avActEl) ? avActEl.GetString() ?? "" : "";
+                    if (avAction == "status")
+                    {
+                        BeginInvoke(() => ReplyToUi(new { id = avId, ok = true, defender = AvScan.DefenderStatus() }));
+                        break;
+                    }
+                    if (avAction == "pick")
+                    {
+                        BeginInvoke(() =>
+                        {
+                            var json = AvScan.PickFiles();
+                            ReplyToUi(new { id = avId, ok = json != null, pathsJson = json ?? "[]" });
+                        });
+                        break;
+                    }
+                    if (avAction == "scan")
+                    {
+                        var paths = new List<string>();
+                        if (root.TryGetProperty("paths", out var pathsEl) && pathsEl.ValueKind == JsonValueKind.Array)
+                        {
+                            foreach (var p in pathsEl.EnumerateArray())
+                            {
+                                var s = p.GetString();
+                                if (!string.IsNullOrWhiteSpace(s)) paths.Add(s);
+                            }
+                        }
+                        _ = Task.Run(async () =>
+                        {
+                            try
+                            {
+                                var result = await AvScan.ScanPathsAsync(paths).ConfigureAwait(false);
+                                BeginInvoke(() => ReplyToUi(new { id = avId, result }));
+                            }
+                            catch (Exception ex)
+                            {
+                                BeginInvoke(() => ReplyToUi(new { id = avId, ok = false, error = ex.Message }));
+                            }
+                        });
+                    }
                     break;
                 }
             }
@@ -847,8 +944,8 @@ internal sealed class ShellForm : Form
         try
         {
             var json = JsonSerializer.Serialize(body);
-            if (view.CoreWebView2 == null) return;
-            view.CoreWebView2.PostWebMessageAsJson(json);
+            try { view.CoreWebView2?.PostWebMessageAsJson(json); } catch { /* widget gone */ }
+            try { dashboardView?.CoreWebView2?.PostWebMessageAsJson(json); } catch { /* dash gone */ }
         }
         catch (Exception ex)
         {

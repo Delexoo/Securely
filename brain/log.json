@@ -3,6 +3,39 @@
   "product": "Securely",
   "updates": [
     {
+      "version": "0.1.13",
+      "date": "2026-10-23",
+      "title": "Nord-style VPN with live IP, WireGuard tunnel, sharper island",
+      "sections": [
+        {
+          "heading": "VPN",
+          "added": [
+            "VPN channel uses a Nord-style map with live public IP, city, Secured state, region pins, and Recents.",
+            "Connect drives a real WireGuard tunnel from a BYO .conf (Algo, PiVPN, Amnezia, Firezone) via the host.",
+            "ip-geo API returns public IP and coarse geolocation so the map updates after connect."
+          ]
+        },
+        {
+          "heading": "Antivirus",
+          "added": [
+            "Protect scans pick files in the host and run Windows Defender MpCmdRun plus SHA-256 reputation through Analyze."
+          ]
+        },
+        {
+          "heading": "Widget",
+          "added": [
+            "Default layout is the small Dynamic Island with scan and tool buttons only \u2014 logo mark removed."
+          ]
+        },
+        {
+          "heading": "Host",
+          "fixes": [
+            "Installer wizard logos are regenerated from the high-res mark on charcoal so rounded edges stay crisp."
+          ]
+        }
+      ]
+    },
+    {
       "version": "0.1.12",
       "date": "2026-10-22",
       "title": "Analyze, Antivirus, and VPN dashboard channels",
@@ -31,7 +64,7 @@
         {
           "heading": "Dashboard",
           "added": [
-            "Timed duration appears when Timed mode is selected; Monitoring no longer shows Start/Stop under Status — use the pill.",
+            "Timed duration appears when Timed mode is selected; Monitoring no longer shows Start/Stop under Status \u2014 use the pill.",
             "Appearance controls sync the island look and brightness live through the host.",
             "Audit log rows open a detail view with screenshot (when captured), summary, and protection tips for suspicious or phishing findings."
           ]
@@ -46,13 +79,13 @@
         {
           "heading": "Dashboard",
           "added": [
-            "Billing is one Subscribe with Stripe button — email, promo, Activate, and Manage fields are gone; Stripe Checkout and the portal handle the rest."
+            "Billing is one Subscribe with Stripe button \u2014 email, promo, Activate, and Manage fields are gone; Stripe Checkout and the portal handle the rest."
           ]
         },
         {
           "heading": "Site",
           "added": [
-            "Pricing is a single Subscribe with Stripe button; Checkout collects email and promo codes on Stripe’s page."
+            "Pricing is a single Subscribe with Stripe button; Checkout collects email and promo codes on Stripe\u2019s page."
           ]
         }
       ]
@@ -60,7 +93,7 @@
     {
       "version": "0.1.9",
       "date": "2026-10-22",
-      "title": "Solid widget chrome — no halo, no clipped tools",
+      "title": "Solid widget chrome \u2014 no halo, no clipped tools",
       "sections": [
         {
           "heading": "Widget",
@@ -108,8 +141,8 @@
         {
           "heading": "Widget",
           "added": [
-            "The island uses a solid Music Widget charcoal palette with a shield mark tile and white circular tool buttons — no translucent glass.",
-            "A reshape control cycles the pill through small square, vertical rectangle, big square, and back to the normal horizontal widget — each layout has its own arrangement."
+            "The island uses a solid Music Widget charcoal palette with a shield mark tile and white circular tool buttons \u2014 no translucent glass.",
+            "A reshape control cycles the pill through small square, vertical rectangle, big square, and back to the normal horizontal widget \u2014 each layout has its own arrangement."
           ]
         }
       ]
@@ -122,13 +155,13 @@
         {
           "heading": "Core",
           "added": [
-            "The local sensitive gate covers more categories — emails, phones, DOB, government and medical IDs, tax IDs, crypto seeds, OTP/recovery codes, private network IDs, and biometric cues — before any AI upload."
+            "The local sensitive gate covers more categories \u2014 emails, phones, DOB, government and medical IDs, tax IDs, crypto seeds, OTP/recovery codes, private network IDs, and biometric cues \u2014 before any AI upload."
           ]
         },
         {
           "heading": "Dashboard",
           "added": [
-            "After Stripe Checkout, the Credits tab flips to Active immediately via checkout-status, opener postMessage, and a short license poll — no manual re-activate wait."
+            "After Stripe Checkout, the Credits tab flips to Active immediately via checkout-status, opener postMessage, and a short license poll \u2014 no manual re-activate wait."
           ],
           "fixes": [
             "Subscribe opens checkout without noopener so the success page can notify the dashboard."
@@ -151,7 +184,7 @@
           "heading": "Security",
           "added": [
             "Threat model documents Analyze/VPN/AV data flows and honest claim limits versus Norton-class suites.",
-            "REA use is bounded to Securely and open targets — never commercial AV/VPN binaries."
+            "REA use is bounded to Securely and open targets \u2014 never commercial AV/VPN binaries."
           ]
         }
       ]
@@ -165,7 +198,7 @@
           "heading": "Core",
           "added": [
             "Quick Scan runs a local detector for passwords, SSNs, payment details, and addresses before any AI upload.",
-            "If sensitive text is found, the pill prompts Stop or Continue — Continue redacts OCR and sends text only (no screenshot) to AI.",
+            "If sensitive text is found, the pill prompts Stop or Continue \u2014 Continue redacts OCR and sends text only (no screenshot) to AI.",
             "OCR+AI remains the classifier; local phishing cues and a one-retry analyze call harden reliability when OCR is strong."
           ],
           "fixes": [

@@ -16,10 +16,10 @@ const MODES = [
 
 /** Widget reshape cycle — each form has its own chrome in securely.css */
 const LAYOUTS = [
-  { id: "normal", label: "Normal pill", width: 340, height: 64, privacyH: 140, radius: "pill" },
-  { id: "square", label: "Small square", width: 148, height: 168, privacyH: 220, radius: 28 },
-  { id: "vertical", label: "Vertical", width: 168, height: 340, privacyH: 400, radius: 32 },
-  { id: "big", label: "Big square", width: 268, height: 292, privacyH: 360, radius: 36 },
+  { id: "square", label: "Small island", width: 132, height: 128, privacyH: 190, radius: 28 },
+  { id: "vertical", label: "Vertical", width: 168, height: 300, privacyH: 360, radius: 32 },
+  { id: "big", label: "Big square", width: 268, height: 260, privacyH: 330, radius: 36 },
+  { id: "normal", label: "Normal pill", width: 300, height: 64, privacyH: 140, radius: "pill" },
 ];
 
 const LAYOUT_ICONS = {
@@ -131,8 +131,21 @@ function loadSettings() {
 }
 
 function loadLayout() {
-  const raw = localStorage.getItem(LAYOUT_KEY) || settings.layout || "normal";
-  return LAYOUTS.some((l) => l.id === raw) ? raw : "normal";
+  const migrateKey = "securely-layout-small-island-v1";
+  // One-shot: old default was the wide pill — switch to the small island.
+  if (!localStorage.getItem(migrateKey)) {
+    localStorage.setItem(migrateKey, "1");
+    const prev = localStorage.getItem(LAYOUT_KEY) || settings.layout || "normal";
+    if (!prev || prev === "normal") {
+      localStorage.setItem(LAYOUT_KEY, "square");
+      return "square";
+    }
+  }
+  const stored = localStorage.getItem(LAYOUT_KEY);
+  if (stored && LAYOUTS.some((l) => l.id === stored)) return stored;
+  const fromSettings = settings.layout;
+  if (fromSettings && LAYOUTS.some((l) => l.id === fromSettings)) return fromSettings;
+  return "square";
 }
 
 function layoutMeta(id = widgetLayout) {

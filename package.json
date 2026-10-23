@@ -1,9 +1,9 @@
 {
   "name": "securely",
-  "version": "0.1.12",
+  "version": "0.1.13",
   "private": true,
   "type": "module",
-  "description": "Securely — AI-assisted Windows screen threat monitoring",
+  "description": "Securely â€” AI-assisted Windows screen threat monitoring",
   "scripts": {
     "notes": "node scripts/render-release-notes.mjs",
     "license:rtf": "node scripts/license-rtf.mjs",
@@ -12,3 +12,4 @@
     "release:github:all": "node scripts/publish-github-release.mjs --all"
   }
 }
+
