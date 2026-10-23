@@ -58,11 +58,50 @@
     <p class="lede">The same list as the <a href="https://github.com/Delexoo/Securely/releases">GitHub releases</a>.</p>
     <div class="release-log">
       <!-- brain:notes -->
+      <article class="release" id="v0.1.5">
+        <div class="release-body">
+          <header class="release-meta">
+            <a class="release-tag" href="https://github.com/Delexoo/Securely/releases/tag/v0.1.5">v0.1.5</a>
+            <span class="release-latest">Latest</span>
+            <time datetime="2026-10-22">22 Oct 2026</time>
+          </header>
+          <div class="release-card">
+            <h2>Instant billing unlock, broader privacy gate, power-suite research</h2>
+            <h3>Added</h3>
+            <h4>Core</h4>
+            <ul>
+              <li>The local sensitive gate covers more categories — emails, phones, DOB, government and medical IDs, tax IDs, crypto seeds, OTP/recovery codes, private network IDs, and biometric cues — before any AI upload.</li>
+            </ul>
+            <h4>Dashboard</h4>
+            <ul>
+              <li>After Stripe Checkout, the Credits tab flips to Active immediately via checkout-status, opener postMessage, and a short license poll — no manual re-activate wait.</li>
+            </ul>
+            <h4>API</h4>
+            <ul>
+              <li>New checkout-status endpoint confirms a Stripe session and returns subscription status for instant app unlock.</li>
+            </ul>
+            <h4>Site</h4>
+            <ul>
+              <li>Billing success auto-confirms the session and posts securely-checkout-done back to the opener dashboard.</li>
+              <li>docs/power-suite research pack maps Analyze, Defender-companion AV, WireGuard VPN, and real-time roadmap with a Phase 1 build prompt.</li>
+            </ul>
+            <h4>Security</h4>
+            <ul>
+              <li>Threat model documents Analyze/VPN/AV data flows and honest claim limits versus Norton-class suites.</li>
+              <li>REA use is bounded to Securely and open targets — never commercial AV/VPN binaries.</li>
+            </ul>
+            <h3>Bug fixes</h3>
+            <h4>Dashboard</h4>
+            <ul>
+              <li>Subscribe opens checkout without noopener so the success page can notify the dashboard.</li>
+            </ul>
+          </div>
+        </div>
+      </article>
       <article class="release" id="v0.1.4">
         <div class="release-body">
           <header class="release-meta">
             <a class="release-tag" href="https://github.com/Delexoo/Securely/releases/tag/v0.1.4">v0.1.4</a>
-            <span class="release-latest">Latest</span>
             <time datetime="2026-10-22">22 Oct 2026</time>
           </header>
           <div class="release-card">

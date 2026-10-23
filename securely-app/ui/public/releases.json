@@ -3,6 +3,50 @@
   "repo": "Delexoo/Securely",
   "updates": [
     {
+      "version": "0.1.5",
+      "date": "2026-10-22",
+      "title": "Instant billing unlock, broader privacy gate, power-suite research",
+      "tag": "v0.1.5",
+      "url": "https://github.com/Delexoo/Securely/releases/tag/v0.1.5",
+      "sections": [
+        {
+          "heading": "Core",
+          "added": [
+            "The local sensitive gate covers more categories — emails, phones, DOB, government and medical IDs, tax IDs, crypto seeds, OTP/recovery codes, private network IDs, and biometric cues — before any AI upload."
+          ]
+        },
+        {
+          "heading": "Dashboard",
+          "added": [
+            "After Stripe Checkout, the Credits tab flips to Active immediately via checkout-status, opener postMessage, and a short license poll — no manual re-activate wait."
+          ],
+          "fixes": [
+            "Subscribe opens checkout without noopener so the success page can notify the dashboard."
+          ]
+        },
+        {
+          "heading": "API",
+          "added": [
+            "New checkout-status endpoint confirms a Stripe session and returns subscription status for instant app unlock."
+          ]
+        },
+        {
+          "heading": "Site",
+          "added": [
+            "Billing success auto-confirms the session and posts securely-checkout-done back to the opener dashboard.",
+            "docs/power-suite research pack maps Analyze, Defender-companion AV, WireGuard VPN, and real-time roadmap with a Phase 1 build prompt."
+          ]
+        },
+        {
+          "heading": "Security",
+          "added": [
+            "Threat model documents Analyze/VPN/AV data flows and honest claim limits versus Norton-class suites.",
+            "REA use is bounded to Securely and open targets — never commercial AV/VPN binaries."
+          ]
+        }
+      ]
+    },
+    {
       "version": "0.1.4",
       "date": "2026-10-22",
       "title": "Local sensitive-data gate before AI scan",

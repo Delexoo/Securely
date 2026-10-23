@@ -617,6 +617,7 @@ dragEl.addEventListener("lostpointercapture", endDragFollow);
 window.addEventListener("storage", (e) => {
   if (e.key === MODE_KEY && e.newValue) setScanMode(e.newValue);
   if (e.key === SETTINGS_KEY) settings = loadSettings();
+  if (e.key === LICENSE_KEY) syncLicenseChrome();
 });
 
 try {

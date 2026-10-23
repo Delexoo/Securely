@@ -281,13 +281,26 @@ function loadLicense() {
   }
 }
 
+const PENDING_CHECKOUT_KEY = "securely-pending-checkout";
+let licenseWatchTimer = 0;
+
+function saveLicenseLocal(next) {
+  localStorage.setItem(LICENSE_KEY, JSON.stringify(next));
+  try {
+    window.dispatchEvent(new StorageEvent("storage", { key: LICENSE_KEY, newValue: JSON.stringify(next) }));
+  } catch { /* ignore */ }
+}
+
 function paintBilling() {
   const lic = loadLicense();
   const tag = document.querySelector("#license-status");
   const copy = document.querySelector("#license-status-copy");
   const emailEl = document.querySelector("#license-email");
   if (emailEl && lic?.email && !emailEl.value) emailEl.value = lic.email;
-  if (tag) tag.textContent = lic?.active ? "Active" : "Inactive";
+  if (tag) {
+    tag.textContent = lic?.active ? "Active" : "Inactive";
+    tag.dataset.state = lic?.active ? "active" : "inactive";
+  }
   if (copy) {
     copy.textContent = lic?.active
       ? `Licensed to ${lic.email}. Scans are unlocked.`
@@ -295,33 +308,89 @@ function paintBilling() {
   }
 }
 
+function applyLicense(email, active, status, message) {
+  const clean = String(email || "").trim().toLowerCase();
+  if (!clean) return;
+  saveLicenseLocal({
+    email: clean,
+    active: !!active,
+    status: status || (active ? "active" : "inactive"),
+    checkedAt: Date.now(),
+  });
+  const emailEl = document.querySelector("#license-email");
+  if (emailEl && !emailEl.value) emailEl.value = clean;
+  paintBilling();
+  const msg = document.querySelector("#license-message");
+  if (msg && message) msg.textContent = message;
+}
+
+function stopLicenseWatch() {
+  if (licenseWatchTimer) {
+    clearInterval(licenseWatchTimer);
+    licenseWatchTimer = 0;
+  }
+}
+
+async function checkLicenseEmail(email) {
+  const clean = String(email || "").trim().toLowerCase();
+  if (!clean) return null;
+  const res = await fetch(`${SITE_ORIGIN}/api/license`, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ email: clean }),
+  });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.error || "Could not verify subscription.");
+  return { email: clean, active: !!data.active, status: data.status || "" };
+}
+
+function startLicenseWatch(email) {
+  const clean = String(email || "").trim().toLowerCase();
+  if (!clean) return;
+  localStorage.setItem(PENDING_CHECKOUT_KEY, JSON.stringify({ email: clean, startedAt: Date.now() }));
+  stopLicenseWatch();
+  let tries = 0;
+  const tick = async () => {
+    tries += 1;
+    if (tries > 60) {
+      stopLicenseWatch();
+      const msg = document.querySelector("#license-message");
+      if (msg) msg.textContent = "Still waiting on Stripe. Press Activate when your receipt arrives.";
+      return;
+    }
+    try {
+      const result = await checkLicenseEmail(clean);
+      if (result?.active) {
+        stopLicenseWatch();
+        localStorage.removeItem(PENDING_CHECKOUT_KEY);
+        applyLicense(
+          result.email,
+          true,
+          result.status,
+          "Subscription active — payment connected. You can run scans now.",
+        );
+      }
+    } catch { /* keep polling */ }
+  };
+  void tick();
+  licenseWatchTimer = setInterval(tick, 2500);
+}
+
 async function activateLicense() {
   const msg = document.querySelector("#license-message");
   const email = document.querySelector("#license-email")?.value?.trim() || "";
   if (msg) msg.textContent = "Checking Stripe…";
   try {
-    const res = await fetch(`${SITE_ORIGIN}/api/license`, {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({ email }),
-    });
-    const data = await res.json().catch(() => ({}));
-    if (!res.ok) throw new Error(data.error || "Could not verify subscription.");
-    localStorage.setItem(
-      LICENSE_KEY,
-      JSON.stringify({
-        email: email.toLowerCase(),
-        active: !!data.active,
-        status: data.status || "",
-        checkedAt: Date.now(),
-      }),
-    );
-    paintBilling();
-    if (msg) {
-      msg.textContent = data.active
+    const result = await checkLicenseEmail(email);
+    applyLicense(
+      result.email,
+      result.active,
+      result.status,
+      result.active
         ? "Subscription active. You can run scans from the pill."
-        : "No active $3/month subscription for that email. Subscribe first, then Activate again.";
-    }
+        : "No active $3/month subscription for that email. Subscribe first, then Activate again.",
+    );
+    if (result.active) localStorage.removeItem(PENDING_CHECKOUT_KEY);
   } catch (err) {
     if (msg) msg.textContent = err.message || "Activation failed.";
   }
@@ -345,15 +414,43 @@ document.querySelector("#license-subscribe")?.addEventListener("click", async ()
     });
     const data = await res.json().catch(() => ({}));
     if (!res.ok || !data.url) throw new Error(data.error || "Checkout unavailable.");
-    window.open(data.url, "_blank", "noopener");
+    // Keep opener so billing-success can postMessage back (do not use noopener).
+    window.open(data.url, "securely-checkout");
+    startLicenseWatch(email);
     if (msg) {
-      msg.textContent = promo
-        ? "Checkout opened. Complete payment (promo applied if valid), then Activate."
-        : "Checkout opened. Complete payment, then Activate with the same email.";
+      msg.textContent = "Checkout opened. Waiting for Stripe — status will flip to Active as soon as payment clears.";
     }
   } catch (err) {
     if (msg) msg.textContent = err.message || "Could not start checkout.";
   }
+});
+
+window.addEventListener("message", (event) => {
+  const data = event.data;
+  if (!data || data.type !== "securely-checkout-done") return;
+  if (data.active && data.email) {
+    stopLicenseWatch();
+    localStorage.removeItem(PENDING_CHECKOUT_KEY);
+    applyLicense(
+      data.email,
+      true,
+      data.status || "active",
+      "Subscription active — payment connected immediately. You can run scans now.",
+    );
+    return;
+  }
+  if (data.email) {
+    const emailEl = document.querySelector("#license-email");
+    if (emailEl) emailEl.value = data.email;
+    startLicenseWatch(data.email);
+  }
+});
+
+window.addEventListener("focus", () => {
+  try {
+    const pending = JSON.parse(localStorage.getItem(PENDING_CHECKOUT_KEY) || "null");
+    if (pending?.email && !loadLicense()?.active) startLicenseWatch(pending.email);
+  } catch { /* ignore */ }
 });
 document.querySelector("#license-portal")?.addEventListener("click", async () => {
   const msg = document.querySelector("#license-message");
@@ -457,3 +554,12 @@ setMode(["quick", "timed", "continuous"].includes(savedMode) ? savedMode : "quic
 const timedSelect = document.querySelector("#dash-timed-mins");
 if (timedSelect && settings.timedMins) timedSelect.value = String(settings.timedMins);
 syncAlerts();
+paintBilling();
+try {
+  const pending = JSON.parse(localStorage.getItem(PENDING_CHECKOUT_KEY) || "null");
+  if (pending?.email && !loadLicense()?.active) {
+    startLicenseWatch(pending.email);
+    const msg = document.querySelector("#license-message");
+    if (msg) msg.textContent = "Watching Stripe for your payment — status updates automatically.";
+  }
+} catch { /* ignore */ }

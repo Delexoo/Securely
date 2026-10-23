@@ -13,9 +13,62 @@
 <body>
   <main class="wrap" style="padding-top:6rem">
     <p class="eyebrow">Checkout</p>
-    <h1>Payment received</h1>
-    <p class="lede">Thanks for subscribing to <strong>Securely</strong> at <strong>$3/month</strong>. Stripe will email a receipt. In the Windows app, open <strong>Dashboard → Billing</strong>, enter the same email, and press <strong>Activate</strong>. Cancel anytime from Billing → Manage / cancel.</p>
+    <h1 id="title">Confirming payment…</h1>
+    <p class="lede" id="lede">Securely is verifying your Stripe checkout so the Windows app can unlock immediately.</p>
+    <p id="status" class="note" role="status"></p>
     <p><a class="btn" href="/">Back home</a> <a class="btn ghost" href="/billing.html">Billing help</a></p>
   </main>
+  <script>
+    (async () => {
+      const title = document.querySelector("#title");
+      const lede = document.querySelector("#lede");
+      const status = document.querySelector("#status");
+      const sessionId = new URLSearchParams(location.search).get("session_id") || "";
+      if (!sessionId) {
+        title.textContent = "Payment received";
+        lede.textContent = "Open the Securely app → Billing and press Activate with your Stripe email.";
+        return;
+      }
+      try {
+        const res = await fetch("/api/checkout-status", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ sessionId }),
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) throw new Error(data.error || "Could not confirm checkout.");
+
+        const payload = {
+          type: "securely-checkout-done",
+          email: data.email || "",
+          active: !!data.active,
+          status: data.status || "",
+          sessionId,
+        };
+        // Notify the Securely dashboard if this tab was opened from the app.
+        try {
+          if (window.opener && !window.opener.closed) {
+            window.opener.postMessage(payload, "*");
+          }
+        } catch { /* cross-origin / closed */ }
+
+        if (data.active) {
+          title.textContent = "You're subscribed";
+          lede.innerHTML = data.email
+            ? `Securely is <strong>active</strong> for <strong>${data.email}</strong>. The app should unlock right away — you can close this tab.`
+            : "Securely is <strong>active</strong>. Return to the app — scans should unlock immediately.";
+          status.textContent = "Subscription connected.";
+        } else {
+          title.textContent = "Payment received";
+          lede.textContent = "Stripe accepted the payment. If the app still shows Inactive, open Billing and press Activate with the same email.";
+          status.textContent = data.status ? `Stripe status: ${data.status}` : "";
+        }
+      } catch (err) {
+        title.textContent = "Payment received";
+        lede.textContent = "Thanks for subscribing. Open Securely → Billing and press Activate with your Stripe email.";
+        status.textContent = err.message || "Could not auto-confirm.";
+      }
+    })();
+  </script>
 </body>
 </html>
