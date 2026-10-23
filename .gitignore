@@ -10,6 +10,7 @@
 **/obj/
 **/node_modules/
 **/dist/
+**/dist-setup/
 **/publish/
 **/.venv/
 **/__pycache__/

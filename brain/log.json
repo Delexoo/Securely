@@ -3,6 +3,32 @@
   "product": "Securely",
   "updates": [
     {
+      "version": "0.1.3",
+      "date": "2026-10-22",
+      "title": "Securely installer, license, and always-latest download",
+      "sections": [
+        {
+          "heading": "Site",
+          "added": [
+            "Windows Download always resolves to the latest Securely-Setup.exe on the site (with GitHub Release fallback).",
+            "Professional README, Securely License Agreement, and installer license screen branded only for Securely."
+          ]
+        },
+        {
+          "heading": "Host",
+          "added": [
+            "Inno Setup package Securely-Setup ships the shell, UI, and Securely license acceptance."
+          ]
+        },
+        {
+          "heading": "Security",
+          "added": [
+            "Local .env is Securely-only (example file documents product secrets without other-brand names)."
+          ]
+        }
+      ]
+    },
+    {
       "version": "0.1.2",
       "date": "2026-10-22",
       "title": "Production API host for scans and billing",

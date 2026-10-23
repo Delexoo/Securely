@@ -754,7 +754,7 @@ internal sealed class ShellForm : Form
                     break;
                 case "play":
                 {
-                    // Basename only — UI sends Hooxie pack filenames under ui/public/sounds.
+                    // Basename only — UI sends sound pack filenames under ui/public/sounds.
                     var soundFile = root.TryGetProperty("file", out var fileEl) ? fileEl.GetString() ?? "" : "";
                     if (string.IsNullOrWhiteSpace(soundFile) && root.TryGetProperty("path", out var pathEl))
                         soundFile = pathEl.GetString() ?? "";

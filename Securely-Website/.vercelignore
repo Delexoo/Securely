@@ -5,8 +5,8 @@ Freeuniversitytools
 docs
 node_modules
 .git
-*.exe
 *.zip
 *.7z
 .env
 .env.*
+# Allow Securely-Website/download/Securely-Setup.exe (latest installer)

@@ -87,6 +87,7 @@ async function publishOne(update) {
       const text = await patch.text();
       return { tag, action: "error", status: patch.status, detail: text.slice(0, 200) };
     }
+    await uploadInstallerAssets(release);
     return { tag, action: "updated", url: release.html_url };
   }
 
@@ -109,7 +110,46 @@ async function publishOne(update) {
     return { tag, action: "error", status: created.status, detail: text.slice(0, 300) };
   }
   const release = await created.json();
+  await uploadInstallerAssets(release);
   return { tag, action: "created", url: release.html_url };
+}
+
+async function uploadInstallerAssets(release) {
+  const version = String(release.tag_name || "").replace(/^v/, "");
+  const candidates = [
+    path.join(root, "dist-setup", `Securely-Setup-${version}.exe`),
+    path.join(root, "dist-setup", "Securely-Setup.exe"),
+    path.join(root, "Securely-Website", "download", "Securely-Setup.exe"),
+  ];
+  const file = candidates.find((p) => fs.existsSync(p));
+  if (!file || !release.upload_url) return;
+  const name = path.basename(file).startsWith("Securely-Setup")
+    ? path.basename(file)
+    : `Securely-Setup-${version}.exe`;
+  const bytes = fs.readFileSync(file);
+  const uploadUrl = String(release.upload_url).replace(/\{.*\}$/, `?name=${encodeURIComponent(name)}`);
+  // Replace existing asset with same name when updating a release.
+  const assets = Array.isArray(release.assets) ? release.assets : [];
+  for (const asset of assets) {
+    if (asset.name === name || asset.name === "Securely-Setup.exe") {
+      await api("DELETE", `/repos/${OWNER}/${REPO}/releases/assets/${asset.id}`);
+    }
+  }
+  const put = await fetch(uploadUrl, {
+    method: "POST",
+    headers: {
+      Accept: "application/vnd.github+json",
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/octet-stream",
+      "X-GitHub-Api-Version": "2022-11-28",
+      "User-Agent": "securely-release-bot",
+    },
+    body: bytes,
+  });
+  if (!put.ok) {
+    const text = await put.text();
+    console.error(`Asset upload failed for ${name}: ${put.status} ${text.slice(0, 180)}`);
+  }
 }
 
 function formatReleaseBody(update) {

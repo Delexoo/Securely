@@ -93,7 +93,7 @@ function loadSettings() {
   }
 }
 
-/* Hooxie sound pack (copied into /sounds) */
+/* Securely sound pack (/sounds) */
 const SOUNDS = {
   start: "menu-open.mp3",
   done: "notification-pluck-off.mp3",

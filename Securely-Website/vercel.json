@@ -20,6 +20,8 @@
     { "source": "/api/license", "destination": "/api/license.js" },
     { "source": "/api/portal", "destination": "/api/portal.js" },
     { "source": "/api/webhook", "destination": "/api/webhook.js" },
-    { "source": "/api/analyze", "destination": "/api/analyze.js" }
+    { "source": "/api/analyze", "destination": "/api/analyze.js" },
+    { "source": "/api/latest-download", "destination": "/api/latest-download.js" },
+    { "source": "/download/latest", "destination": "/api/latest-download.js" }
   ]
 }

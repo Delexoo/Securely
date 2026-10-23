@@ -1,0 +1,215 @@
+SECURELY LICENSE AGREEMENT
+Effective date: 22 October 2026
+Version: 2026-10-22
+
+This Securely License Agreement (the "Agreement") is a binding contract between Delexoo ("Delexoo," "we," "us," or "our") and the person or entity that downloads, installs, pays for, accesses, or uses Securely, the trysecurely.com / trysecurely.vercel.app website, or related installers, updates, and services (the "Software"). "You" and "your" mean that person or, if you accept for an organization, that organization and the individual who accepts.
+
+Securely is a Windows desktop product published by Delexoo. Support: support@trysecurely.com. The same text is posted with the product and on the Securely website.
+
+READ THIS AGREEMENT. IT LIMITS WARRANTIES, LIMITS OUR LIABILITY, REQUIRES YOU TO COVER CERTAIN CLAIMS AGAINST US, AND SENDS MOST DISPUTES TO INDIVIDUAL ARBITRATION UNLESS YOU OPT OUT IN TIME. IT ALSO SAYS THAT YOU, NOT DELEXOO, ARE RESPONSIBLE FOR HOW YOU USE SCREEN CAPTURE, OCR, AND AI ANALYSIS RESULTS.
+
+If you do not agree, do not download, install, buy, or use the Software. If you already installed it, stop using it and uninstall it.
+
+A short reading aid appears first. The numbered sections are the contract. If the reading aid and a numbered section differ, the numbered section controls.
+
+
+READING AID
+
+- An active paid subscription unlocks Securely on the computers you activate with the Stripe email you used at checkout.
+- Securely is a threat-monitoring overlay. It is not antivirus, not a guarantee that every scam will be caught, and not legal advice.
+- The Software is provided as is. We do not promise that OCR or AI analysis is complete, correct, or uninterrupted.
+- Our liability for a claim about a subscription is limited to the amount you paid for Securely in the three months before the claim, except where the law does not allow that limit.
+- You are responsible for what appears on your screen, for consent when monitoring continuously, and for rules set by schools, employers, and other services.
+- Most disputes go to individual arbitration, not a class action, unless you opt out within 30 days or a mandatory consumer law says otherwise.
+
+
+1. ACCEPTANCE
+
+1.1 You accept this Agreement when you do any of the following: click to agree, install or run the Software, complete checkout, activate a subscription on a computer, or keep using the Software after we post an updated Agreement.
+
+1.2 The installer shows this Agreement before setup finishes. If you do not accept it there, setup does not continue.
+
+1.3 We offer the Software only if you accept. There is no use outside this Agreement.
+
+1.4 You agree that electronic acceptance is the same as a signature under the United States Electronic Signatures in Global and National Commerce Act (E-SIGN), 15 U.S.C. section 7001 and following, the Uniform Electronic Transactions Act, and similar laws. You consent to receive this Agreement, receipts, and legal notices in electronic form.
+
+
+2. WHO THIS BINDS
+
+2.1 You must be at least 18 years old, or the age of legal majority where you live, whichever is higher. The Software and the Website are not directed to children under 13. You must not let a child under 13 use them or send us a child's personal information. If you are under 18, do not accept this Agreement.
+
+2.2 If you use the Software for a company or other organization, you represent that you can bind it. "You" then includes that organization. If you lack authority, you must not accept. If you use the Software anyway, you accept personally.
+
+2.3 You may not accept this Agreement, buy a subscription, or use the Software if you are barred under export and sanctions law, or if a court or government order prohibits you from doing so.
+
+2.4 This Agreement gives you a copyright license. It is not a sale of goods except to the extent a mandatory consumer law treats digital content as goods. Title to the Software does not pass to you.
+
+
+3. DEFINITIONS
+
+"Analysis" means the OCR text, screenshot evidence, and classification result (including Safe, Suspicious, Phishing, Unsure, or similar labels) produced when Securely examines screen content.
+
+"Computer" means a Windows device on which you install and run Securely.
+
+"Input" means screen pixels, OCR text, settings, the email you use for Stripe, and other data the Software processes on your Computer or sends to Securely servers you invoke.
+
+"Paid subscription" means an active Stripe subscription for Securely that Delexoo honors for the email you activate in the app.
+
+"Stripe" means Stripe, Inc. and its affiliates, which process payment.
+
+"Website" means trysecurely.com, trysecurely.vercel.app, and the pages Delexoo serves for Securely, including terms, privacy, billing, releases, and this Agreement.
+
+
+4. WHAT SECURELY IS
+
+4.1 Securely is a Windows overlay that can capture the primary display, run OCR, and send evidence to a server-side analysis service so you can see Safe / Warning / Phishing style status on the widget. It includes a floating dashboard for monitoring settings, billing activation, audit history, and release notes.
+
+4.2 Securely is a decision aid. It is not a full antivirus product, not a firewall, not identity theft insurance, and not a promise that every phishing page, scam, or malicious UI will be detected. False negatives and false positives can occur.
+
+4.3 A paid subscription is a limited copyright license to use the Software while the subscription remains active. It is not a sale of our intellectual property and not an assignment of any right except the limited rights in section 5.
+
+4.4 Features can differ by version, by Windows build, by network availability, and by whether this Computer has an active paid subscription. Descriptions on the Website, in a demo, in a video, or in a conversation explain the product in ordinary language. They are not a warranty or a service-level agreement.
+
+4.5 The price of Securely is three United States dollars per month, renewing until canceled, unless a promotional code changes the amount Stripe charges. Taxes may be added. Cancel anytime through the Stripe customer portal linked from the app or Website.
+
+4.6 The Software requires a supported Windows 10 or Windows 11 install and the Microsoft Edge WebView2 runtime. You are responsible for installing system software the version you use requires.
+
+4.7 Continuous (24/7) monitoring requires your explicit consent in the product. You are responsible for complying with workplace, school, and local privacy rules before leaving monitoring on.
+
+
+5. LICENSE GRANT
+
+5.1 If you comply with this Agreement and maintain an active paid subscription (or a promotional period Delexoo honors), Delexoo grants you a limited, non-exclusive, non-transferable, non-sublicensable, revocable license to install and run the object code of the Software on Computers you activate for your own use, for as long as this Agreement and the subscription allow.
+
+5.2 If you have not activated a paid subscription, you may install the Software only to the extent that build still runs before payment. Delexoo may require activation before scan features run. Sharing an activation email, receipt, or copied application folder does not create extra unpaid seats beyond what Stripe and the activation flow allow.
+
+5.3 This license does not include the right to offer Securely as a service to others, to rent or lease it, to use it as the engine of a product you sell, or to present yourself as the publisher of Securely.
+
+5.4 Any right not granted in this section requires a separate written license from Delexoo. Ask at support@trysecurely.com.
+
+
+6. SUBSCRIPTION AND ACTIVATION
+
+6.1 Checkout is handled by Stripe. After payment, you activate Securely in the app with the same email used at Stripe checkout. The app checks subscription status through Securely servers.
+
+6.2 You will not bypass, patch, or share around that check. You will not publish a method whose purpose is to unlock Securely without an active paid subscription. Circumventing a technical measure that controls access to a paid feature can violate the Digital Millennium Copyright Act, 17 U.S.C. section 1201, and similar laws, except for a reverse-engineering right that a statute gives you and that cannot be waived.
+
+6.3 You are responsible for activity under your activated email, including activity by another person who uses your Windows session.
+
+6.4 Refunds and cancellations follow the billing policy on the Website and Stripe's rules. Canceling stops future renewals; it does not automatically erase local audit logs on your Computer.
+
+
+7. RESTRICTIONS
+
+Except where a statute forbids the restriction, you will not, and will not allow anyone else to:
+
+(a) copy the Software except for ordinary backups that are not run as unpaid extra seats;
+
+(b) distribute, publish, sublicense, sell, lend, or lease the Software;
+
+(c) modify the Software, or make a derivative work, in order to defeat licensing or this Agreement;
+
+(d) reverse engineer, decompile, or disassemble the Software, except for the narrow interoperability right a law gives you after you have asked us in writing and we have not provided the needed information within a reasonable time;
+
+(e) remove a copyright, license, trademark, or attribution notice;
+
+(f) use our names, logos, or trade dress except for fair credit, or register a confusingly similar name, domain, or handle for software;
+
+(g) state or imply that Delexoo sponsors, employs, or endorses you, your coursework, your employer, or your product;
+
+(h) use the Software to violate privacy, wiretap, or computer-crime laws, or to monitor another person's screen without a lawful basis and any required consent;
+
+(i) use Analysis results as the sole basis for legal, medical, employment, or financial decisions without your own review.
+
+
+8. OWNERSHIP
+
+8.1 Delexoo and its licensors own the Software, the Website, the Securely name and logos, the selection and arrangement of the product, and the copyrights, trade secrets, and other intellectual property in them. This Agreement does not transfer that ownership.
+
+8.2 Windows, Stripe, OpenRouter, and other third-party names are the property of their owners. Mention describes a product or service you may use. It is not a statement of partnership, sponsorship, or endorsement.
+
+8.3 As between you and Delexoo, you keep whatever rights you already have in Input that originates on your Computer. You grant Delexoo only the rights needed to run analysis and billing features you invoke and to handle support as the privacy policy describes.
+
+8.4 Analysis labels and explanations are generated automatically. We do not warrant that Analysis is original, accurate, complete, non-infringing, or fit for a particular purpose. You must review it before you act.
+
+
+9. CREDIT
+
+When you are allowed to show the Software in public, give credit a viewer can see. Link https://trysecurely.vercel.app or https://trysecurely.com when that domain is live. A line such as "Securely by Delexoo" is enough. Credit is not permission to copy, modify, or sell the Software.
+
+
+10. SUGGESTIONS YOU SEND US
+
+If you send an idea, a bug report, or a suggestion, you grant Delexoo a perpetual, irrevocable, worldwide, royalty-free license to use it for any purpose, without further payment or credit, and without treating it as confidential. Do not send material you want kept secret, or material someone else owns.
+
+
+11. OTHER PEOPLE'S SOFTWARE AND SERVICES
+
+11.1 The Software may include or call third-party components, including the WebView2 runtime, NAudio, and libraries under their own licenses. Those licenses govern those components.
+
+11.2 Payments are processed by Stripe under Stripe's terms and privacy policy. Analysis may call OpenRouter or another model provider under that provider's terms. We do not receive your full payment-card number.
+
+11.3 The Software depends on Windows. Microsoft can change capture, OCR, graphics, and security behavior. A Windows change is not a defect we promised to prevent.
+
+
+12. PRIVACY AND SCREEN CONTENT
+
+12.1 Securely may capture screen images and OCR text from the primary monitor when you run a scan or enable monitoring. Tray and toast regions may be masked. The Securely window is hidden during capture when possible.
+
+12.2 Do not use Securely to capture or send content you are not allowed to process. You are responsible for sensitive data that appears on screen during a scan.
+
+12.3 The privacy policy on the Website describes how Website and billing data are handled. Local audit logs stay on your Computer unless you choose to share them.
+
+
+13. DISCLAIMER OF WARRANTIES
+
+THE SOFTWARE, WEBSITE, AND ANALYSIS ARE PROVIDED "AS IS" AND "AS AVAILABLE." TO THE MAXIMUM EXTENT PERMITTED BY LAW, DELEXOO DISCLAIMS ALL WARRANTIES, WHETHER EXPRESS, IMPLIED, OR STATUTORY, INCLUDING MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, TITLE, AND NON-INFRINGEMENT. WE DO NOT WARRANT THAT EVERY THREAT WILL BE DETECTED, THAT ANALYSIS WILL BE ERROR-FREE, OR THAT THE SOFTWARE WILL BE UNINTERRUPTED OR SECURE.
+
+
+14. LIMITATION OF LIABILITY
+
+TO THE MAXIMUM EXTENT PERMITTED BY LAW, DELEXOO IS NOT LIABLE FOR INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, EXEMPLARY, OR PUNITIVE DAMAGES, OR FOR LOST PROFITS, LOST DATA, OR BUSINESS INTERRUPTION, EVEN IF ADVISED OF THE POSSIBILITY. DELEXOO'S TOTAL LIABILITY FOR CLAIMS ARISING OUT OF THIS AGREEMENT OR THE SOFTWARE IS LIMITED TO THE AMOUNTS YOU PAID TO DELEXOO FOR SECURELY IN THE THREE MONTHS BEFORE THE CLAIM. SOME PLACES DO NOT ALLOW CERTAIN LIMITS; IN THOSE PLACES THE LIMIT APPLIES ONLY TO THE EXTENT ALLOWED.
+
+
+15. INDEMNITY
+
+You will defend and indemnify Delexoo against claims arising from your misuse of the Software, your monitoring of others without a lawful basis, your violation of this Agreement, or your violation of law, except to the extent caused by Delexoo's willful misconduct.
+
+
+16. DISPUTES
+
+16.1 The laws of the State of Delaware, USA, govern this Agreement, without regard to conflict-of-law rules, except where a mandatory consumer law of your residence requires otherwise.
+
+16.2 Except for small-claims matters and intellectual-property injunctions, disputes will be resolved by binding individual arbitration administered by the American Arbitration Association under its Consumer Arbitration Rules. Class actions are waived to the extent allowed by law.
+
+16.3 You may opt out of arbitration within 30 days of first accepting this Agreement by emailing support@trysecurely.com with your name, the email used at checkout, and a clear statement that you opt out of arbitration.
+
+
+17. EXPORT AND SANCTIONS
+
+You will not export, re-export, or use the Software in violation of United States export or sanctions law. You represent that you are not on a denied-party list and are not located in a comprehensively embargoed territory.
+
+
+18. CHANGES AND TERMINATION
+
+18.1 We may update this Agreement by posting a new version with the product or on the Website. Continued use after the effective date of a change is acceptance of the change, except where mandatory law requires a different process.
+
+18.2 We may suspend or end the license if you breach this Agreement, if payment fails, or if the subscription is canceled. On termination you must stop using the Software and uninstall it.
+
+18.3 Sections that by their nature should survive (including ownership, disclaimer, liability limits, indemnity, and disputes) survive termination.
+
+
+19. GENERAL
+
+19.1 This Agreement is the entire agreement for the Software license. It does not change Stripe's terms for payment processing.
+
+19.2 If a court finds a part unenforceable, the rest remains in effect.
+
+19.3 You may not assign this Agreement without our written consent. We may assign it as part of a reorganization or sale.
+
+19.4 Failure to enforce a term is not a waiver.
+
+19.5 Notices to Delexoo go to support@trysecurely.com. Notices to you may go to the Stripe email on your subscription.
+
+
+BY INSTALLING OR USING SECURELY, YOU AGREE TO THIS AGREEMENT.
