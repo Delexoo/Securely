@@ -1,6 +1,6 @@
 #define MyAppName "Securely"
 #ifndef MyAppVersion
-#define MyAppVersion "0.1.7"
+#define MyAppVersion "0.1.8"
 #endif
 #define MyAppPublisher "Delexoo"
 #define MyAppURL "https://trysecurely.vercel.app"
@@ -25,8 +25,9 @@ UninstallDisplayIcon={app}\SecurelyShell.exe
 ; Securely shield logo (replaces default package/CD wizard art)
 WizardSmallImageFile=wizard\wizard-small-58.png,wizard\wizard-small-147.png,wizard\wizard-small-256.png
 WizardImageFile=wizard\wizard-202x386.png,wizard\wizard-240x459.png
-WizardImageBackColor=clBlack
-WizardSmallImageBackColor=clBlack
+WizardImageBackColor=clWhite
+WizardSmallImageBackColor=clWhite
+WizardImageAlphaFormat=defined
 WizardImageStretch=yes
 PrivilegesRequired=lowest
 PrivilegesRequiredOverridesAllowed=dialog

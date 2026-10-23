@@ -3,6 +3,21 @@
   "repo": "Delexoo/Securely",
   "updates": [
     {
+      "version": "0.1.8",
+      "date": "2026-10-22",
+      "title": "Rounded Securely logo in the installer",
+      "tag": "v0.1.8",
+      "url": "https://github.com/Delexoo/Securely/releases/tag/v0.1.8",
+      "sections": [
+        {
+          "heading": "Host",
+          "added": [
+            "Installer wizard logo tiles use a rounded squircle shield mark with transparent corners instead of a hard square."
+          ]
+        }
+      ]
+    },
+    {
       "version": "0.1.7",
       "date": "2026-10-22",
       "title": "Securely logo on the Windows installer",
