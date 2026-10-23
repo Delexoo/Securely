@@ -135,7 +135,17 @@ const SITE_ORIGIN = "https://trysecurely.vercel.app";
 const LICENSE_KEY = "securely-license";
 
 function openSection(name) {
-  const allowed = ["monitor", "settings", "billing", "audit", "releases", "credits"];
+  const allowed = [
+    "monitor",
+    "analyze",
+    "antivirus",
+    "vpn",
+    "settings",
+    "billing",
+    "audit",
+    "releases",
+    "credits",
+  ];
   const tabMap = {
     dashboard: "monitor",
     settings: "settings",
@@ -144,6 +154,10 @@ function openSection(name) {
     releases: "releases",
     credits: "credits",
     monitor: "monitor",
+    analyze: "analyze",
+    antivirus: "antivirus",
+    protect: "antivirus",
+    vpn: "vpn",
   };
   const id = tabMap[name] || (allowed.includes(name) ? name : "monitor");
   document.querySelectorAll(".side-nav [data-open]").forEach((btn) => {
@@ -156,6 +170,8 @@ function openSection(name) {
   if (id === "audit" || id === "monitor") syncAlerts();
   if (id === "releases") paintReleaseNotes();
   if (id === "billing") paintBilling();
+  if (id === "antivirus") paintAv();
+  if (id === "vpn") paintVpn();
 }
 
 window.openSecurelySection = openSection;
@@ -683,10 +699,359 @@ document.querySelector("#toggle-pill")?.addEventListener("click", () => {
 });
 document.querySelector("#quit-securely")?.addEventListener("click", () => hostPost({ cmd: "quit" }));
 
+/* ——— Analyze / Antivirus / VPN suite ——— */
+const AV_KEY = "securely-av";
+const VPN_KEY = "securely-vpn";
+const AV_EVENTS_KEY = "securely-av-events";
+
+let analyzeFile = null;
+
+function loadAv() {
+  try {
+    return {
+      profile: "balanced",
+      watchDownloads: true,
+      ...JSON.parse(localStorage.getItem(AV_KEY) || "{}"),
+    };
+  } catch {
+    return { profile: "balanced", watchDownloads: true };
+  }
+}
+
+function saveAv(next) {
+  localStorage.setItem(AV_KEY, JSON.stringify(next));
+}
+
+function loadVpn() {
+  try {
+    return {
+      connected: false,
+      region: "auto",
+      killSwitch: true,
+      splitTunnel: false,
+      config: "",
+      ...JSON.parse(localStorage.getItem(VPN_KEY) || "{}"),
+    };
+  } catch {
+    return { connected: false, region: "auto", killSwitch: true, splitTunnel: false, config: "" };
+  }
+}
+
+function saveVpn(next) {
+  localStorage.setItem(VPN_KEY, JSON.stringify(next));
+}
+
+function pushAvEvent(text, kind = "PROTECT") {
+  const rows = JSON.parse(localStorage.getItem(AV_EVENTS_KEY) || "[]");
+  rows.unshift({ t: Date.now(), kind, text });
+  localStorage.setItem(AV_EVENTS_KEY, JSON.stringify(rows.slice(0, 40)));
+  const audit = JSON.parse(localStorage.getItem(AUDIT_KEY) || "[]");
+  audit.unshift({ t: Date.now(), kind, text, summary: text });
+  localStorage.setItem(AUDIT_KEY, JSON.stringify(audit.slice(0, 200)));
+}
+
+async function sha256File(file) {
+  const buf = await file.arrayBuffer();
+  const digest = await crypto.subtle.digest("SHA-256", buf);
+  return [...new Uint8Array(digest)].map((b) => b.toString(16).padStart(2, "0")).join("");
+}
+
+function paintAnalyzeResult(data, fallbackSubject = "") {
+  const card = document.querySelector("#analyze-result");
+  const verdictEl = document.querySelector("#analyze-verdict");
+  const summaryEl = document.querySelector("#analyze-summary");
+  const evidenceEl = document.querySelector("#analyze-evidence");
+  const tipsEl = document.querySelector("#analyze-tips");
+  if (!card) return;
+  const verdict = data?.verdict || "unknown";
+  card.dataset.verdict = verdict;
+  if (verdictEl) verdictEl.textContent = verdict;
+  if (summaryEl) {
+    summaryEl.textContent =
+      data?.summary ||
+      (data?.error ? data.error : `Checked ${fallbackSubject || "item"}.`);
+  }
+  if (evidenceEl) {
+    evidenceEl.replaceChildren();
+    for (const row of data?.evidence || []) {
+      const li = document.createElement("li");
+      li.textContent = `${row.source}: ${row.detail}`;
+      evidenceEl.append(li);
+    }
+  }
+  if (tipsEl) {
+    const tips = data?.tips || [];
+    tipsEl.hidden = !tips.length;
+    tipsEl.replaceChildren();
+    for (const tip of tips) {
+      const li = document.createElement("li");
+      li.textContent = tip;
+      tipsEl.append(li);
+    }
+  }
+}
+
+async function runThreatAnalyze(payload) {
+  const res = await fetch(`${SITE_ORIGIN}/api/analyze-threat`, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.error || "Analysis failed.");
+  return data;
+}
+
+function setAnalyzeBusy(on) {
+  document.querySelector("#analyze-url-btn")?.toggleAttribute("disabled", !!on);
+  document.querySelector("#analyze-file-btn")?.toggleAttribute("disabled", !!on || !analyzeFile);
+}
+
+function bindAnalyze() {
+  const drop = document.querySelector("#analyze-drop");
+  const fileInput = document.querySelector("#analyze-file");
+  const meta = document.querySelector("#analyze-file-meta");
+  const fileBtn = document.querySelector("#analyze-file-btn");
+
+  function takeFile(file) {
+    if (!file) return;
+    if (file.size > 32 * 1024 * 1024) {
+      paintAnalyzeResult({ verdict: "unknown", summary: "File is over 32 MB — pick a smaller sample or hash it elsewhere.", evidence: [], tips: [] });
+      return;
+    }
+    analyzeFile = file;
+    if (meta) {
+      meta.hidden = false;
+      meta.textContent = `${file.name} · ${(file.size / 1024).toFixed(1)} KB`;
+    }
+    if (fileBtn) fileBtn.disabled = false;
+  }
+
+  document.querySelector("#analyze-pick")?.addEventListener("click", () => fileInput?.click());
+  drop?.addEventListener("click", () => fileInput?.click());
+  fileInput?.addEventListener("change", () => takeFile(fileInput.files?.[0]));
+  drop?.addEventListener("dragover", (e) => {
+    e.preventDefault();
+    drop.classList.add("is-drag");
+  });
+  drop?.addEventListener("dragleave", () => drop.classList.remove("is-drag"));
+  drop?.addEventListener("drop", (e) => {
+    e.preventDefault();
+    drop.classList.remove("is-drag");
+    takeFile(e.dataTransfer?.files?.[0]);
+  });
+
+  document.querySelector("#analyze-url-btn")?.addEventListener("click", async () => {
+    const url = document.querySelector("#analyze-url")?.value?.trim() || "";
+    if (!url) {
+      paintAnalyzeResult({ verdict: "unknown", summary: "Paste a link first.", evidence: [], tips: [] });
+      return;
+    }
+    setAnalyzeBusy(true);
+    paintAnalyzeResult({ verdict: "unknown", summary: "Checking link…", evidence: [], tips: [] });
+    try {
+      const data = await runThreatAnalyze({ type: "url", url });
+      paintAnalyzeResult(data, url);
+      pushAvEvent(`URL ${data.verdict}: ${url}`, data.verdict === "malicious" ? "PHISHING" : data.verdict === "suspicious" ? "SUSPICIOUS" : "ANALYZE");
+    } catch (err) {
+      paintAnalyzeResult({ verdict: "unknown", summary: err.message || "Link check failed.", evidence: [], tips: [] });
+    } finally {
+      setAnalyzeBusy(false);
+    }
+  });
+
+  fileBtn?.addEventListener("click", async () => {
+    if (!analyzeFile) return;
+    setAnalyzeBusy(true);
+    paintAnalyzeResult({ verdict: "unknown", summary: "Hashing on this PC…", evidence: [], tips: [] });
+    try {
+      const hash = await sha256File(analyzeFile);
+      paintAnalyzeResult({
+        verdict: "unknown",
+        summary: `SHA-256 ${hash.slice(0, 16)}… — looking up reputation…`,
+        evidence: [{ source: "local", detail: "Hash computed locally; file bytes are not uploaded by default." }],
+        tips: [],
+      });
+      const data = await runThreatAnalyze({
+        type: "file",
+        hash,
+        fileName: analyzeFile.name,
+        fileSize: analyzeFile.size,
+        mimeType: analyzeFile.type || "",
+      });
+      paintAnalyzeResult(data, analyzeFile.name);
+      pushAvEvent(
+        `File ${data.verdict}: ${analyzeFile.name}`,
+        data.verdict === "malicious" ? "PHISHING" : data.verdict === "suspicious" ? "SUSPICIOUS" : "ANALYZE",
+      );
+      paintAv();
+    } catch (err) {
+      paintAnalyzeResult({ verdict: "unknown", summary: err.message || "File analysis failed.", evidence: [], tips: [] });
+    } finally {
+      setAnalyzeBusy(false);
+    }
+  });
+}
+
+function paintAv() {
+  const av = loadAv();
+  document.querySelectorAll("[data-av-profile]").forEach((btn) => {
+    btn.setAttribute("aria-checked", String(btn.dataset.avProfile === av.profile));
+  });
+  const watch = document.querySelector("#av-watch-downloads");
+  if (watch) watch.checked = !!av.watchDownloads;
+  const status = document.querySelector("#av-status");
+  if (status) {
+    status.textContent = `Ready — ${av.profile[0].toUpperCase()}${av.profile.slice(1)} profile${
+      av.watchDownloads ? " · Downloads watch on" : ""
+    }.`;
+  }
+  const list = document.querySelector("#av-events");
+  if (!list) return;
+  const rows = JSON.parse(localStorage.getItem(AV_EVENTS_KEY) || "[]");
+  if (!rows.length) {
+    list.innerHTML = `<p class="empty-state">No protect events yet. Scan a file to see results here.</p>`;
+    return;
+  }
+  list.replaceChildren();
+  for (const row of rows.slice(0, 20)) {
+    const el = document.createElement("div");
+    el.className = "threat-row";
+    el.innerHTML = `<span class="kind">${row.kind || "PROTECT"}</span><span>${row.text || ""}</span><div class="muted">${new Date(row.t).toLocaleString()}</div>`;
+    list.append(el);
+  }
+}
+
+function bindAv() {
+  document.querySelectorAll("[data-av-profile]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const av = loadAv();
+      av.profile = btn.dataset.avProfile || "balanced";
+      saveAv(av);
+      paintAv();
+    });
+  });
+  document.querySelector("#av-watch-downloads")?.addEventListener("change", (e) => {
+    const av = loadAv();
+    av.watchDownloads = !!e.target.checked;
+    saveAv(av);
+    paintAv();
+  });
+  document.querySelector("#av-open-defender")?.addEventListener("click", () => {
+    hostPost({ cmd: "open-url", url: "ms-settings:windowsdefender" });
+    window.open("ms-settings:windowsdefender", "_blank");
+  });
+  document.querySelector("#av-open-analyze")?.addEventListener("click", () => openSection("analyze"));
+  document.querySelector("#av-scan-files")?.addEventListener("click", async () => {
+    const input = document.createElement("input");
+    input.type = "file";
+    input.multiple = true;
+    input.addEventListener("change", async () => {
+      const files = [...(input.files || [])].slice(0, 8);
+      if (!files.length) return;
+      const status = document.querySelector("#av-status");
+      if (status) status.textContent = `Scanning ${files.length} file(s)…`;
+      for (const file of files) {
+        try {
+          const hash = await sha256File(file);
+          const data = await runThreatAnalyze({
+            type: "file",
+            hash,
+            fileName: file.name,
+            fileSize: file.size,
+            mimeType: file.type || "",
+          });
+          pushAvEvent(`Scan ${data.verdict}: ${file.name}`, data.verdict === "malicious" ? "PHISHING" : "PROTECT");
+        } catch (err) {
+          pushAvEvent(`Scan failed: ${file.name} — ${err.message || "error"}`, "UNSURE");
+        }
+      }
+      paintAv();
+      if (status) status.textContent = "Scan finished — see recent protect events.";
+      playDashSound("notification-pluck-off.mp3");
+    });
+    input.click();
+  });
+}
+
+function paintVpn() {
+  const vpn = loadVpn();
+  const hero = document.querySelector(".vpn-hero");
+  const label = document.querySelector("#vpn-state-label");
+  const copy = document.querySelector("#vpn-state-copy");
+  const btn = document.querySelector("#vpn-connect");
+  const region = document.querySelector("#vpn-region");
+  const kill = document.querySelector("#vpn-kill");
+  const split = document.querySelector("#vpn-split");
+  const config = document.querySelector("#vpn-config");
+  if (region) region.value = vpn.region || "auto";
+  if (kill) kill.checked = vpn.killSwitch !== false;
+  if (split) split.checked = !!vpn.splitTunnel;
+  if (config && config.value !== (vpn.config || "")) config.value = vpn.config || "";
+  hero?.classList.toggle("is-on", !!vpn.connected);
+  if (label) label.textContent = vpn.connected ? "Connected" : "Disconnected";
+  if (copy) {
+    const regionLabel = region?.selectedOptions?.[0]?.text || vpn.region || "Auto";
+    copy.textContent = vpn.connected
+      ? `${regionLabel} · kill switch ${vpn.killSwitch === false ? "off" : "on"}${vpn.config ? " · BYO profile" : ""}`
+      : "Choose a region and press Connect.";
+  }
+  if (btn) btn.textContent = vpn.connected ? "Disconnect" : "Connect";
+}
+
+function bindVpn() {
+  const persist = () => {
+    const vpn = loadVpn();
+    vpn.region = document.querySelector("#vpn-region")?.value || "auto";
+    vpn.killSwitch = !!document.querySelector("#vpn-kill")?.checked;
+    vpn.splitTunnel = !!document.querySelector("#vpn-split")?.checked;
+    vpn.config = document.querySelector("#vpn-config")?.value || "";
+    saveVpn(vpn);
+    paintVpn();
+  };
+  document.querySelector("#vpn-region")?.addEventListener("change", persist);
+  document.querySelector("#vpn-kill")?.addEventListener("change", persist);
+  document.querySelector("#vpn-split")?.addEventListener("change", persist);
+  document.querySelector("#vpn-save-config")?.addEventListener("click", () => {
+    persist();
+    playDashSound("new-notification.mp3");
+    const copy = document.querySelector("#vpn-state-copy");
+    if (copy) copy.textContent = "WireGuard profile saved on this PC.";
+  });
+  document.querySelector("#vpn-connect")?.addEventListener("click", () => {
+    const vpn = loadVpn();
+    vpn.connected = !vpn.connected;
+    vpn.region = document.querySelector("#vpn-region")?.value || vpn.region;
+    vpn.killSwitch = !!document.querySelector("#vpn-kill")?.checked;
+    vpn.splitTunnel = !!document.querySelector("#vpn-split")?.checked;
+    vpn.config = document.querySelector("#vpn-config")?.value || vpn.config;
+    saveVpn(vpn);
+    paintVpn();
+    hostPost({
+      cmd: "vpn",
+      action: vpn.connected ? "connect" : "disconnect",
+      region: vpn.region,
+      killSwitch: vpn.killSwitch,
+      splitTunnel: vpn.splitTunnel,
+      hasConfig: !!String(vpn.config || "").trim(),
+    });
+    playDashSound(vpn.connected ? "notification-pluck-off.mp3" : "menu-open.mp3");
+  });
+}
+
+function bindSuiteChannels() {
+  bindAnalyze();
+  bindAv();
+  bindVpn();
+  paintAv();
+  paintVpn();
+}
+
 const savedAppear = localStorage.getItem(APPEAR_KEY) || "light";
 setAppearance(savedAppear);
 syncWidgetModes();
 bindSettings();
+bindSuiteChannels();
 
 const tab = new URLSearchParams(location.search).get("tab") || "dashboard";
 openSection(tab);

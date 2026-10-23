@@ -3,6 +3,27 @@
   "product": "Securely",
   "updates": [
     {
+      "version": "0.1.12",
+      "date": "2026-10-22",
+      "title": "Analyze, Antivirus, and VPN dashboard channels",
+      "sections": [
+        {
+          "heading": "Dashboard",
+          "added": [
+            "Analyze channel lets you paste a link or drop a file for hash-first reputation and heuristic harm checks.",
+            "Antivirus channel adds Quiet/Balanced/Paranoid profiles, Downloads watch, Defender deep-link, and multi-file scan.",
+            "VPN channel adds one-tap Connect with region, kill switch, split tunnel, and optional WireGuard BYO config."
+          ]
+        },
+        {
+          "heading": "API",
+          "added": [
+            "analyze-threat endpoint aggregates local heuristics, optional VirusTotal, URLhaus, and an AI summary for URLs and file hashes."
+          ]
+        }
+      ]
+    },
+    {
       "version": "0.1.11",
       "date": "2026-10-22",
       "title": "Timed duration, appearance sync, educated audit details",

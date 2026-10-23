@@ -800,6 +800,40 @@ internal sealed class ShellForm : Form
                     });
                     break;
                 }
+                case "open-url":
+                {
+                    var openUrl = root.TryGetProperty("url", out var openUrlEl) ? openUrlEl.GetString() ?? "" : "";
+                    if (string.IsNullOrWhiteSpace(openUrl)) break;
+                    // Allow https/http and Windows settings URIs only.
+                    var okScheme =
+                        openUrl.StartsWith("https://", StringComparison.OrdinalIgnoreCase)
+                        || openUrl.StartsWith("http://", StringComparison.OrdinalIgnoreCase)
+                        || openUrl.StartsWith("ms-settings:", StringComparison.OrdinalIgnoreCase);
+                    if (!okScheme) break;
+                    BeginInvoke(() =>
+                    {
+                        try
+                        {
+                            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+                            {
+                                FileName = openUrl,
+                                UseShellExecute = true,
+                            });
+                        }
+                        catch (Exception ex)
+                        {
+                            System.Diagnostics.Debug.WriteLine("open-url: " + ex.Message);
+                        }
+                    });
+                    break;
+                }
+                case "vpn":
+                {
+                    // Prefs are stored in the dashboard WebView; WireGuard tunnel engine hooks here later.
+                    var vpnAction = root.TryGetProperty("action", out var vpnActEl) ? vpnActEl.GetString() ?? "" : "";
+                    System.Diagnostics.Debug.WriteLine("vpn: " + vpnAction);
+                    break;
+                }
             }
         }
         catch (Exception ex)

@@ -26,6 +26,18 @@
           <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="7.2"/><path d="M12 8.2v4.2l2.6 1.6"/></svg>
           <span>Monitoring</span>
         </button>
+        <button type="button" data-open="analyze" title="Analyze">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.2"/><path d="m16.2 16.2 3.3 3.3"/></svg>
+          <span>Analyze</span>
+        </button>
+        <button type="button" data-open="antivirus" title="Antivirus">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5 19 6.2v5.1c0 4.6-3 7.9-7 9.2-4-1.3-7-4.6-7-9.2V6.2L12 3.5z"/><path d="m9.2 12.1 1.9 1.9 3.7-3.8"/></svg>
+          <span>Antivirus</span>
+        </button>
+        <button type="button" data-open="vpn" title="VPN">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.8 19.2 7v4.6c0 4.5-3.1 8.2-7.2 9.6-4.1-1.4-7.2-5.1-7.2-9.6V7L12 3.8z"/><path d="M8.5 12h7"/><path d="M12 8.5v7"/></svg>
+          <span>VPN</span>
+        </button>
         <button type="button" data-open="settings" title="Settings">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h16"/><path d="M4 16h16"/><circle cx="9" cy="8" r="2.1"/><circle cx="15" cy="16" r="2.1"/></svg>
           <span>Settings</span>
@@ -98,6 +110,122 @@
         <p class="note">Recent findings from scans on this computer.</p>
         <div id="dash-alerts" class="alert-list" role="log" aria-live="polite">
           <p class="empty-state">No threats logged yet. Run a Quick Scan to start.</p>
+        </div>
+      </section>
+
+      <section data-section="analyze" data-title="Analyze" hidden>
+        <h1>Analyze</h1>
+        <p class="note">Paste a link or drop a file. Securely hashes locally first, then checks reputation and heuristics — VirusTotal-style results without scraping VirusTotal’s site.</p>
+        <h2 class="dash-group">Link</h2>
+        <div class="suite-card">
+          <label class="suite-label" for="analyze-url">URL or link</label>
+          <div class="suite-inline">
+            <input id="analyze-url" class="suite-input" type="url" placeholder="https://example.com/download" autocomplete="off" spellcheck="false">
+            <button type="button" id="analyze-url-btn" class="btn">Check link</button>
+          </div>
+        </div>
+        <h2 class="dash-group">File</h2>
+        <div class="suite-card">
+          <div id="analyze-drop" class="analyze-drop" tabindex="0" role="button" aria-label="Drop a file to analyze">
+            <strong>Drop a file here</strong>
+            <span>or choose one — SHA-256 is computed on this PC before any cloud lookup</span>
+            <input id="analyze-file" type="file" hidden>
+          </div>
+          <p id="analyze-file-meta" class="muted suite-meta" hidden></p>
+          <div class="actions" style="margin-top:12px">
+            <button type="button" id="analyze-file-btn" class="btn" disabled>Analyze file</button>
+            <button type="button" id="analyze-pick" class="ghost">Choose file</button>
+          </div>
+        </div>
+        <h2 class="dash-group">Result</h2>
+        <div id="analyze-result" class="verdict-card" data-verdict="idle">
+          <p class="verdict-label" id="analyze-verdict">Waiting</p>
+          <p class="verdict-summary" id="analyze-summary">Paste a link or pick a file to begin.</p>
+          <ul class="verdict-evidence" id="analyze-evidence"></ul>
+          <ul class="audit-detail-tips" id="analyze-tips" hidden></ul>
+        </div>
+      </section>
+
+      <section data-section="antivirus" data-title="Antivirus" hidden>
+        <h1>Antivirus</h1>
+        <p class="note">Lightweight companion protection beside Windows Security — not a second full AV that turns Defender off.</p>
+        <h2 class="dash-group">Protection mode</h2>
+        <div class="rows">
+          <div class="row">
+            <span class="mark" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3.5 19 6.2v5.1c0 4.6-3 7.9-7 9.2-4-1.3-7-4.6-7-9.2V6.2L12 3.5z"/></svg></span>
+            <div class="row-copy"><strong>Profile</strong><span>Quiet alerts less; Paranoid prompts on more file types.</span></div>
+            <div class="modes modes-3" role="radiogroup" aria-label="AV profile">
+              <span class="modes-thumb" aria-hidden="true"></span>
+              <button type="button" data-av-profile="quiet" aria-checked="false">Quiet</button>
+              <button type="button" data-av-profile="balanced" aria-checked="true">Balanced</button>
+              <button type="button" data-av-profile="paranoid" aria-checked="false">Paranoid</button>
+            </div>
+          </div>
+          <div class="row">
+            <span class="mark" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 7h16v10H4z"/><path d="M8 11h8"/></svg></span>
+            <div class="row-copy"><strong>Watch Downloads</strong><span>Prompt Analyze when new files land in Downloads.</span></div>
+            <label class="switch"><input id="av-watch-downloads" type="checkbox" checked><i></i></label>
+          </div>
+          <div class="row">
+            <span class="mark" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3.5 19 6.2v5.1c0 4.6-3 7.9-7 9.2-4-1.3-7-4.6-7-9.2V6.2L12 3.5z"/><path d="m9.2 12.1 1.9 1.9 3.7-3.8"/></svg></span>
+            <div class="row-copy"><strong>Windows Security</strong><span id="av-defender-copy">Keep Defender on — Securely complements it.</span></div>
+            <button type="button" id="av-open-defender" class="ghost">Open</button>
+          </div>
+        </div>
+        <h2 class="dash-group">Quick actions</h2>
+        <div class="actions" style="margin-top:0">
+          <button type="button" id="av-scan-files" class="btn">Scan files…</button>
+          <button type="button" id="av-open-analyze" class="ghost">Open Analyze</button>
+        </div>
+        <p id="av-status" class="note" role="status">Ready — Balanced profile.</p>
+        <h2 class="dash-group">Recent protect events</h2>
+        <div id="av-events" class="alert-list">
+          <p class="empty-state">No protect events yet. Scan a file to see results here.</p>
+        </div>
+      </section>
+
+      <section data-section="vpn" data-title="VPN" hidden>
+        <h1>VPN</h1>
+        <p class="note">One-tap WireGuard-class prefs: region, kill switch, and optional BYO config. Easy controls first — tunnel engine follows your saved profile.</p>
+        <div class="vpn-hero suite-card">
+          <div>
+            <p class="vpn-state-label" id="vpn-state-label">Disconnected</p>
+            <p class="muted" id="vpn-state-copy">Choose a region and press Connect.</p>
+          </div>
+          <button type="button" id="vpn-connect" class="btn vpn-connect">Connect</button>
+        </div>
+        <h2 class="dash-group">Easy setup</h2>
+        <div class="rows">
+          <div class="row">
+            <span class="mark" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="7.5"/><path d="M12 8v8M8 12h8"/></svg></span>
+            <div class="row-copy"><strong>Region</strong><span>Where your tunnel should exit.</span></div>
+            <select id="vpn-region" class="field" aria-label="VPN region">
+              <option value="auto">Auto (fastest)</option>
+              <option value="us">United States</option>
+              <option value="eu">Europe</option>
+              <option value="uk">United Kingdom</option>
+              <option value="asia">Asia Pacific</option>
+              <option value="byo">Bring your own</option>
+            </select>
+          </div>
+          <div class="row">
+            <span class="mark" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 7h10v10H7z"/><path d="M4 12h3M17 12h3"/></svg></span>
+            <div class="row-copy"><strong>Kill switch</strong><span>Block internet if the tunnel drops.</span></div>
+            <label class="switch"><input id="vpn-kill" type="checkbox" checked><i></i></label>
+          </div>
+          <div class="row">
+            <span class="mark" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 8h7v8H4z"/><path d="M13 8h7v8h-7z"/></svg></span>
+            <div class="row-copy"><strong>Split tunnel</strong><span>Keep local LAN / selected apps off-VPN.</span></div>
+            <label class="switch"><input id="vpn-split" type="checkbox"><i></i></label>
+          </div>
+        </div>
+        <h2 class="dash-group">Bring your own WireGuard</h2>
+        <div class="suite-card">
+          <label class="suite-label" for="vpn-config">Paste a .conf (optional)</label>
+          <textarea id="vpn-config" class="suite-textarea" rows="5" placeholder="[Interface]&#10;PrivateKey = …&#10;Address = …&#10;[Peer]&#10;PublicKey = …&#10;Endpoint = …&#10;AllowedIPs = 0.0.0.0/0" spellcheck="false"></textarea>
+          <div class="actions" style="margin-top:12px">
+            <button type="button" id="vpn-save-config" class="ghost">Save profile</button>
+          </div>
         </div>
       </section>
 
@@ -330,6 +458,76 @@
     .audit-detail-body { margin: 0; font-size: 14px; line-height: 1.45; }
     .audit-detail-tips { margin: 0; padding-left: 1.15rem; display: grid; gap: 6px; font-size: 14px; line-height: 1.4; }
     .audit-detail .dash-group { margin: 8px 0 0; }
+    .suite-card {
+      padding: 14px;
+      border-radius: 16px;
+      background: var(--inset);
+      display: grid;
+      gap: 10px;
+    }
+    .suite-label { font-size: 13px; font-weight: 650; color: var(--muted); }
+    .suite-inline { display: flex; gap: 10px; flex-wrap: wrap; }
+    .suite-input, .suite-textarea {
+      flex: 1 1 220px;
+      min-width: 0;
+      border: 0;
+      border-radius: 12px;
+      background: var(--surface);
+      color: var(--text);
+      padding: 10px 12px;
+      font: inherit;
+    }
+    .suite-textarea {
+      width: 100%;
+      resize: vertical;
+      font-family: ui-monospace, Consolas, monospace;
+      font-size: 12.5px;
+      line-height: 1.4;
+    }
+    .suite-meta { margin: 0; }
+    .analyze-drop {
+      display: grid;
+      gap: 4px;
+      place-items: center;
+      text-align: center;
+      padding: 28px 16px;
+      border-radius: 14px;
+      border: 1.5px dashed color-mix(in srgb, var(--text) 22%, transparent);
+      background: var(--surface);
+      cursor: pointer;
+    }
+    .analyze-drop strong { font-size: 15px; }
+    .analyze-drop span { color: var(--muted); font-size: 13px; max-width: 36ch; }
+    .analyze-drop.is-drag { border-color: var(--text); background: color-mix(in srgb, var(--text) 6%, var(--surface)); }
+    .verdict-card {
+      padding: 16px;
+      border-radius: 16px;
+      background: var(--inset);
+      display: grid;
+      gap: 8px;
+    }
+    .verdict-label { margin: 0; font-size: 18px; font-weight: 750; text-transform: capitalize; }
+    .verdict-summary { margin: 0; font-size: 14px; line-height: 1.45; }
+    .verdict-evidence { margin: 0; padding-left: 1.1rem; display: grid; gap: 4px; font-size: 13px; color: var(--muted); }
+    .verdict-card[data-verdict="clean"] .verdict-label { color: #15803d; }
+    .verdict-card[data-verdict="suspicious"] .verdict-label { color: #b45309; }
+    .verdict-card[data-verdict="malicious"] .verdict-label { color: #be123c; }
+    .verdict-card[data-verdict="unknown"] .verdict-label,
+    .verdict-card[data-verdict="idle"] .verdict-label { color: var(--text); }
+    html[data-appearance="dark"] .verdict-card[data-verdict="clean"] .verdict-label { color: #86efac; }
+    html[data-appearance="dark"] .verdict-card[data-verdict="suspicious"] .verdict-label { color: #fbbf24; }
+    html[data-appearance="dark"] .verdict-card[data-verdict="malicious"] .verdict-label { color: #fb7185; }
+    .vpn-hero {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .vpn-state-label { margin: 0; font-size: 22px; font-weight: 750; }
+    .vpn-connect { min-width: 8.5rem; min-height: 44px; font-size: 15px; }
+    .vpn-hero.is-on .vpn-state-label { color: #15803d; }
+    html[data-appearance="dark"] .vpn-hero.is-on .vpn-state-label { color: #86efac; }
   </style>
   <script src="/dashboard.js"></script>
 </body>
